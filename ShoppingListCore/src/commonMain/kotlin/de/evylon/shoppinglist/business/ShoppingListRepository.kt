@@ -17,4 +17,8 @@ interface ShoppingListRepository {
 
     suspend fun loadListById(id: String)
     suspend fun deleteItem(listId: String, item: Item)
+    companion object {
+        // TODO temporary solution for fast setup/testing, use dependency injection
+        val instance: ShoppingListRepository = ShoppingListRepositoryImpl()
+    }
 }

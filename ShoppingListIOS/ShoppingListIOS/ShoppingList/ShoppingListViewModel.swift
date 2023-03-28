@@ -16,47 +16,27 @@ class ShoppingListViewModel: ObservableObject {
 
     private let shoppingListRepository = ShoppingListRepositoryImpl()
 
-    @Published var shoppingList: ShoppingList?
+    private let shoppingListReducer = ShoppingListReducerIos().proxy
+
+    @Published var shoppingListState: ShoppingListState = ShoppingListState.companion.inital
 
     func subscribeToShoppingList() {
-        collect(shoppingListRepository.shoppingListFlow)
+        collect(shoppingListReducer.stateFlow)
             .completeOnFailure()
             .sink { [weak self] result in
                 guard let result = result else {
                     return
                 }
-                switch result {
-                    case let success as NetworkResultSuccess<ShoppingList>:
-                        self?.shoppingList = success.value
-                    case let failure as NetworkResultFailure<ShoppingList>:
-                        print("Failure \(failure.throwable.description())")
-                    default:
-                        print("Not gonna happen")
-                }
+                self?.shoppingListState = result
             }
             .store(in: &subscriptions)
     }
 
     func loadListById(listId: String) {
-        shoppingListRepository.loadListById(id: listId) { error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print(error)
-                }
-            }
-        }
+        shoppingListReducer.reduce(action: ShoppingListAction.FetchList(listId: listId))
     }
 
     func deleteItem(item: Item) {
-        guard let listId = shoppingList?.id else {
-            return
-        }
-        shoppingListRepository.deleteItem(listId: listId, item: item) { error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print(error)
-                }
-            }
-        }
+        shoppingListReducer.reduce(action: ShoppingListAction.DeleteItem(item: item))
     }
 }

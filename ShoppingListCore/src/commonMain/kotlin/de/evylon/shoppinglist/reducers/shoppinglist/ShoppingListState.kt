@@ -1,19 +1,25 @@
-package de.evylon.shoppinglist.business
+package de.evylon.shoppinglist.reducers.shoppinglist
 
 import de.evylon.shoppinglist.models.Amount
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
-import de.evylon.shoppinglist.utils.NetworkResult
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import de.evylon.shoppinglist.reducers.LoadingState
 
-@Suppress("MagicNumber")
-class ShoppingListRepositoryMock : ShoppingListRepository {
-
-    private val mockFlow = MutableStateFlow(
-        NetworkResult.Success(
-            ShoppingList(
+data class ShoppingListState(
+    val shoppingList: ShoppingList,
+    val loadingState: LoadingState
+) {
+    companion object {
+        val inital = ShoppingListState(
+            shoppingList = ShoppingList(
+                id = "",
+                title = "",
+                items = listOf()
+            ),
+            loadingState = LoadingState.Loading
+        )
+        val mock = ShoppingListState(
+            shoppingList = ShoppingList(
                 id = "Mock",
                 title = "MockList",
                 items = mutableListOf(
@@ -32,17 +38,8 @@ class ShoppingListRepositoryMock : ShoppingListRepository {
                         amount = Amount(0.05f, "hPa")
                     ),
                 )
-            )
+            ),
+            loadingState = LoadingState.Done
         )
-    )
-    override val shoppingListFlow: StateFlow<NetworkResult<ShoppingList>?>
-        get() = mockFlow.asStateFlow()
-
-    override suspend fun loadListById(id: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteItem(listId: String, item: Item) {
-        TODO("Not yet implemented")
     }
 }
