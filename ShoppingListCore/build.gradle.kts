@@ -1,13 +1,13 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
-val ktorVersion = "2.1.2"
+val ktorVersion = "2.3.3"
 
 kotlin {
-    android()
+    androidTarget()
 
     listOf(
         iosX64(),
@@ -22,7 +22,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
@@ -37,7 +37,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
             }
         }
         val iosX64Main by getting
@@ -66,9 +66,13 @@ kotlin {
 
 android {
     namespace = "de.evylon.shoppinglist"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
