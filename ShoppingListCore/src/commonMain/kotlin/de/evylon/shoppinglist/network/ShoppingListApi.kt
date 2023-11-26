@@ -21,11 +21,13 @@ import kotlin.time.Duration.Companion.seconds
 internal class ShoppingListApi {
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
+            json(
+                Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                }
+            )
             install(Logging) {
                 logger = Logger.DEFAULT
                 level = LogLevel.HEADERS
