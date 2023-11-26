@@ -8,10 +8,10 @@ import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListReducer
 
 class ShoppingListViewModel : ViewModel() {
 
-    var reducer = ShoppingListReducer(coroutineScope = viewModelScope)
+    private var reducer = ShoppingListReducer(coroutineScope = viewModelScope)
+    val uiStateFlow = reducer.stateFlow
 
-    fun loadList(id: String?) {
-        if (id == null) return
+    fun loadList(id: String) {
         reducer.reduce(ShoppingListAction.FetchList(id))
     }
 

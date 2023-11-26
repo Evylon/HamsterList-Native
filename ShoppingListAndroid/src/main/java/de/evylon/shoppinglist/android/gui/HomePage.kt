@@ -21,7 +21,7 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
     var listId by remember { mutableStateOf("Demo") }
 
     Column(
-        Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
     ) {
@@ -29,9 +29,9 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
             value = listId,
             onValueChange = { listId = it }
         )
-        Button(onClick = {
-            onNavigateToShoppingList(listId)
-        }) {
+        Button(
+            onClick = { onNavigateToShoppingList(listId) },
+        ) {
             Text(text = "Load")
         }
     }

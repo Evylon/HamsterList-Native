@@ -35,9 +35,9 @@ fun NavigationHost() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomePage(onNavigateToShoppingList = {
-                navController.navigate("shoppingList/$it")
-            })
+            HomePage(
+                onNavigateToShoppingList = { navController.navigate("shoppingList/$it") },
+            )
         }
         composable("shoppingList/{id}") {
             ShoppingListPage(shoppingListId = it.arguments?.getString("id") ?: "")

@@ -9,29 +9,32 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.reducers.LoadingState
-import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListAction
 
 @Composable
 fun ShoppingListPage(shoppingListId: String) {
-    val viewModel = ShoppingListViewModel()
-    val uiState = viewModel.reducer.stateFlow.collectAsState()
+    val viewModel by remember { mutableStateOf(ShoppingListViewModel()) }
+    val uiState by viewModel.uiStateFlow.collectAsState()
 
     LaunchedEffect(shoppingListId) {
-        viewModel.reducer.reduce(ShoppingListAction.FetchList(shoppingListId))
+        viewModel.loadList(shoppingListId)
     }
 
-    Crossfade(uiState.value.loadingState) { state ->
+    Crossfade(
+        targetState = uiState.loadingState,
+        label = "loading state"
+    ) { state ->
         when (state) {
             is LoadingState.Loading -> {
                 Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxSize().padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -40,9 +43,7 @@ fun ShoppingListPage(shoppingListId: String) {
             }
             is LoadingState.Error -> {
                 Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxSize().padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -51,10 +52,8 @@ fun ShoppingListPage(shoppingListId: String) {
             }
             is LoadingState.Done -> {
                 ShoppingListView(
-                    shoppingList = uiState.value.shoppingList,
-                    onDeleteItem = { item ->
-                        viewModel.deleteItem(item)
-                    }
+                    shoppingList = uiState.shoppingList,
+                    onDeleteItem = { viewModel.deleteItem(it) }
                 )
             }
         }
