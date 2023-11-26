@@ -20,7 +20,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -47,7 +47,7 @@ dependencies {
     implementation(project(":ShoppingListCore"))
 
     // Compose Bill of Materials
-    val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
+    val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
@@ -56,6 +56,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material")
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 }
