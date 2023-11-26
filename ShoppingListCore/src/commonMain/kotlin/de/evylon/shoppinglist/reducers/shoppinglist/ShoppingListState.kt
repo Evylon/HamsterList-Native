@@ -10,7 +10,7 @@ data class ShoppingListState(
     val loadingState: LoadingState
 ) {
     companion object {
-        val inital = ShoppingListState(
+        val empty = ShoppingListState(
             shoppingList = ShoppingList(
                 id = "",
                 title = "",

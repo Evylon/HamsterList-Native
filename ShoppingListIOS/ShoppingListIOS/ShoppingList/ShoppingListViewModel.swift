@@ -18,10 +18,10 @@ class ShoppingListViewModel: ObservableObject {
 
     private let shoppingListReducer = ShoppingListReducerIos().proxy
 
-    @Published var shoppingListState: ShoppingListState = ShoppingListState.companion.inital
+    @Published var shoppingListState: ShoppingListState = ShoppingListState.companion.empty
 
     func subscribeToShoppingList() {
-        collect(shoppingListReducer.stateFlow)
+        collect(shoppingListReducer.uiStateFlow)
             .completeOnFailure()
             .sink { [weak self] result in
                 guard let result = result else {

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 
 @Suppress("MagicNumber")
 @Composable
-fun MyApplicationTheme(
+fun ShoppingListTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

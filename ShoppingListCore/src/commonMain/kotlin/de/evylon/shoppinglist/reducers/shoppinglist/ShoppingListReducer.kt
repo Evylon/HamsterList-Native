@@ -12,6 +12,8 @@ import de.evylon.shoppinglist.utils.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class ShoppingListReducer(
@@ -19,19 +21,17 @@ class ShoppingListReducer(
     private val shoppingListRepository: ShoppingListRepository = ShoppingListRepository.instance
 ) : Reducer<ShoppingListAction, ShoppingListState>(coroutineScope) {
 
-    private val _flow = MutableStateFlow(ShoppingListState.inital)
-    override val stateFlow = _flow.asStateFlow()
+    private val _uiStateFlow = MutableStateFlow(ShoppingListState.empty)
+    override val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
-        coroutineScope.launch(dispatcher) {
-            shoppingListRepository.shoppingListFlow.collect { result ->
-                when (result) {
-                    is NetworkResult.Success -> reduce(UpdateList(result.value))
-                    is NetworkResult.Failure -> result.throwable.printStackTrace()
-                    null -> {} // do nothing?
-                }
+        shoppingListRepository.shoppingListFlow.onEach { networkResult ->
+            when (networkResult) {
+                is NetworkResult.Success -> reduce(UpdateList(networkResult.value))
+                is NetworkResult.Failure -> networkResult.throwable.printStackTrace()
+                null -> {} // do nothing?
             }
-        }
+        }.launchIn(coroutineScope)
     }
 
     override fun reduce(action: ShoppingListAction) {
@@ -49,7 +49,7 @@ class ShoppingListReducer(
     }
 
     private fun deleteItem(item: Item) {
-        val oldState = _flow.value
+        val oldState = _uiStateFlow.value
         coroutineScope.launch(dispatcher) {
             shoppingListRepository.deleteItem(oldState.shoppingList.id, item)
         }
@@ -57,8 +57,8 @@ class ShoppingListReducer(
 
     private fun updateList(shoppingList: ShoppingList) {
         coroutineScope.launch(dispatcher) {
-            _flow.emit(
-                _flow.value.copy(
+            _uiStateFlow.emit(
+                _uiStateFlow.value.copy(
                     shoppingList = shoppingList,
                     loadingState = LoadingState.Done
                 )

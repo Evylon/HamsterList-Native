@@ -15,7 +15,7 @@ class FetchListReducer(
 ) : Reducer<FetchListAction, FetchListState>(coroutineScope) {
 
     private val _state = MutableStateFlow(FetchListState(LoadingState.Loading))
-    override val stateFlow = _state.asStateFlow()
+    override val uiStateFlow = _state.asStateFlow()
 
     override fun reduce(action: FetchListAction) {
         when (action) {

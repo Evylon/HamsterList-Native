@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import de.evylon.shoppinglist.android.MyApplicationTheme
+import de.evylon.shoppinglist.android.ShoppingListTheme
 import de.evylon.shoppinglist.android.R
 import de.evylon.shoppinglist.android.gui.utils.prettyFormat
 import de.evylon.shoppinglist.models.Item
@@ -56,7 +56,7 @@ fun ShoppingListItemRow(item: Item, onDelete: (Item) -> Unit) {
 @Composable
 fun ShoppingListItemRowPreview() {
     val mockShoppingList = ShoppingListState.Companion.mock.shoppingList
-    MyApplicationTheme {
+    ShoppingListTheme {
         ShoppingListItemRow(
             item = mockShoppingList.items.first(),
             onDelete = {}

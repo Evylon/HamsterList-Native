@@ -11,11 +11,11 @@ abstract class Reducer<A, S>(
     protected val coroutineScope: CoroutineScope,
     protected val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
-    abstract val stateFlow: StateFlow<S>
+    abstract val uiStateFlow: StateFlow<S>
     abstract fun reduce(action: A)
 
-    fun stateFlow(
+    fun uiStateFlow(
         onEach: (S) -> Unit,
         onCompletion: (Throwable?) -> Unit
-    ): Cancellable = stateFlow.collect(onEach, onCompletion)
+    ): Cancellable = uiStateFlow.collect(onEach, onCompletion)
 }

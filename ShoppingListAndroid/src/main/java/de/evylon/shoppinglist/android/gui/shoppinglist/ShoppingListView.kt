@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import de.evylon.shoppinglist.android.MyApplicationTheme
+import de.evylon.shoppinglist.android.ShoppingListTheme
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
 import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListState
@@ -49,7 +49,7 @@ fun ShoppingListView(
 @Preview
 @Composable
 fun ShoppingListViewPreview() {
-    MyApplicationTheme {
+    ShoppingListTheme {
         Surface(color = MaterialTheme.colors.background) {
             ShoppingListView(ShoppingListState.mock.shoppingList, onDeleteItem = {})
         }
