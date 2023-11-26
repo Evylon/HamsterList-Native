@@ -24,9 +24,7 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
     override suspend fun loadListById(id: String) {
         try {
             val shoppingList = shoppingListApi.getShoppingListById(id)
-            _shoppingListFlow.emit(
-                NetworkResult.Success(shoppingList)
-            )
+            _shoppingListFlow.emit(NetworkResult.Success(shoppingList))
         } catch (e: IOException) {
             _shoppingListFlow.emit(NetworkResult.Failure(e))
         } catch (e: CancellationException) {

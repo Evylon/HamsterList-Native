@@ -18,9 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.android.R
 import de.evylon.shoppinglist.android.gui.utils.prettyFormat
-import de.evylon.shoppinglist.business.ShoppingListRepositoryMock
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.utils.NetworkResult
+import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListState
 
 @Composable
 fun ShoppingListItemRow(item: Item, onDelete: (Item) -> Unit) {
@@ -54,7 +53,7 @@ fun ShoppingListItemRow(item: Item, onDelete: (Item) -> Unit) {
 @Preview
 @Composable
 fun ShoppingListItemRowPreview() {
-    val mockShoppingList = (ShoppingListRepositoryMock().shoppingListFlow.value as NetworkResult.Success).value
+    val mockShoppingList = ShoppingListState.Companion.mock.shoppingList
     ShoppingListItemRow(
         item = mockShoppingList.items.first(),
         onDelete = {}

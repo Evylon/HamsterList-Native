@@ -24,20 +24,25 @@ struct ShoppingListPage: View {
     var body: some View {
         NavigationView {
             VStack {
-                if let shoppingList = viewModel.shoppingList {
-                    Text(shoppingList.title)
-                    List(shoppingList.items) { item in
-                        Text(item.description())
-                            .swipeActions {
-                                Button(action: {
-                                    viewModel.deleteItem(item: item)
-                                }) {
-                                    Image(systemName: "trash")
-                                }.tint(Color.red)
-                            }
-                    }
-                } else {
-                    Text("Loading...")
+                switch viewModel.shoppingListState.loadingState {
+                    case LoadingState.Done():
+                        Text(viewModel.shoppingListState.shoppingList.title)
+                        List(viewModel.shoppingListState.shoppingList.items) { item in
+                            Text(item.description())
+                                .swipeActions {
+                                    Button(action: {
+                                        viewModel.deleteItem(item: item)
+                                    }) {
+                                        Image(systemName: "trash")
+                                    }.tint(Color.red)
+                                }
+                        }
+                    case LoadingState.Loading():
+                        Text("Loading...")
+                    case LoadingState.Error():
+                        Text("Error")
+                    default:
+                        Text("Should not happen")
                 }
             }
         }.onAppear {

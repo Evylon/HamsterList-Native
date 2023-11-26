@@ -1,6 +1,5 @@
 package de.evylon.shoppinglist.android.gui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
@@ -30,8 +27,7 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
     ) {
         TextField(
             value = listId,
-            onValueChange = { listId = it },
-            modifier = Modifier.background(Color.White)
+            onValueChange = { listId = it }
         )
         Button(onClick = {
             onNavigateToShoppingList(listId)

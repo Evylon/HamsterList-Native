@@ -40,7 +40,7 @@ fun NavigationHost() {
             })
         }
         composable("shoppingList/{id}") {
-            ShoppingListPage(shoppingListId = it.arguments?.getString("id"))
+            ShoppingListPage(shoppingListId = it.arguments?.getString("id") ?: "")
         }
     }
 }
