@@ -2,6 +2,8 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     kotlin("plugin.serialization") version "1.9.0"
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
+    id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-25"
 }
 
 val ktorVersion = "2.3.3"
@@ -20,6 +22,9 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+        }
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -38,6 +43,7 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+                api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
             }
         }
         val iosX64Main by getting

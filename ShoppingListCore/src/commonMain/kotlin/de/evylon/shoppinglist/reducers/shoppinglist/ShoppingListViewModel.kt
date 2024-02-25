@@ -1,62 +1,52 @@
 package de.evylon.shoppinglist.reducers.shoppinglist
 
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.business.ShoppingListRepository
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
 import de.evylon.shoppinglist.reducers.LoadingState
-import de.evylon.shoppinglist.reducers.Reducer
-import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListAction.DeleteItem
-import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListAction.FetchList
-import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListAction.UpdateList
 import de.evylon.shoppinglist.utils.NetworkResult
-import kotlinx.coroutines.CoroutineScope
+import de.evylon.shoppinglist.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class ShoppingListReducer(
-    coroutineScope: CoroutineScope,
+class ShoppingListViewModel(
     private val shoppingListRepository: ShoppingListRepository = ShoppingListRepository.instance
-) : Reducer<ShoppingListAction, ShoppingListState>(coroutineScope) {
+) : BaseViewModel() {
 
     private val _uiStateFlow = MutableStateFlow(ShoppingListState.empty)
-    override val uiStateFlow = _uiStateFlow.asStateFlow()
+
+    @NativeCoroutinesState
+    val uiStateFlow = _uiStateFlow.asStateFlow()
 
     init {
         shoppingListRepository.shoppingListFlow.onEach { networkResult ->
             when (networkResult) {
-                is NetworkResult.Success -> reduce(UpdateList(networkResult.value))
+                is NetworkResult.Success -> updateList(networkResult.value)
                 is NetworkResult.Failure -> networkResult.throwable.printStackTrace()
                 null -> {} // do nothing?
             }
-        }.launchIn(coroutineScope)
+        }.launchIn(scope)
     }
 
-    override fun reduce(action: ShoppingListAction) {
-        when (action) {
-            is FetchList -> fetchList(action.listId)
-            is DeleteItem -> deleteItem(action.item)
-            is UpdateList -> updateList(action.shoppingList)
-        }
-    }
-
-    private fun fetchList(listId: String) {
-        coroutineScope.launch(dispatcher) {
+    fun fetchList(listId: String) {
+        scope.launch {
             shoppingListRepository.loadListById(listId)
         }
     }
 
-    private fun deleteItem(item: Item) {
+    fun deleteItem(item: Item) {
         val oldState = _uiStateFlow.value
-        coroutineScope.launch(dispatcher) {
+        scope.launch {
             shoppingListRepository.deleteItem(oldState.shoppingList.id, item)
         }
     }
 
-    private fun updateList(shoppingList: ShoppingList) {
-        coroutineScope.launch(dispatcher) {
+    fun updateList(shoppingList: ShoppingList) {
+        scope.launch {
             _uiStateFlow.emit(
                 _uiStateFlow.value.copy(
                     shoppingList = shoppingList,
