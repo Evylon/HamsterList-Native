@@ -12,7 +12,6 @@ import ShoppingListCore
 import SwiftUI
 
 struct ShoppingListPage: View {
-    private let shoppingListRepository: ShoppingListRepository
     private var viewModel: ShoppingListViewModel
 
     @ObservedObject
@@ -22,9 +21,7 @@ struct ShoppingListPage: View {
 
     init(listId: String) {
         self.listId = listId
-        let repository = ShoppingListRepositoryImpl()
-        self.shoppingListRepository = repository
-        self.viewModel = ShoppingListViewModel(shoppingListRepository: repository)
+        self.viewModel = ShoppingListViewModel()
         self.uiState = FlowPublisher(
             publisher: createPublisher(for: self.viewModel.uiStateFlowFlow),
             initial: ShoppingListState.companion.empty

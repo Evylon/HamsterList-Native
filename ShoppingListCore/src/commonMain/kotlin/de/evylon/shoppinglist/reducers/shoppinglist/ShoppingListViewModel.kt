@@ -13,10 +13,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class ShoppingListViewModel(
+class ShoppingListViewModel : BaseViewModel() {
     private val shoppingListRepository: ShoppingListRepository = ShoppingListRepository.instance
-) : BaseViewModel() {
-
     private val _uiStateFlow = MutableStateFlow(ShoppingListState.empty)
 
     @NativeCoroutinesState
