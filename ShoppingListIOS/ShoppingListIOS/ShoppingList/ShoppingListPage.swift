@@ -7,27 +7,35 @@
 //
 
 import Combine
+import KMPNativeCoroutinesCombine
 import ShoppingListCore
 import SwiftUI
 
 struct ShoppingListPage: View {
+    private var viewModel: ShoppingListViewModel
 
-    @StateObject
-    private var viewModel = ShoppingListViewModel()
-    
+    @ObservedObject
+    private var uiState: FlowPublisher<ShoppingListState, Error>
+
     let listId: String
 
     init(listId: String) {
         self.listId = listId
+        self.viewModel = ShoppingListViewModel()
+        self.uiState = FlowPublisher(
+            publisher: createPublisher(for: self.viewModel.uiStateFlowFlow),
+            initial: ShoppingListState.companion.empty
+        )
+        uiState.subscribePublisher()
     }
 
     var body: some View {
         NavigationView {
             VStack {
-                switch viewModel.shoppingListState.loadingState {
+                switch uiState.value.loadingState {
                     case LoadingState.Done():
-                        Text(viewModel.shoppingListState.shoppingList.title)
-                        List(viewModel.shoppingListState.shoppingList.items) { item in
+                        Text(uiState.value.shoppingList.title)
+                        List(uiState.value.shoppingList.items) { item in
                             Text(item.description())
                                 .swipeActions {
                                     Button(action: {
@@ -46,12 +54,11 @@ struct ShoppingListPage: View {
                 }
             }
         }.onAppear {
-            print("init ViewModel")
-            viewModel.subscribeToShoppingList()
-            viewModel.loadListById(listId: listId)
+            viewModel.fetchList(listId: listId)
         }
     }
 }
+
 
 struct ShoppingListPagePreview: PreviewProvider {
     static var previews: some View {
