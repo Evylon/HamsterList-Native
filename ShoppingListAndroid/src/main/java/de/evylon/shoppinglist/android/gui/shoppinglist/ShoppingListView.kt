@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.android.ShoppingListTheme
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
-import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListState
+import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListState
 
 @Composable
 fun ShoppingListView(

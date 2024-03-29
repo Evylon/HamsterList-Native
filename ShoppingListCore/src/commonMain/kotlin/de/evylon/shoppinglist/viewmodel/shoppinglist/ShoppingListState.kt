@@ -1,9 +1,9 @@
-package de.evylon.shoppinglist.reducers.shoppinglist
+package de.evylon.shoppinglist.viewmodel.shoppinglist
 
 import de.evylon.shoppinglist.models.Amount
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
-import de.evylon.shoppinglist.reducers.LoadingState
+import de.evylon.shoppinglist.viewmodel.LoadingState
 
 data class ShoppingListState(
     val shoppingList: ShoppingList,

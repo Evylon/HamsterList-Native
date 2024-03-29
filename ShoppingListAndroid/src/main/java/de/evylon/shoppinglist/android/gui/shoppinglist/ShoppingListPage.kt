@@ -16,8 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import de.evylon.shoppinglist.reducers.LoadingState
-import de.evylon.shoppinglist.reducers.shoppinglist.ShoppingListViewModel
+import de.evylon.shoppinglist.viewmodel.LoadingState
+import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListViewModel
 
 @Composable
 fun ShoppingListPage(shoppingListId: String) {

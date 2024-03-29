@@ -1,10 +1,10 @@
-package de.evylon.shoppinglist.reducers.shoppinglist
+package de.evylon.shoppinglist.viewmodel.shoppinglist
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.business.ShoppingListRepository
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
-import de.evylon.shoppinglist.reducers.LoadingState
+import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.utils.NetworkResult
 import de.evylon.shoppinglist.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
