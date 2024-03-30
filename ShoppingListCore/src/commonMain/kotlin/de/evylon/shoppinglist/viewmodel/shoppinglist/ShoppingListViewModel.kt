@@ -43,7 +43,7 @@ class ShoppingListViewModel : BaseViewModel() {
         }
     }
 
-    fun updateList(shoppingList: ShoppingList) {
+    private fun updateList(shoppingList: ShoppingList) {
         scope.launch {
             _uiState.emit(
                 _uiState.value.copy(

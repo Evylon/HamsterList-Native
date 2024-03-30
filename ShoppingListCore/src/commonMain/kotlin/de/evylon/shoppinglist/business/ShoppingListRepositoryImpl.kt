@@ -9,16 +9,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class ShoppingListRepositoryImpl : ShoppingListRepository {
-
     private val shoppingListApi = ShoppingListApi()
 
     // Flows
-
     private val _shoppingListFlow = MutableStateFlow<FetchState<ShoppingList>>(FetchState.Loading)
     override val shoppingList = _shoppingListFlow.asStateFlow()
 
     // Service Calls
-
     override suspend fun loadListById(id: String) {
         _shoppingListFlow.loadCatchingAndEmit {
             shoppingListApi.getShoppingListById(id)
