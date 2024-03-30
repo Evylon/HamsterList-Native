@@ -23,7 +23,7 @@ struct ShoppingListPage: View {
         self.listId = listId
         self.viewModel = ShoppingListViewModel()
         self.uiState = FlowPublisher(
-            publisher: createPublisher(for: self.viewModel.uiStateFlowFlow),
+            publisher: createPublisher(for: self.viewModel.uiStateFlow),
             initial: ShoppingListState.companion.empty
         )
         uiState.subscribePublisher()
