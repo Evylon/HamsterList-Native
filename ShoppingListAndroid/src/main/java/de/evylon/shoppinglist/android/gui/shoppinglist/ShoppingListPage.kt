@@ -22,7 +22,7 @@ import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListViewModel
 @Composable
 fun ShoppingListPage(shoppingListId: String) {
     val viewModel by remember { mutableStateOf(ShoppingListViewModel()) }
-    val uiState by viewModel.uiStateFlow.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(shoppingListId) {
         viewModel.fetchList(shoppingListId)
