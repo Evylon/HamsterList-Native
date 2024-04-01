@@ -3,11 +3,10 @@ package de.evylon.shoppinglist.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ShoppingList(
+data class SyncedShoppingList(
     val id: String,
     val title: String,
+    val token: String,
+    val changeId: String,
     var items: List<Item>
-) {
-    override fun toString() = "$title: $items"
-}
-
+)

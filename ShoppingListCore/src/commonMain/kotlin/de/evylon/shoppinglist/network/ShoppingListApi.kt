@@ -2,6 +2,7 @@ package de.evylon.shoppinglist.network
 
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -16,9 +17,11 @@ import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 internal class ShoppingListApi {
+    private val baseUrl = "https://list.tilman.ninja/api"
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(
@@ -31,26 +34,30 @@ internal class ShoppingListApi {
             install(Logging) {
                 logger = Logger.DEFAULT
                 level = LogLevel.HEADERS
-                filter { request ->
-                    request.url.host.contains("ktor.io")
-                }
             }
         }
     }
 
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
     suspend fun getShoppingListById(id: String): ShoppingList {
-        return httpClient.get("https://list.tilman.ninja/api/$id").body()
+        return httpClient.get("$baseUrl/$id").body()
     }
 
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
-    suspend fun deleteItem(list: ShoppingList, item: Item): ShoppingList {
+    suspend fun deleteItem(list: SyncedShoppingList, item: Item): SyncedShoppingList {
         delay(1.seconds)
         // TODO use listId, currently only MOCK
         return list.copy(
             id = list.id,
             title = list.title,
+            token = Random.nextInt().toString(),
+            changeId = Random.nextInt().toString(),
             items = list.items.filter { it != item }
         )
+    }
+
+    @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
+    suspend fun getSyncedShoppingList(listId: String): SyncedShoppingList {
+        return httpClient.get("$baseUrl/$listId/sync").body()
     }
 }

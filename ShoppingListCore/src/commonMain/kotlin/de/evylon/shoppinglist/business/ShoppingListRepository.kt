@@ -3,13 +3,13 @@ package de.evylon.shoppinglist.business
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.utils.FetchState
 import kotlinx.coroutines.flow.StateFlow
 
 interface ShoppingListRepository {
     @NativeCoroutinesState
-    val shoppingList: StateFlow<FetchState<ShoppingList>>
+    val shoppingList: StateFlow<FetchState<SyncedShoppingList>>
 
     @NativeCoroutines
     suspend fun loadListById(id: String)

@@ -3,7 +3,7 @@ package de.evylon.shoppinglist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.business.ShoppingListRepository
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.utils.FetchState
 import de.evylon.shoppinglist.viewmodel.BaseViewModel
@@ -43,7 +43,7 @@ class ShoppingListViewModel : BaseViewModel() {
         }
     }
 
-    private fun updateList(shoppingList: ShoppingList) {
+    private fun updateList(shoppingList: SyncedShoppingList) {
         scope.launch {
             _uiState.emit(
                 _uiState.value.copy(

@@ -2,6 +2,7 @@ package de.evylon.shoppinglist.business
 
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.network.ShoppingListApi
 import de.evylon.shoppinglist.utils.FetchState
 import de.evylon.shoppinglist.utils.loadCatchingAndEmit
@@ -12,13 +13,13 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
     private val shoppingListApi = ShoppingListApi()
 
     // Flows
-    private val _shoppingListFlow = MutableStateFlow<FetchState<ShoppingList>>(FetchState.Loading)
+    private val _shoppingListFlow = MutableStateFlow<FetchState<SyncedShoppingList>>(FetchState.Loading)
     override val shoppingList = _shoppingListFlow.asStateFlow()
 
     // Service Calls
     override suspend fun loadListById(id: String) {
         _shoppingListFlow.loadCatchingAndEmit {
-            shoppingListApi.getShoppingListById(id)
+            shoppingListApi.getSyncedShoppingList(id)
         }
     }
 
