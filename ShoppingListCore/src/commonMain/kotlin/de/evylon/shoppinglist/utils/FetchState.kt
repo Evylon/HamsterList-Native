@@ -1,6 +1,9 @@
 package de.evylon.shoppinglist.utils
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
+import io.ktor.serialization.JsonConvertException
+import io.ktor.utils.io.CancellationException
+import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed class FetchState<out S> {
@@ -10,11 +13,14 @@ sealed class FetchState<out S> {
 }
 
 @NativeCoroutines
-@Suppress("TooGenericExceptionCaught")
 suspend fun <T> loadCatching(apiCall: suspend () -> T): FetchState<T> {
     return try {
         FetchState.Success(apiCall())
-    } catch (e: Exception) {
+    } catch (e: IOException) {
+        FetchState.Failure(e)
+    } catch (e: CancellationException) {
+        FetchState.Failure(e)
+    } catch (e: JsonConvertException) {
         FetchState.Failure(e)
     }
 }
