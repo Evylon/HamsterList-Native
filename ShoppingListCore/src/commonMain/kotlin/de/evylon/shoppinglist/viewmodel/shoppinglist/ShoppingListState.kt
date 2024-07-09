@@ -2,7 +2,6 @@ package de.evylon.shoppinglist.viewmodel.shoppinglist
 
 import de.evylon.shoppinglist.models.Amount
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
 import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.viewmodel.LoadingState
 import kotlin.random.Random

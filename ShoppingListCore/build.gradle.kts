@@ -6,7 +6,8 @@ plugins {
     id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-25"
 }
 
-val ktorVersion = "2.3.3"
+val ktorVersion = "2.3.12"
+val coroutinesVersion = "1.8.0"
 
 kotlin {
     androidTarget()
@@ -27,7 +28,7 @@ kotlin {
         }
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
@@ -42,8 +43,9 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-                api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+                implementation("org.slf4j:slf4j-android:1.7.36")
+                api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
             }
         }
         val iosX64Main by getting

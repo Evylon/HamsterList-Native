@@ -9,4 +9,10 @@ data class SyncedShoppingList(
     val token: String,
     val changeId: String,
     var items: List<Item>
-)
+) {
+    fun toShoppingList(): ShoppingList = ShoppingList(
+        id = id,
+        title = title,
+        items = items
+    )
+}

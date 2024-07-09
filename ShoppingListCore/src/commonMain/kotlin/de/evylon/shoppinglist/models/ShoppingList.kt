@@ -10,4 +10,3 @@ data class ShoppingList(
 ) {
     override fun toString() = "$title: $items"
 }
-
