@@ -35,12 +35,12 @@ data class ShoppingListState(
                     Item(
                         id = "UUID2",
                         name = "Item2",
-                        amount = Amount(1.5f, "kg")
+                        amount = Amount(1.5, "kg")
                     ),
                     Item(
                         id = "UUID3",
                         name = "Item3",
-                        amount = Amount(0.05f, "hPa")
+                        amount = Amount(0.05, "hPa")
                     ),
                 )
             ),

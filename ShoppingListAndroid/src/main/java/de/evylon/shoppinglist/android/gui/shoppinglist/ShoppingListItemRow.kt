@@ -79,7 +79,7 @@ fun ShoppingListItemRowPreview() {
             item = Item(
                 id = "",
                 name = "very long item title like really fucking long oh my god",
-                amount = Amount(1337.42f, "kg"),
+                amount = Amount(1337.42, "kg"),
                 category = "Category"
             ),
             onDelete = {}
