@@ -24,19 +24,53 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
     }
 
     override suspend fun deleteItem(listId: String, item: Item) {
-        val list = (_shoppingListFlow.value as? FetchState.Success)?.value
-        if (list == null || list.id != listId) return // TODO
-         val updatedList = list.copy(
-             items = list.items.filterNot { it.id == item.id }
-         )
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.filterNot { it.id == item.id }
+            )
+        }
+    }
+
+    override suspend fun addItem(listId: String, item: Item) {
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.plus(item)
+            )
+        }
+    }
+
+    override suspend fun changeItem(listId: String, item: Item) {
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.map {
+                    if (it.id == it.id) item else it
+                }
+            )
+        }
+    }
+
+    private suspend fun trySync(listId: String, transformList: (SyncedShoppingList) -> SyncedShoppingList) {
+        val previousList = getLatestList(listId) ?: return // TODO add error handling
+        val updatedList = transformList(previousList)
+        if (previousList.id != updatedList.id) return // TODO add error handling
         // TODO separate last saved sync state from current ShoppingList
         _shoppingListFlow.emit(FetchState.Success(updatedList))
         val syncRequest = SyncRequest(
-            previousSync = list,
+            previousSync = previousList,
             currentState = updatedList.toShoppingList()
         )
         _shoppingListFlow.loadCatchingAndEmit {
-            shoppingListApi.requestSync(listId, syncRequest)
+            shoppingListApi.requestSync(previousList.id, syncRequest)
+        }
+    }
+
+    // TODO add caching and resolving for multiple lists
+    private fun getLatestList(listId: String): SyncedShoppingList? {
+        val list = (_shoppingListFlow.value as? FetchState.Success)?.value
+        return if (list == null || list.id != listId) {
+            null
+        } else {
+            list
         }
     }
 }
