@@ -55,8 +55,8 @@ fun ShoppingListPage(shoppingListId: String) {
                 ShoppingListView(
                     shoppingList = uiState.shoppingList,
                     deleteItem = { viewModel.deleteItem(it) },
-                    changeItem = { viewModel.changeItem(it) },
-                    addItem = { viewModel.addItem(it) }
+                    changeItem = { id, item -> viewModel.changeItem(id, item) },
+                    addItem = { item -> viewModel.addItem(item) }
                 )
             }
         }

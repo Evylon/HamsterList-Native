@@ -42,15 +42,15 @@ class ShoppingListViewModel : BaseViewModel() {
         }
     }
 
-    fun addItem(item: Item.Text) {
+    fun addItem(newItem: String) {
         scope.launch {
-            shoppingListRepository.addItem(_uiState.value.shoppingList.id, item)
+            shoppingListRepository.addItem(_uiState.value.shoppingList.id, Item.Text(newItem))
         }
     }
 
-    fun changeItem(item: Item.Text) {
+    fun changeItem(id: String, newItem: String) {
         scope.launch {
-            shoppingListRepository.changeItem(_uiState.value.shoppingList.id, item)
+            shoppingListRepository.changeItem(_uiState.value.shoppingList.id, Item.Text(id, newItem))
         }
     }
 

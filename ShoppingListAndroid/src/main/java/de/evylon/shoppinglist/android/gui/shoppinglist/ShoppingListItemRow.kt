@@ -33,7 +33,7 @@ import de.evylon.shoppinglist.models.Item
 fun ShoppingListItemRow(
     item: Item,
     deleteItem: (Item) -> Unit,
-    changeItem: (Item.Text) -> Unit,
+    changeItem: (id: String, item: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var itemText by remember {
@@ -48,33 +48,26 @@ fun ShoppingListItemRow(
         elevation = 4.dp
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+            TextField(
+                value = itemText,
+                onValueChange = {
+                    itemText = it
+                    hasModified = true
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                ),
                 modifier = Modifier
-                    .padding(8.dp)
                     .weight(1f)
-            ) {
-                TextField(
-                    value = itemText,
-                    onValueChange = {
-                        itemText = it
-                        hasModified = true
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
-                    ),
-                    modifier = Modifier.onFocusChanged { focusState ->
+                    .onFocusChanged { focusState ->
                         if (!focusState.isFocused && hasModified) {
-                            changeItem(
-                                Item.Text(id = item.itemId(), stringRepresentation = itemText)
-                            )
+                            changeItem(item.itemId(), itemText)
                             hasModified = false
                         }
                     }
-                )
-            }
+            )
             IconButton(onClick = { deleteItem(item) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -99,7 +92,7 @@ fun ShoppingListItemRowPreview() {
                 category = "Category"
             ),
             deleteItem = {},
-            changeItem = {}
+            changeItem = { _, _ -> }
         )
     }
 }

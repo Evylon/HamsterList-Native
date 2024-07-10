@@ -1,6 +1,7 @@
 package de.evylon.shoppinglist.models
 
 import de.evylon.shoppinglist.utils.prettyFormat
+import de.evylon.shoppinglist.utils.randomUUID
 import kotlinx.serialization.Serializable
 
 @Serializable(ItemSerializer::class)
@@ -11,6 +12,10 @@ sealed class Item {
         val stringRepresentation: String
     ) : Item() {
         override fun toString(): String = stringRepresentation
+        constructor(stringRepresentation: String) : this(
+            id = randomUUID(),
+            stringRepresentation = stringRepresentation
+        )
     }
 
     @Serializable

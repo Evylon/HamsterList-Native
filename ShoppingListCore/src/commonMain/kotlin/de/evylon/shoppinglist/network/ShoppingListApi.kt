@@ -1,7 +1,5 @@
 package de.evylon.shoppinglist.network
 
-import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
 import de.evylon.shoppinglist.models.SyncRequest
 import de.evylon.shoppinglist.models.SyncedShoppingList
 import io.ktor.client.HttpClient
@@ -38,11 +36,6 @@ internal class ShoppingListApi {
             logger = Logger.DEFAULT
             level = LogLevel.ALL
         }
-    }
-
-    @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
-    suspend fun getShoppingListById(id: String): ShoppingList {
-        return httpClient.get("$baseUrl/$id").body()
     }
 
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
