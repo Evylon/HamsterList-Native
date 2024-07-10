@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ShoppingListViewModel : BaseViewModel() {
@@ -24,8 +25,13 @@ class ShoppingListViewModel : BaseViewModel() {
         shoppingListRepository.shoppingList.onEach { networkResult ->
             when (networkResult) {
                 is FetchState.Success -> updateList(networkResult.value)
-                is FetchState.Failure -> networkResult.throwable.printStackTrace()
-                is FetchState.Loading -> {} // TODO
+                is FetchState.Failure -> _uiState.update { oldState ->
+                    networkResult.throwable.printStackTrace()
+                    oldState.copy(loadingState = LoadingState.Error)
+                }
+                is FetchState.Loading -> _uiState.update { oldState ->
+                    oldState.copy(loadingState = LoadingState.Loading)
+                }
             }
         }.launchIn(scope)
     }

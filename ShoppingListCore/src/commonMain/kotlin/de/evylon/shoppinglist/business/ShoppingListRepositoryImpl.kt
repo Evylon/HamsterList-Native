@@ -51,12 +51,11 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
         }
     }
 
+    // TODO separate last saved sync state from current ShoppingList
     private suspend fun trySync(listId: String, transformList: (SyncedShoppingList) -> SyncedShoppingList) {
         val previousList = getLatestList(listId) ?: return // TODO add error handling
         val updatedList = transformList(previousList)
         if (previousList.id != updatedList.id) return // TODO add error handling
-        // TODO separate last saved sync state from current ShoppingList
-        _shoppingListFlow.emit(FetchState.Success(updatedList))
         val syncRequest = SyncRequest(
             previousSync = previousList,
             currentState = updatedList.toShoppingList()

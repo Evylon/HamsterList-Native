@@ -35,11 +35,13 @@ import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListState
 
 @Composable
+@Suppress("LongParameterList")
 fun ShoppingListView(
     shoppingList: SyncedShoppingList,
     deleteItem: (Item) -> Unit,
     changeItem: (id: String, item: String) -> Unit,
     addItem: (item: String) -> Unit,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -65,21 +67,24 @@ fun ShoppingListView(
                     ShoppingListItemRow(
                         item = item,
                         deleteItem = deleteItem,
-                        changeItem = changeItem
+                        changeItem = changeItem,
+                        isEnabled
                     )
                 }
             }
         }
         AddItemView(
             addItem = addItem,
+            isEnabled = isEnabled,
             modifier = Modifier.padding(top = 12.dp)
         )
     }
 }
 
 @Composable
-fun AddItemView(
+private fun AddItemView(
     addItem: (item: String) -> Unit,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     var itemText by remember {
@@ -96,9 +101,11 @@ fun AddItemView(
                 placeholder = { Text("New Item")},
                 onValueChange = { itemText = it },
                 singleLine = true,
+                enabled = isEnabled,
                 modifier = Modifier.weight(1f)
             )
             IconButton(
+                enabled = isEnabled,
                 onClick = {
                     addItem(itemText)
                     itemText = ""
@@ -125,6 +132,7 @@ fun ShoppingListViewPreview() {
                 shoppingList = ShoppingListState.mock.shoppingList,
                 deleteItem = {},
                 changeItem = { _, _ -> },
+                isEnabled = true,
                 addItem = {}
             )
         }

@@ -1,9 +1,7 @@
 package de.evylon.shoppinglist.android.gui.shoppinglist
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
@@ -34,6 +32,7 @@ fun ShoppingListItemRow(
     item: Item,
     deleteItem: (Item) -> Unit,
     changeItem: (id: String, item: String) -> Unit,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     var itemText by remember {
@@ -59,6 +58,7 @@ fun ShoppingListItemRow(
                 keyboardActions = KeyboardActions(
                     onDone = { focusManager.clearFocus() }
                 ),
+                enabled = isEnabled,
                 modifier = Modifier
                     .weight(1f)
                     .onFocusChanged { focusState ->
@@ -68,7 +68,10 @@ fun ShoppingListItemRow(
                         }
                     }
             )
-            IconButton(onClick = { deleteItem(item) }) {
+            IconButton(
+                enabled = isEnabled,
+                onClick = { deleteItem(item) }
+            ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete item",
@@ -92,7 +95,8 @@ fun ShoppingListItemRowPreview() {
                 category = "Category"
             ),
             deleteItem = {},
-            changeItem = { _, _ -> }
+            changeItem = { _, _ -> },
+            isEnabled = true
         )
     }
 }
