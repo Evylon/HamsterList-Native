@@ -28,7 +28,7 @@ import de.evylon.shoppinglist.models.Amount
 import de.evylon.shoppinglist.models.Item
 
 @Composable
-fun ShoppingListItemRow(
+fun ShoppingListItem(
     item: Item,
     deleteItem: (Item) -> Unit,
     changeItem: (id: String, item: String) -> Unit,
@@ -87,7 +87,7 @@ fun ShoppingListItemRow(
 @Composable
 fun ShoppingListItemRowPreview() {
     ShoppingListTheme {
-        ShoppingListItemRow(
+        ShoppingListItem(
             item = Item.Data(
                 id = "",
                 name = "very long item title like really fucking long oh my god",

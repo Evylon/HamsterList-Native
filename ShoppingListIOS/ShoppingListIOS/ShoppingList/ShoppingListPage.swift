@@ -16,6 +16,12 @@ struct ShoppingListPage: View {
 
     @ObservedObject
     private var uiState: FlowPublisher<ShoppingListState, Error>
+    
+    @State private var newItem = ""
+    
+    private var isLoading: Bool {
+        uiState.value.loadingState is LoadingState.Loading
+    }
 
     let listId: String
 
@@ -33,20 +39,18 @@ struct ShoppingListPage: View {
         NavigationView {
             VStack {
                 switch uiState.value.loadingState {
-                    case LoadingState.Done():
-                        Text(uiState.value.shoppingList.title)
-                        List(uiState.value.shoppingList.items) { item in
-                            Text(item.description())
-                                .swipeActions {
-                                    Button(action: {
-                                        viewModel.deleteItem(item: item)
-                                    }) {
-                                        Image(systemName: "trash")
-                                    }.tint(Color.red)
-                                }
+                    case LoadingState.Loading(), LoadingState.Done():
+                        ZStack {
+                            ShoppingListView(shoppingList: uiState.value.shoppingList,
+                                             deleteItem: { item in viewModel.deleteItem(item: item) },
+                                             changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
+                                             addItem: { newItem in viewModel.addItem(newItem: newItem) }
+                            ).allowsHitTesting(!isLoading)
+                                .opacity(isLoading ? 0.5 : 1)
+                            if isLoading {
+                                Text("Loading...")
+                            }
                         }
-                    case LoadingState.Loading():
-                        Text("Loading...")
                     case LoadingState.Error():
                         Text("Error")
                     default:
@@ -58,7 +62,6 @@ struct ShoppingListPage: View {
         }
     }
 }
-
 
 struct ShoppingListPagePreview: PreviewProvider {
     static var previews: some View {

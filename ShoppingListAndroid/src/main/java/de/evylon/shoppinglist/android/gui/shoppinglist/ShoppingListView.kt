@@ -64,7 +64,7 @@ fun ShoppingListView(
         ) {
             shoppingList.items.forEach { item ->
                 item {
-                    ShoppingListItemRow(
+                    ShoppingListItem(
                         item = item,
                         deleteItem = deleteItem,
                         changeItem = changeItem,
