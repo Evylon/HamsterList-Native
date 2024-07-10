@@ -3,7 +3,7 @@ package de.evylon.shoppinglist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.business.ShoppingListRepository
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.utils.FetchState
 import de.evylon.shoppinglist.viewmodel.BaseViewModel
@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ShoppingListViewModel : BaseViewModel() {
@@ -24,8 +25,13 @@ class ShoppingListViewModel : BaseViewModel() {
         shoppingListRepository.shoppingList.onEach { networkResult ->
             when (networkResult) {
                 is FetchState.Success -> updateList(networkResult.value)
-                is FetchState.Failure -> networkResult.throwable.printStackTrace()
-                is FetchState.Loading -> {} // TODO
+                is FetchState.Failure -> _uiState.update { oldState ->
+                    networkResult.throwable.printStackTrace()
+                    oldState.copy(loadingState = LoadingState.Error)
+                }
+                is FetchState.Loading -> _uiState.update { oldState ->
+                    oldState.copy(loadingState = LoadingState.Loading)
+                }
             }
         }.launchIn(scope)
     }
@@ -37,13 +43,24 @@ class ShoppingListViewModel : BaseViewModel() {
     }
 
     fun deleteItem(item: Item) {
-        val oldState = _uiState.value
         scope.launch {
-            shoppingListRepository.deleteItem(oldState.shoppingList.id, item)
+            shoppingListRepository.deleteItem(_uiState.value.shoppingList.id, item)
         }
     }
 
-    private fun updateList(shoppingList: ShoppingList) {
+    fun addItem(newItem: String) {
+        scope.launch {
+            shoppingListRepository.addItem(_uiState.value.shoppingList.id, Item.Text(newItem))
+        }
+    }
+
+    fun changeItem(id: String, newItem: String) {
+        scope.launch {
+            shoppingListRepository.changeItem(_uiState.value.shoppingList.id, Item.Text(id, newItem))
+        }
+    }
+
+    private fun updateList(shoppingList: SyncedShoppingList) {
         scope.launch {
             _uiState.emit(
                 _uiState.value.copy(

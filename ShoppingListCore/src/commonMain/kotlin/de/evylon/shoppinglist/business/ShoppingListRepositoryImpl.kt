@@ -1,7 +1,8 @@
 package de.evylon.shoppinglist.business
 
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncRequest
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.network.ShoppingListApi
 import de.evylon.shoppinglist.utils.FetchState
 import de.evylon.shoppinglist.utils.loadCatchingAndEmit
@@ -12,21 +13,65 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
     private val shoppingListApi = ShoppingListApi()
 
     // Flows
-    private val _shoppingListFlow = MutableStateFlow<FetchState<ShoppingList>>(FetchState.Loading)
+    private val _shoppingListFlow = MutableStateFlow<FetchState<SyncedShoppingList>>(FetchState.Loading)
     override val shoppingList = _shoppingListFlow.asStateFlow()
 
     // Service Calls
     override suspend fun loadListById(id: String) {
         _shoppingListFlow.loadCatchingAndEmit {
-            shoppingListApi.getShoppingListById(id)
+            shoppingListApi.getSyncedShoppingList(id)
         }
     }
 
     override suspend fun deleteItem(listId: String, item: Item) {
-        val list = (_shoppingListFlow.value as? FetchState.Success)?.value
-        if (list == null || list.id != listId) return // TODO
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.filterNot {
+                    it.itemId() == item.itemId()
+                }
+            )
+        }
+    }
+
+    override suspend fun addItem(listId: String, item: Item.Text) {
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.plus(item)
+            )
+        }
+    }
+
+    override suspend fun changeItem(listId: String, item: Item.Text) {
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.map {
+                    if (it.itemId() == item.itemId()) item else it
+                }
+            )
+        }
+    }
+
+    // TODO separate last saved sync state from current ShoppingList
+    private suspend fun trySync(listId: String, transformList: (SyncedShoppingList) -> SyncedShoppingList) {
+        val previousList = getLatestList(listId) ?: return // TODO add error handling
+        val updatedList = transformList(previousList)
+        if (previousList.id != updatedList.id) return // TODO add error handling
+        val syncRequest = SyncRequest(
+            previousSync = previousList,
+            currentState = updatedList.toShoppingList()
+        )
         _shoppingListFlow.loadCatchingAndEmit {
-            shoppingListApi.deleteItem(list, item)
+            shoppingListApi.requestSync(previousList.id, syncRequest)
+        }
+    }
+
+    // TODO add caching and resolving for multiple lists
+    private fun getLatestList(listId: String): SyncedShoppingList? {
+        val list = (_shoppingListFlow.value as? FetchState.Success)?.value
+        return if (list == null || list.id != listId) {
+            null
+        } else {
+            list
         }
     }
 }

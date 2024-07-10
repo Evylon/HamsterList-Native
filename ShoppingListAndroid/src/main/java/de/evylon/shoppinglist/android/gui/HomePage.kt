@@ -3,6 +3,8 @@ package de.evylon.shoppinglist.android.gui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -21,13 +23,16 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
     var listId by remember { mutableStateOf("Demo") }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
     ) {
         TextField(
             value = listId,
-            onValueChange = { listId = it }
+            onValueChange = { listId = it },
+            modifier = Modifier.fillMaxWidth(),
         )
         Button(
             onClick = { onNavigateToShoppingList(listId) },

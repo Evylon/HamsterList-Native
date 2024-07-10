@@ -2,40 +2,45 @@ package de.evylon.shoppinglist.viewmodel.shoppinglist
 
 import de.evylon.shoppinglist.models.Amount
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
+import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.viewmodel.LoadingState
+import kotlin.random.Random
 
 data class ShoppingListState(
-    val shoppingList: ShoppingList,
+    val shoppingList: SyncedShoppingList,
     val loadingState: LoadingState
 ) {
     companion object {
         val empty = ShoppingListState(
-            shoppingList = ShoppingList(
+            shoppingList = SyncedShoppingList(
                 id = "",
                 title = "",
+                token = Random.nextInt().toString(),
+                changeId = Random.nextInt().toString(),
                 items = listOf()
             ),
             loadingState = LoadingState.Loading
         )
         val mock = ShoppingListState(
-            shoppingList = ShoppingList(
+            shoppingList = SyncedShoppingList(
                 id = "Mock",
                 title = "MockList",
+                token = Random.nextInt().toString(),
+                changeId = Random.nextInt().toString(),
                 items = mutableListOf(
-                    Item(
+                    Item.Data(
                         id = "UUID1",
                         name = "Item1"
                     ),
-                    Item(
+                    Item.Data(
                         id = "UUID2",
                         name = "Item2",
-                        amount = Amount(1.5f, "kg")
+                        amount = Amount(1.5, "kg")
                     ),
-                    Item(
+                    Item.Data(
                         id = "UUID3",
                         name = "Item3",
-                        amount = Amount(0.05f, "hPa")
+                        amount = Amount(0.05, "hPa")
                     ),
                 )
             ),

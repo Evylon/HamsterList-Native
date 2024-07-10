@@ -2,9 +2,11 @@ package de.evylon.shoppinglist.android.gui.shoppinglist
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,10 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListViewModel
+
+const val ALPHA_LOADING = 0.5f
 
 @Composable
 fun ShoppingListPage(shoppingListId: String) {
@@ -33,29 +38,34 @@ fun ShoppingListPage(shoppingListId: String) {
         label = "loading state"
     ) { state ->
         when (state) {
-            is LoadingState.Loading -> {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("Loading...")
-                }
-            }
             is LoadingState.Error -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text("Error")
                 }
             }
-            is LoadingState.Done -> {
-                ShoppingListView(
-                    shoppingList = uiState.shoppingList,
-                    onDeleteItem = { viewModel.deleteItem(it) }
-                )
+
+            is LoadingState.Done,
+            is LoadingState.Loading -> {
+                val isLoading = state is LoadingState.Loading
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ShoppingListView(
+                        shoppingList = uiState.shoppingList,
+                        deleteItem = { viewModel.deleteItem(it) },
+                        changeItem = { id, item -> viewModel.changeItem(id, item) },
+                        addItem = { item -> viewModel.addItem(item) },
+                        isEnabled = !isLoading,
+                        modifier = Modifier.alpha(ALPHA_LOADING).takeIf { isLoading } ?: Modifier
+                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
             }
         }
     }
