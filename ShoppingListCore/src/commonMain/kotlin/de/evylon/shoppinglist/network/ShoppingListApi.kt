@@ -1,8 +1,8 @@
 package de.evylon.shoppinglist.network
 
+import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.ShoppingList
 import de.evylon.shoppinglist.models.SyncRequest
-import de.evylon.shoppinglist.models.SyncResponse
 import de.evylon.shoppinglist.models.SyncedShoppingList
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

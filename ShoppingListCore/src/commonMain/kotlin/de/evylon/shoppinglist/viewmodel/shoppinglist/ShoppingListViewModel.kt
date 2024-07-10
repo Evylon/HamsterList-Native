@@ -37,9 +37,20 @@ class ShoppingListViewModel : BaseViewModel() {
     }
 
     fun deleteItem(item: Item) {
-        val oldState = _uiState.value
         scope.launch {
-            shoppingListRepository.deleteItem(oldState.shoppingList.id, item)
+            shoppingListRepository.deleteItem(_uiState.value.shoppingList.id, item)
+        }
+    }
+
+    fun addItem(item: Item.Text) {
+        scope.launch {
+            shoppingListRepository.addItem(_uiState.value.shoppingList.id, item)
+        }
+    }
+
+    fun changeItem(item: Item.Text) {
+        scope.launch {
+            shoppingListRepository.changeItem(_uiState.value.shoppingList.id, item)
         }
     }
 

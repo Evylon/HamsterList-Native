@@ -28,16 +28,16 @@ data class ShoppingListState(
                 token = Random.nextInt().toString(),
                 changeId = Random.nextInt().toString(),
                 items = mutableListOf(
-                    Item(
+                    Item.Data(
                         id = "UUID1",
                         name = "Item1"
                     ),
-                    Item(
+                    Item.Data(
                         id = "UUID2",
                         name = "Item2",
                         amount = Amount(1.5, "kg")
                     ),
-                    Item(
+                    Item.Data(
                         id = "UUID3",
                         name = "Item3",
                         amount = Amount(0.05, "hPa")

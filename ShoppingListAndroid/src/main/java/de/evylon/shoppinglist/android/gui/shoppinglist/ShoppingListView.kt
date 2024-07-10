@@ -15,14 +15,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.android.ShoppingListTheme
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.ShoppingList
 import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListState
 
 @Composable
 fun ShoppingListView(
     shoppingList: SyncedShoppingList,
-    onDeleteItem: (Item) -> Unit,
+    deleteItem: (Item) -> Unit,
+    changeItem: (Item.Text) -> Unit,
+    addItem: (Item.Text) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -41,7 +42,8 @@ fun ShoppingListView(
             item {
                 ShoppingListItemRow(
                     item = item,
-                    onDelete = onDeleteItem
+                    deleteItem = deleteItem,
+                    changeItem = changeItem
                 )
             }
         }
@@ -54,7 +56,12 @@ fun ShoppingListView(
 fun ShoppingListViewPreview() {
     ShoppingListTheme {
         Surface(color = MaterialTheme.colors.background) {
-            ShoppingListView(ShoppingListState.mock.shoppingList, onDeleteItem = {})
+            ShoppingListView(
+                shoppingList = ShoppingListState.mock.shoppingList,
+                deleteItem = {},
+                changeItem = {},
+                addItem = {}
+            )
         }
     }
 }

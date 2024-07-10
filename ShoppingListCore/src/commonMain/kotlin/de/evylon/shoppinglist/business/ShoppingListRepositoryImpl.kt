@@ -26,12 +26,14 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
     override suspend fun deleteItem(listId: String, item: Item) {
         trySync(listId) { previousList ->
             previousList.copy(
-                items = previousList.items.filterNot { it.id == item.id }
+                items = previousList.items.filterNot {
+                    it.itemId() == item.itemId()
+                }
             )
         }
     }
 
-    override suspend fun addItem(listId: String, item: Item) {
+    override suspend fun addItem(listId: String, item: Item.Text) {
         trySync(listId) { previousList ->
             previousList.copy(
                 items = previousList.items.plus(item)
@@ -39,11 +41,11 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
         }
     }
 
-    override suspend fun changeItem(listId: String, item: Item) {
+    override suspend fun changeItem(listId: String, item: Item.Text) {
         trySync(listId) { previousList ->
             previousList.copy(
                 items = previousList.items.map {
-                    if (it.id == it.id) item else it
+                    if (it.itemId() == item.itemId()) item else it
                 }
             )
         }

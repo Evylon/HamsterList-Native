@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.23"
     id("com.google.devtools.ksp") version "1.9.23-1.0.20"
     id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-25"
 }
