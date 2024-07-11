@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.android.ShoppingListTheme
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.viewmodel.LoadingState
+import de.evylon.shoppinglist.viewmodel.shoppinglist.ItemState
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListState
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -84,9 +85,14 @@ fun ShoppingListView(
                     key = { it.itemId() }
                 ) { item ->
                     ShoppingListItem(
-                        item = item,
+                        itemState = ItemState(
+                            item = item,
+                            categoryDefinition = uiState.categories.firstOrNull {
+                                it.id == (item as? Item.Data)?.category
+                            }
+                        ),
                         deleteItem = deleteItem,
-                        changeItem = changeItem,
+                        changeItem = { itemText -> changeItem(item.itemId(), itemText) },
                         isEnabled = isEnabled
                     )
                 }

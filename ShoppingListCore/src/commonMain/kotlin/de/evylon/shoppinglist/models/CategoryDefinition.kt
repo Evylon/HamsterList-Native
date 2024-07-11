@@ -9,4 +9,7 @@ data class CategoryDefinition(
     val shortName: String,
     val color: String,
     val lightText: Boolean
-)
+) {
+    val colorCode: String
+        get() = "FF${color.substring(1)}"
+}
