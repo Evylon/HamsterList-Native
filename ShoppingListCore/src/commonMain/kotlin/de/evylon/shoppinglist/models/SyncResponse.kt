@@ -5,5 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SyncResponse(
     val list: SyncedShoppingList,
-    // TODO add completions, categories, orders and changes
+    val orders: List<Order>,
+    val categories: List<CategoryDefinition>
+    // TODO add completions and changes
 )

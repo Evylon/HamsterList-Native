@@ -3,7 +3,7 @@ package de.evylon.shoppinglist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.business.ShoppingListRepository
 import de.evylon.shoppinglist.models.Item
-import de.evylon.shoppinglist.models.SyncedShoppingList
+import de.evylon.shoppinglist.models.SyncResponse
 import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.utils.FetchState
 import de.evylon.shoppinglist.viewmodel.BaseViewModel
@@ -22,9 +22,9 @@ class ShoppingListViewModel : BaseViewModel() {
     val uiState = _uiState.asStateFlow()
 
     init {
-        shoppingListRepository.shoppingList.onEach { networkResult ->
+        shoppingListRepository.syncState.onEach { networkResult ->
             when (networkResult) {
-                is FetchState.Success -> updateList(networkResult.value)
+                is FetchState.Success -> updateSyncState(networkResult.value)
                 is FetchState.Failure -> _uiState.update { oldState ->
                     networkResult.throwable.printStackTrace()
                     oldState.copy(loadingState = LoadingState.Error)
@@ -60,11 +60,13 @@ class ShoppingListViewModel : BaseViewModel() {
         }
     }
 
-    private fun updateList(shoppingList: SyncedShoppingList) {
+    private fun updateSyncState(syncResponse: SyncResponse) {
         scope.launch {
             _uiState.emit(
                 _uiState.value.copy(
-                    shoppingList = shoppingList,
+                    shoppingList = syncResponse.list,
+                    categories = syncResponse.categories,
+                    orders = syncResponse.orders,
                     loadingState = LoadingState.Done
                 )
             )

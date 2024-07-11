@@ -1,7 +1,9 @@
 package de.evylon.shoppinglist.business
 
+import de.evylon.shoppinglist.models.AdditionalData
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.models.SyncRequest
+import de.evylon.shoppinglist.models.SyncResponse
 import de.evylon.shoppinglist.models.SyncedShoppingList
 import de.evylon.shoppinglist.network.ShoppingListApi
 import de.evylon.shoppinglist.utils.FetchState
@@ -13,12 +15,12 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
     private val shoppingListApi = ShoppingListApi()
 
     // Flows
-    private val _shoppingListFlow = MutableStateFlow<FetchState<SyncedShoppingList>>(FetchState.Loading)
-    override val shoppingList = _shoppingListFlow.asStateFlow()
+    private val _syncStateFlow = MutableStateFlow<FetchState<SyncResponse>>(FetchState.Loading)
+    override val syncState = _syncStateFlow.asStateFlow()
 
     // Service Calls
     override suspend fun loadListById(id: String) {
-        _shoppingListFlow.loadCatchingAndEmit {
+        _syncStateFlow.loadCatchingAndEmit {
             shoppingListApi.getSyncedShoppingList(id)
         }
     }
@@ -58,16 +60,17 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
         if (previousList.id != updatedList.id) return // TODO add error handling
         val syncRequest = SyncRequest(
             previousSync = previousList,
-            currentState = updatedList.toShoppingList()
+            currentState = updatedList.toShoppingList(),
+            includeInResponse = listOf(AdditionalData.orders, AdditionalData.categories)
         )
-        _shoppingListFlow.loadCatchingAndEmit {
+        _syncStateFlow.loadCatchingAndEmit {
             shoppingListApi.requestSync(previousList.id, syncRequest)
         }
     }
 
     // TODO add caching and resolving for multiple lists
     private fun getLatestList(listId: String): SyncedShoppingList? {
-        val list = (_shoppingListFlow.value as? FetchState.Success)?.value
+        val list = (_syncStateFlow.value as? FetchState.Success)?.value?.list
         return if (list == null || list.id != listId) {
             null
         } else {
