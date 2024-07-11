@@ -16,6 +16,7 @@
 		0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */; };
 		0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */; };
 		0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */; };
+		079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */; };
 		07BE15372B8CBF77003C0501 /* Item+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BE15362B8CBF77003C0501 /* Item+Identifiable.swift */; };
 		07FA12ED293D564400714895 /* ShoppingListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FA12EC293D564400714895 /* ShoppingListPage.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
@@ -41,6 +42,7 @@
 		0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowPublisher.swift; sourceTree = "<group>"; };
 		0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListItem.swift; sourceTree = "<group>"; };
 		0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
+		079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyles.swift; sourceTree = "<group>"; };
 		07BE15362B8CBF77003C0501 /* Item+Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Item+Identifiable.swift"; sourceTree = "<group>"; };
 		07FA12EC293D564400714895 /* ShoppingListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListPage.swift; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
@@ -91,6 +93,14 @@
 			path = ShoppingList;
 			sourceTree = "<group>";
 		};
+		079716B82C4049D700FDBBC2 /* Styles */ = {
+			isa = PBXGroup;
+			children = (
+				079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */,
+			);
+			path = Styles;
+			sourceTree = "<group>";
+		};
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
@@ -111,6 +121,7 @@
 		7555FF7D242A565900829871 /* ShoppingListIOS */ = {
 			isa = PBXGroup;
 			children = (
+				079716B82C4049D700FDBBC2 /* Styles */,
 				077EAE28298FE9CB00CBB7E2 /* ShoppingList */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				077EAE23298FD80300CBB7E2 /* SharedUtils */,
@@ -230,6 +241,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */,
 				07BE15372B8CBF77003C0501 /* Item+Identifiable.swift in Sources */,

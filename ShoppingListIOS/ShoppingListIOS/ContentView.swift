@@ -9,10 +9,10 @@ struct ContentView: View {
             VStack {
                 TextField("Listname", text: $listId)
                     .disableAutocorrection(true)
-                    .padding(8)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 16)
                 NavigationLink("Load", destination: ShoppingListPage(listId: listId))
+                    .padding(.top, 8)
             }
         }
     }

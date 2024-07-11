@@ -43,10 +43,12 @@ struct ShoppingListView: View {
     }
 
     private func ShoppingItemList(items: [Item]) -> some View {
+        // TODO for some reason the divider line is not symmetrical
         List(items) { item in
-            ShoppingListItem(item: item,
-                             deleteItem: deleteItem,
-                             changeItem: changeItem
+            ShoppingListItem(
+                item: item,
+                deleteItem: deleteItem,
+                changeItem: changeItem
             ).swipeActions {
                 Button(action: {
                     deleteItem(item)
@@ -61,6 +63,7 @@ struct ShoppingListView: View {
     private var AddItemView: some View {
         HStack {
             TextField("New Item", text: $newItem)
+                .textFieldStyle(BackgroundContrastStyle())
             Button(
                 action: {
                     if (!newItem.isEmpty) {
@@ -83,6 +86,6 @@ struct ShoppingListViewPreview: PreviewProvider {
                          changeItem: { (_, _) in },
                          addItem: { _ in },
                          refresh: {}
-        ).padding(24)
+        )
     }
 }

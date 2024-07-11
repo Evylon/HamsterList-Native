@@ -26,18 +26,16 @@ struct ShoppingListItem : View {
     }
 
     var body: some View {
-        HStack {
-            TextField(
-                "",
-                text: $itemText,
-                onEditingChanged: { isEditing in
-                    // TODO this is different from Android
-                    if !isEditing && itemText != item.description {
-                        changeItem(item.itemId(), itemText)
-                    }
+        TextField(
+            "",
+            text: $itemText,
+            onEditingChanged: { isEditing in
+                // TODO this is different from Android
+                if !isEditing && itemText != item.description {
+                    changeItem(item.itemId(), itemText)
                 }
-            )
-        }
+            }
+        )
     }
 }
 

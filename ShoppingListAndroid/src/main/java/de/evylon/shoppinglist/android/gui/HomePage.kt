@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -45,5 +46,7 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
 @Preview
 @Composable
 fun HomePagePreview() {
-    HomePage {}
+    Surface {
+        HomePage {}
+    }
 }
