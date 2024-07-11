@@ -15,17 +15,21 @@ struct ShoppingListView: View {
     private let deleteItem: (Item) -> Void
     private let changeItem: (_ id: String, _ newItem: String) -> Void
     private let addItem: (_ newItem: String) -> Void
+    private let refresh: () -> Void
 
     @State private var newItem = ""
 
     init(shoppingList: SyncedShoppingList,
          deleteItem: @escaping (Item) -> Void,
          changeItem: @escaping (_ id: String, _ newItem: String) -> Void,
-         addItem: @escaping (_ newItem: String) -> Void) {
+         addItem: @escaping (_ newItem: String) -> Void,
+         refresh: @escaping () -> Void
+    ) {
         self.shoppingList = shoppingList
         self.deleteItem = deleteItem
         self.changeItem = changeItem
         self.addItem = addItem
+        self.refresh = refresh
     }
 
     var body: some View {
@@ -51,6 +55,7 @@ struct ShoppingListView: View {
                 }.tint(Color.red)
             }
         }
+        .refreshable { refresh() }
     }
 
     private var AddItemView: some View {
@@ -76,7 +81,8 @@ struct ShoppingListViewPreview: PreviewProvider {
         ShoppingListView(shoppingList: ShoppingListState.companion.mock.shoppingList,
                          deleteItem: { _ in },
                          changeItem: { (_, _) in },
-                         addItem: { _ in }
+                         addItem: { _ in },
+                         refresh: {}
         ).padding(24)
     }
 }

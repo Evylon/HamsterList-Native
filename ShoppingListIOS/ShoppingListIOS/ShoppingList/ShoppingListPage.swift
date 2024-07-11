@@ -44,7 +44,8 @@ struct ShoppingListPage: View {
                             ShoppingListView(shoppingList: uiState.value.shoppingList,
                                              deleteItem: { item in viewModel.deleteItem(item: item) },
                                              changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
-                                             addItem: { newItem in viewModel.addItem(newItem: newItem) }
+                                             addItem: { newItem in viewModel.addItem(newItem: newItem) },
+                                             refresh: { viewModel.fetchList(listId: listId) }
                             ).allowsHitTesting(!isLoading)
                                 .opacity(isLoading ? 0.5 : 1)
                             if isLoading {

@@ -55,10 +55,11 @@ fun ShoppingListPage(shoppingListId: String) {
                 val isLoading = state is LoadingState.Loading
                 Box(modifier = Modifier.fillMaxSize()) {
                     ShoppingListView(
-                        shoppingList = uiState.shoppingList,
+                        uiState = uiState,
                         deleteItem = { viewModel.deleteItem(it) },
                         changeItem = { id, item -> viewModel.changeItem(id, item) },
                         addItem = { item -> viewModel.addItem(item) },
+                        refresh = { viewModel.fetchList(listId = shoppingListId) },
                         isEnabled = !isLoading,
                         modifier = Modifier.alpha(ALPHA_LOADING).takeIf { isLoading } ?: Modifier
                     )
