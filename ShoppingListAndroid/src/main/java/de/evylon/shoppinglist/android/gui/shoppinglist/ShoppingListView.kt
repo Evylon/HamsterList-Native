@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -62,15 +63,16 @@ fun ShoppingListView(
                 .padding(horizontal = 12.dp)
                 .weight(1f)
         ) {
-            shoppingList.items.forEach { item ->
-                item {
-                    ShoppingListItem(
-                        item = item,
-                        deleteItem = deleteItem,
-                        changeItem = changeItem,
-                        isEnabled
-                    )
-                }
+            items(
+                shoppingList.items,
+                key = { it.itemId() }
+            ) { item ->
+                ShoppingListItem(
+                    item = item,
+                    deleteItem = deleteItem,
+                    changeItem = changeItem,
+                    isEnabled = isEnabled
+                )
             }
         }
         AddItemView(
