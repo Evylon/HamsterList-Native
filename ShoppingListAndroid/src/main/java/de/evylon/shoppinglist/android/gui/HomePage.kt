@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
-    var listId by remember { mutableStateOf("Demo") }
+    var listId by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -33,10 +33,12 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
         TextField(
             value = listId,
             onValueChange = { listId = it },
+            placeholder = { Text("Enter Listname") },
             modifier = Modifier.fillMaxWidth(),
         )
         Button(
             onClick = { onNavigateToShoppingList(listId) },
+            enabled = listId.isNotEmpty()
         ) {
             Text(text = "Load")
         }

@@ -9,3 +9,4 @@
 import ShoppingListCore
 
 extension Item: Identifiable {}
+extension Order: Identifiable {}

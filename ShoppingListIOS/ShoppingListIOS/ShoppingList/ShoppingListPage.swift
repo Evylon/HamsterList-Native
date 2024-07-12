@@ -46,6 +46,7 @@ struct ShoppingListPage: View {
                                 deleteItem: { item in viewModel.deleteItem(item: item) },
                                 changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
                                 addItem: { newItem in viewModel.addItem(newItem: newItem) },
+                                selectOrder: { order in viewModel.selectOrder(order: order) },
                                 refresh: { viewModel.fetchList(listId: listId) }
                             ).allowsHitTesting(!isLoading)
                                 .opacity(isLoading ? 0.5 : 1)

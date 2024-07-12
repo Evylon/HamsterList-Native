@@ -15,6 +15,7 @@ struct ShoppingListView: View {
     private let deleteItem: (Item) -> Void
     private let changeItem: (_ id: String, _ newItem: String) -> Void
     private let addItem: (_ newItem: String) -> Void
+    private let selectOrder: (Order) -> Void
     private let refresh: () -> Void
 
     @State private var newItem = ""
@@ -23,12 +24,14 @@ struct ShoppingListView: View {
          deleteItem: @escaping (Item) -> Void,
          changeItem: @escaping (_ id: String, _ newItem: String) -> Void,
          addItem: @escaping (_ newItem: String) -> Void,
+         selectOrder: @escaping (Order) -> Void,
          refresh: @escaping () -> Void
     ) {
         self.shoppingListState = shoppingListState
         self.deleteItem = deleteItem
         self.changeItem = changeItem
         self.addItem = addItem
+        self.selectOrder = selectOrder
         self.refresh = refresh
     }
 
@@ -36,6 +39,13 @@ struct ShoppingListView: View {
         NavigationView {
             VStack {
                 Text(shoppingListState.shoppingList.title)
+                if (!shoppingListState.orders.isEmpty) {
+                    OrderMenu(
+                        orders: shoppingListState.orders,
+                        selectedOrder: shoppingListState.selectedOrder,
+                        selectOrder: selectOrder
+                    )
+                }
                 ShoppingItemList(items: shoppingListState.shoppingList.items)
                 AddItemView
             }
@@ -83,6 +93,20 @@ struct ShoppingListView: View {
             EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
         )
     }
+
+    private func OrderMenu(
+        orders: [Order],
+        selectedOrder: Order?,
+        selectOrder: @escaping (Order) -> Void
+    ) -> some View {
+        Menu {
+            ForEach(orders) { order in
+                Button(order.name) { selectOrder(order) }
+            }
+        } label: {
+            Label(selectedOrder?.name ?? "Create Order", systemImage: "slider.horizontal.3")
+        }
+    }
 }
 
 struct ShoppingListViewPreview: PreviewProvider {
@@ -91,6 +115,7 @@ struct ShoppingListViewPreview: PreviewProvider {
                          deleteItem: { _ in },
                          changeItem: { (_, _) in },
                          addItem: { _ in },
+                         selectOrder: { _ in },
                          refresh: {}
         )
     }
