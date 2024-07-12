@@ -59,6 +59,7 @@ fun ShoppingListPage(shoppingListId: String) {
                         deleteItem = { viewModel.deleteItem(it) },
                         changeItem = { id, item -> viewModel.changeItem(id, item) },
                         addItem = { item -> viewModel.addItem(item) },
+                        selectOrder = { order -> viewModel.selectOrder(order) },
                         refresh = { viewModel.fetchList(listId = shoppingListId) },
                         isEnabled = !isLoading,
                         modifier = Modifier.alpha(ALPHA_LOADING).takeIf { isLoading } ?: Modifier

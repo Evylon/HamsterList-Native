@@ -37,18 +37,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.android.ShoppingListTheme
 import de.evylon.shoppinglist.models.Item
+import de.evylon.shoppinglist.models.Order
 import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ItemState
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ShoppingListState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 fun ShoppingListView(
     uiState: ShoppingListState,
     deleteItem: (Item) -> Unit,
     changeItem: (id: String, item: String) -> Unit,
     addItem: (item: String) -> Unit,
+    selectOrder: (Order) -> Unit,
     refresh: () -> Unit,
     isEnabled: Boolean,
     modifier: Modifier = Modifier
@@ -59,13 +61,21 @@ fun ShoppingListView(
     )
     Column(modifier = modifier.fillMaxSize()) {
         Surface(color = MaterialTheme.colors.background) {
-            Text(
-                text = uiState.shoppingList.title,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp)
-            )
+            Column {
+                Text(
+                    text = uiState.shoppingList.title,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                )
+                OrdersMenu(
+                    orders = uiState.orders,
+                    selectedOrder = uiState.selectedOrder,
+                    selectOrder = selectOrder,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
         }
         Box(
             modifier = Modifier
@@ -161,6 +171,7 @@ fun ShoppingListViewPreview() {
                 uiState = ShoppingListState.mock,
                 deleteItem = {},
                 changeItem = { _, _ -> },
+                selectOrder = {},
                 isEnabled = true,
                 addItem = {},
                 refresh = {}

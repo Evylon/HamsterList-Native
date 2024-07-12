@@ -70,24 +70,36 @@ class ShoppingListViewModel : BaseViewModel() {
         }
     }
 
-    private fun updateSyncState(syncResponse: SyncResponse) {
-        scope.launch {
-            _uiState.update { oldState ->
-                val selectedOrder = oldState.selectedOrder ?: syncResponse.orders.firstOrNull()
-                oldState.copy(
-                    shoppingList = syncResponse.list.copy(
-                        items = syncResponse.list.items.sortedWith(
-                            compareBy(nullsLast(orderComparator(selectedOrder))) { it.category }
-                        )
-                    ),
-                    categories = syncResponse.categories,
-                    orders = syncResponse.orders,
-                    selectedOrder = selectedOrder,
-                    loadingState = LoadingState.Done
-                )
-            }
+    fun selectOrder(order: Order) {
+        _uiState.update { oldState ->
+            oldState.copy(
+                shoppingList = oldState.shoppingList.copy(
+                    items = oldState.shoppingList.items.sortedByOrder(order)
+                ),
+                selectedOrder = order
+            )
         }
     }
+
+    private fun updateSyncState(syncResponse: SyncResponse) {
+        _uiState.update { oldState ->
+            val selectedOrder = oldState.selectedOrder ?: syncResponse.orders.firstOrNull()
+            oldState.copy(
+                shoppingList = syncResponse.list.copy(
+                    items = syncResponse.list.items.sortedByOrder(selectedOrder)
+                ),
+                categories = syncResponse.categories,
+                orders = syncResponse.orders,
+                selectedOrder = selectedOrder,
+                loadingState = LoadingState.Done
+            )
+        }
+    }
+
+    private fun List<Item>.sortedByOrder(selectedOrder: Order?) =
+        this.sortedWith(
+            compareBy(nullsLast(orderComparator(selectedOrder))) { it.category }
+        )
 
     private fun orderComparator(selectedOrder: Order?) =
         Comparator { category1: String, category2: String ->
