@@ -10,7 +10,6 @@ private val logger = KotlinLogging.logger {}
 
 data class ItemState(
     val item: Item,
-    val itemText: String,
     val category: String,
     val categoryColor: CSSColor,
     val categoryTextLight: Boolean,
@@ -18,7 +17,6 @@ data class ItemState(
 ) {
     constructor(item: Item, categoryDefinition: CategoryDefinition?) : this(
         item = item,
-        itemText = item.toString(),
         category = categoryDefinition?.shortName ?: DEFAULT_CATEGORY_TEXT,
         categoryColor = categoryDefinition?.cssColor ?: DEFAULT_CATEGORY_COLOR,
         categoryTextLight = categoryDefinition?.lightText ?: false,
@@ -30,10 +28,10 @@ data class ItemState(
         private const val DEFAULT_CATEGORY_TEXT = "?"
 
         fun getCategory(item: Item, categories: List<CategoryDefinition>) =
-            categories.firstOrNull { it.id == (item as? Item.Data)?.category }
+            categories.firstOrNull { it.id == item.category }
 
         val mockItemDark = ItemState(
-            item = Item.Data(
+            item = Item(
                 id = "",
                 name = "very long item title like really fucking long oh my god",
                 amount = Amount(1337.42, "kg"),
@@ -48,7 +46,7 @@ data class ItemState(
             )
         )
         val mockItemLight = ItemState(
-            item = Item.Data(
+            item = Item(
                 id = "",
                 name = "short item name",
                 amount = Amount(0.0),

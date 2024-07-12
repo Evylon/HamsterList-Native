@@ -62,7 +62,7 @@ fun ShoppingListItem(
                 categoryTextLight = itemState.categoryTextLight
             )
             ItemTextField(
-                itemText = itemState.itemText,
+                itemText = itemState.item.toString(),
                 isEnabled = isEnabled,
                 changeItem = changeItem,
                 modifier = Modifier.weight(1f)

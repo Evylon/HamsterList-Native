@@ -54,7 +54,7 @@ struct ShoppingListView: View {
                     )
                 ),
                 deleteItem: deleteItem,
-                changeItem: changeItem
+                changeItem: { itemText in changeItem(item.id, itemText) }
             ).swipeActions {
                 Button(action: {
                     deleteItem(item)

@@ -16,9 +16,9 @@ interface ShoppingListRepository {
     @NativeCoroutines
     suspend fun deleteItem(listId: String, item: Item)
     @NativeCoroutines
-    suspend fun addItem(listId: String, item: Item.Text)
+    suspend fun addItem(listId: String, item: Item)
     @NativeCoroutines
-    suspend fun changeItem(listId: String, item: Item.Text)
+    suspend fun changeItem(listId: String, item: Item)
     companion object {
         // TODO temporary solution for fast setup/testing, use dependency injection
         val instance: ShoppingListRepository = ShoppingListRepositoryImpl()

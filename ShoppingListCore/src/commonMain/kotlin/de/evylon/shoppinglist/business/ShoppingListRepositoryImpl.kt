@@ -29,13 +29,13 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
         trySync(listId) { previousList ->
             previousList.copy(
                 items = previousList.items.filterNot {
-                    it.itemId() == item.itemId()
+                    it.id == item.id
                 }
             )
         }
     }
 
-    override suspend fun addItem(listId: String, item: Item.Text) {
+    override suspend fun addItem(listId: String, item: Item) {
         trySync(listId) { previousList ->
             previousList.copy(
                 items = previousList.items.plus(item)
@@ -43,11 +43,11 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
         }
     }
 
-    override suspend fun changeItem(listId: String, item: Item.Text) {
+    override suspend fun changeItem(listId: String, item: Item) {
         trySync(listId) { previousList ->
             previousList.copy(
                 items = previousList.items.map {
-                    if (it.itemId() == item.itemId()) item else it
+                    if (it.id == item.id) item else it
                 }
             )
         }

@@ -12,15 +12,15 @@ import ShoppingListCore
 struct ShoppingListItem : View {
     private let itemState: ItemState
     private let deleteItem: (Item) -> Void
-    private let changeItem: (_ id: String, _ newItem: String) -> Void
+    private let changeItem: (_ newItem: String) -> Void
 
     @State private var itemText: String
 
     init(itemState: ItemState,
          deleteItem: @escaping (Item) -> Void,
-         changeItem: @escaping (_ id: String, _ newItem: String) -> Void) {
+         changeItem: @escaping (_ newItem: String) -> Void) {
         self.itemState = itemState
-        self.itemText = itemState.itemText
+        self.itemText = itemState.item.description
         self.deleteItem = deleteItem
         self.changeItem = changeItem
     }
@@ -43,8 +43,8 @@ struct ShoppingListItem : View {
                 text: $itemText,
                 onEditingChanged: { isEditing in
                     // TODO this is different from Android
-                    if !isEditing && itemText != itemState.itemText {
-                        changeItem(itemState.item.itemId(), itemText)
+                    if !isEditing && itemText != itemState.item.description() {
+                        changeItem(itemText)
                     }
                 }
             )
@@ -58,12 +58,12 @@ struct ShoppingListItemPreview: PreviewProvider {
             ShoppingListItem(
                 itemState: ItemState.companion.mockItemLight,
                 deleteItem: { _ in },
-                changeItem: { (_, _) in }
+                changeItem: { _ in }
             ).padding(24)
             ShoppingListItem(
                 itemState: ItemState.companion.mockItemDark,
                 deleteItem: { _ in },
-                changeItem: { (_, _) in }
+                changeItem: { _ in }
             ).padding(24)
         }
     }

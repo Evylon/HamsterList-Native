@@ -44,19 +44,28 @@ class ShoppingListViewModel : BaseViewModel() {
 
     fun deleteItem(item: Item) {
         scope.launch {
-            shoppingListRepository.deleteItem(_uiState.value.shoppingList.id, item)
+            shoppingListRepository.deleteItem(
+                listId = _uiState.value.shoppingList.id,
+                item = item
+            )
         }
     }
 
     fun addItem(newItem: String) {
         scope.launch {
-            shoppingListRepository.addItem(_uiState.value.shoppingList.id, Item.Text(newItem))
+            shoppingListRepository.addItem(
+                listId = _uiState.value.shoppingList.id,
+                item = Item.parse(stringRepresentation = newItem)
+            )
         }
     }
 
     fun changeItem(id: String, newItem: String) {
         scope.launch {
-            shoppingListRepository.changeItem(_uiState.value.shoppingList.id, Item.Text(id, newItem))
+            shoppingListRepository.changeItem(
+                listId = _uiState.value.shoppingList.id,
+                item = Item.parse(stringRepresentation = newItem, id = id)
+            )
         }
     }
 

@@ -82,7 +82,7 @@ fun ShoppingListView(
             ) {
                 items(
                     uiState.shoppingList.items,
-                    key = { it.itemId() }
+                    key = { it.id }
                 ) { item ->
                     ShoppingListItem(
                         itemState = ItemState(
@@ -90,7 +90,7 @@ fun ShoppingListView(
                             categoryDefinition = ItemState.getCategory(item, uiState.categories)
                         ),
                         deleteItem = deleteItem,
-                        changeItem = { itemText -> changeItem(item.itemId(), itemText) },
+                        changeItem = { itemText -> changeItem(item.id, itemText) },
                         isEnabled = isEnabled
                     )
                 }

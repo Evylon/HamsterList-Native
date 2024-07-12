@@ -4,39 +4,45 @@ import de.evylon.shoppinglist.utils.prettyFormat
 import de.evylon.shoppinglist.utils.randomUUID
 import kotlinx.serialization.Serializable
 
-@Serializable(ItemSerializer::class)
-sealed class Item {
-    @Serializable
-    data class Text(
-        val id: String,
-        val stringRepresentation: String
-    ) : Item() {
-        override fun toString(): String = stringRepresentation
-        constructor(stringRepresentation: String) : this(
-            id = randomUUID(),
-            stringRepresentation = stringRepresentation
-        )
-    }
-
-    @Serializable
-    data class Data(
-        val id: String,
-        val name: String,
-        val amount: Amount? = null,
-        val category: String? = null
-    ) : Item() {
-        override fun toString(): String = buildString {
-            amount?.value?.let { value ->
-                append(value.prettyFormat())
-                amount.unit?.let { append(" ${it.trim()}") }
+@Serializable
+data class Item(
+    val id: String,
+    val name: String,
+    val amount: Amount? = null,
+    val category: String? = null
+) {
+    companion object {
+        // TODO add automatic category assignment
+        fun parse(
+            stringRepresentation: String,
+            id: String = randomUUID()
+        ): Item {
+            val components = stringRepresentation.trim().split(' ', limit = 3)
+            for (i in components.size downTo 1) {
+                val amountCandidate = components.subList(0, i)
+                Amount.parse(amountCandidate)?.let {
+                    return Item(
+                        id = id,
+                        name = components
+                            .subList(i, components.size)
+                            .joinToString(separator = " ") { it },
+                        amount = it
+                    )
+                }
             }
-            append(" ${name.trim()}")
+            return Item(
+                id = id,
+                name = components.joinToString(separator = " ") { it }
+            )
         }
     }
 
-    fun itemId(): String = when (this) {
-        is Text -> this.id
-        is Data -> this.id
+    override fun toString(): String = buildString {
+        amount?.value?.let { value ->
+            append(value.prettyFormat())
+            amount.unit?.let { append(" ${it.trim()}") }
+        }
+        append(" ${name.trim()}")
     }
 }
 
