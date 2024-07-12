@@ -10,40 +10,61 @@ import SwiftUI
 import ShoppingListCore
 
 struct ShoppingListItem : View {
-    private let item: Item
+    private let itemState: ItemState
     private let deleteItem: (Item) -> Void
     private let changeItem: (_ id: String, _ newItem: String) -> Void
 
     @State private var itemText: String
 
-    init(item: Item,
+    init(itemState: ItemState,
          deleteItem: @escaping (Item) -> Void,
          changeItem: @escaping (_ id: String, _ newItem: String) -> Void) {
-        self.item = item
-        self.itemText = item.description
+        self.itemState = itemState
+        self.itemText = itemState.itemText
         self.deleteItem = deleteItem
         self.changeItem = changeItem
     }
 
     var body: some View {
-        TextField(
-            "",
-            text: $itemText,
-            onEditingChanged: { isEditing in
-                // TODO this is different from Android
-                if !isEditing && itemText != item.description {
-                    changeItem(item.itemId(), itemText)
+        HStack {
+            ZStack(alignment: .center) {
+                Circle()
+                    .size(CGSize(width: 40, height: 40))
+                    .fill(itemState.categoryColor.toColor())
+                if (itemState.categoryTextLight) {
+                    Text(itemState.category)
+                        .colorInvert()
+                } else {
+                    Text(itemState.category)
                 }
-            }
-        )
+            }.frame(width: 40, height: 40)
+            TextField(
+                "",
+                text: $itemText,
+                onEditingChanged: { isEditing in
+                    // TODO this is different from Android
+                    if !isEditing && itemText != itemState.itemText {
+                        changeItem(itemState.item.itemId(), itemText)
+                    }
+                }
+            )
+        }
     }
 }
 
 struct ShoppingListItemPreview: PreviewProvider {
     static var previews: some View {
-        ShoppingListItem(item: ShoppingListState.companion.mock.shoppingList.items.first as! Item.Data,
-                         deleteItem: { _ in },
-                         changeItem: { (_, _) in })
-        .padding(24)
+        VStack {
+            ShoppingListItem(
+                itemState: ItemState.companion.mockItemLight,
+                deleteItem: { _ in },
+                changeItem: { (_, _) in }
+            ).padding(24)
+            ShoppingListItem(
+                itemState: ItemState.companion.mockItemDark,
+                deleteItem: { _ in },
+                changeItem: { (_, _) in }
+            ).padding(24)
+        }
     }
 }

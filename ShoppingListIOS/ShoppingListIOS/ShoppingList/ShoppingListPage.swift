@@ -42,7 +42,7 @@ struct ShoppingListPage: View {
                     case LoadingState.Loading(), LoadingState.Done():
                         ZStack {
                             ShoppingListView(
-                                shoppingList: uiState.value.shoppingList,
+                                shoppingListState: uiState.value,
                                 deleteItem: { item in viewModel.deleteItem(item: item) },
                                 changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
                                 addItem: { newItem in viewModel.addItem(newItem: newItem) },

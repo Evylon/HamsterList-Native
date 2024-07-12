@@ -1,6 +1,7 @@
 package de.evylon.shoppinglist.viewmodel.shoppinglist
 
 import de.evylon.shoppinglist.models.Amount
+import de.evylon.shoppinglist.models.CSSColor
 import de.evylon.shoppinglist.models.CategoryDefinition
 import de.evylon.shoppinglist.models.Item
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -11,28 +12,26 @@ data class ItemState(
     val item: Item,
     val itemText: String,
     val category: String,
-    val categoryColor: Long,
+    val categoryColor: CSSColor,
     val categoryTextLight: Boolean,
     val isEnabled: Boolean,
 ) {
-    @OptIn(ExperimentalStdlibApi::class)
     constructor(item: Item, categoryDefinition: CategoryDefinition?) : this(
         item = item,
         itemText = item.toString(),
         category = categoryDefinition?.shortName ?: DEFAULT_CATEGORY_TEXT,
-        categoryColor = try {
-            categoryDefinition?.colorCode?.hexToLong() ?: DEFAULT_CATEGORY_COLOR
-        } catch (e: IllegalArgumentException) {
-            logger.error(e) { "failed to parse color" }
-            DEFAULT_CATEGORY_COLOR
-        },
+        categoryColor = categoryDefinition?.cssColor ?: DEFAULT_CATEGORY_COLOR,
         categoryTextLight = categoryDefinition?.lightText ?: false,
         isEnabled = false
     )
 
     companion object {
-        private const val DEFAULT_CATEGORY_COLOR = 0xFFCCCCCC
+        val DEFAULT_CATEGORY_COLOR = CSSColor.RGBAColor(alpha = 0xFF, red = 0xCC, green = 0xCC, blue = 0xCC)
         private const val DEFAULT_CATEGORY_TEXT = "?"
+
+        fun getCategory(item: Item, categories: List<CategoryDefinition>) =
+            categories.firstOrNull { it.id == (item as? Item.Data)?.category }
+
         val mockItemDark = ItemState(
             item = Item.Data(
                 id = "",

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
+		070B99022C4083290062BE1A /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070B99012C4083290062BE1A /* ColorUtils.swift */; };
 		072DB8462B8BEF0E00C41167 /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8452B8BEF0E00C41167 /* KMPNativeCoroutinesAsync */; };
 		072DB8482B8BEF0E00C41167 /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8472B8BEF0E00C41167 /* KMPNativeCoroutinesCombine */; };
 		072DB84A2B8BEF0E00C41167 /* KMPNativeCoroutinesCore in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8492B8BEF0E00C41167 /* KMPNativeCoroutinesCore */; };
@@ -39,6 +40,7 @@
 /* Begin PBXFileReference section */
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		070B99012C4083290062BE1A /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
 		0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowPublisher.swift; sourceTree = "<group>"; };
 		0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListItem.swift; sourceTree = "<group>"; };
 		0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 			children = (
 				0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */,
 				07BE15362B8CBF77003C0501 /* Item+Identifiable.swift */,
+				070B99012C4083290062BE1A /* ColorUtils.swift */,
 			);
 			path = SharedUtils;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070B99022C4083290062BE1A /* ColorUtils.swift in Sources */,
 				079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */,

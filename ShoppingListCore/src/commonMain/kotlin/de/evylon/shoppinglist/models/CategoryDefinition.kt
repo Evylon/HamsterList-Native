@@ -10,6 +10,6 @@ data class CategoryDefinition(
     val color: String,
     val lightText: Boolean
 ) {
-    val colorCode: String
-        get() = "FF${color.substring(1)}"
+    val cssColor: CSSColor?
+        get() = CSSColor.invoke(color)
 }

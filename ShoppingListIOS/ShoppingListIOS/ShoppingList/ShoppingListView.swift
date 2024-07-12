@@ -10,7 +10,7 @@ import ShoppingListCore
 import SwiftUI
 
 struct ShoppingListView: View {
-    private let shoppingList: SyncedShoppingList
+    private let shoppingListState: ShoppingListState
 
     private let deleteItem: (Item) -> Void
     private let changeItem: (_ id: String, _ newItem: String) -> Void
@@ -19,13 +19,13 @@ struct ShoppingListView: View {
 
     @State private var newItem = ""
 
-    init(shoppingList: SyncedShoppingList,
+    init(shoppingListState: ShoppingListState,
          deleteItem: @escaping (Item) -> Void,
          changeItem: @escaping (_ id: String, _ newItem: String) -> Void,
          addItem: @escaping (_ newItem: String) -> Void,
          refresh: @escaping () -> Void
     ) {
-        self.shoppingList = shoppingList
+        self.shoppingListState = shoppingListState
         self.deleteItem = deleteItem
         self.changeItem = changeItem
         self.addItem = addItem
@@ -35,8 +35,8 @@ struct ShoppingListView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Text(shoppingList.title)
-                ShoppingItemList(items: shoppingList.items)
+                Text(shoppingListState.shoppingList.title)
+                ShoppingItemList(items: shoppingListState.shoppingList.items)
                 AddItemView
             }
         }
@@ -46,7 +46,13 @@ struct ShoppingListView: View {
         // TODO for some reason the divider line is not symmetrical
         List(items) { item in
             ShoppingListItem(
-                item: item,
+                itemState: ItemState(
+                    item: item,
+                    categoryDefinition: ItemState.companion.getCategory(
+                        item: item, 
+                        categories: shoppingListState.categories
+                    )
+                ),
                 deleteItem: deleteItem,
                 changeItem: changeItem
             ).swipeActions {
@@ -81,7 +87,7 @@ struct ShoppingListView: View {
 
 struct ShoppingListViewPreview: PreviewProvider {
     static var previews: some View {
-        ShoppingListView(shoppingList: ShoppingListState.companion.mock.shoppingList,
+        ShoppingListView(shoppingListState: ShoppingListState.companion.mock,
                          deleteItem: { _ in },
                          changeItem: { (_, _) in },
                          addItem: { _ in },

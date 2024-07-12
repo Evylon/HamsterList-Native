@@ -87,9 +87,7 @@ fun ShoppingListView(
                     ShoppingListItem(
                         itemState = ItemState(
                             item = item,
-                            categoryDefinition = uiState.categories.firstOrNull {
-                                it.id == (item as? Item.Data)?.category
-                            }
+                            categoryDefinition = ItemState.getCategory(item, uiState.categories)
                         ),
                         deleteItem = deleteItem,
                         changeItem = { itemText -> changeItem(item.itemId(), itemText) },

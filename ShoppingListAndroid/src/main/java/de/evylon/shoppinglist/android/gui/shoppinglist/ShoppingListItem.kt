@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import de.evylon.shoppinglist.android.ShoppingListTheme
+import de.evylon.shoppinglist.android.gui.utils.toColor
 import de.evylon.shoppinglist.models.Item
 import de.evylon.shoppinglist.viewmodel.shoppinglist.ItemState
 
@@ -57,7 +58,7 @@ fun ShoppingListItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             CategoryCircle(
                 category = itemState.category,
-                categoryColor = itemState.categoryColor,
+                categoryColor = itemState.categoryColor.toColor(),
                 categoryTextLight = itemState.categoryTextLight
             )
             ItemTextField(
@@ -149,7 +150,7 @@ private fun ItemTextField(
 @Composable
 private fun CategoryCircle(
     category: String,
-    categoryColor: Long,
+    categoryColor: Color,
     categoryTextLight: Boolean,
 ) {
     Box(
@@ -157,7 +158,7 @@ private fun CategoryCircle(
             .padding(4.dp)
             .size(40.dp)
             .drawBehind {
-                drawCircle(color = Color(categoryColor))
+                drawCircle(color = categoryColor)
             }
     ) {
         ShoppingListTheme(darkTheme = categoryTextLight) {
