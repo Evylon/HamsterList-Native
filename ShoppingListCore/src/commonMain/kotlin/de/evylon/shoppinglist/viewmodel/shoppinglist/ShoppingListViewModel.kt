@@ -3,10 +3,11 @@ package de.evylon.shoppinglist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import de.evylon.shoppinglist.business.ShoppingListRepository
 import de.evylon.shoppinglist.models.Item
+import de.evylon.shoppinglist.models.Order
 import de.evylon.shoppinglist.models.SyncResponse
-import de.evylon.shoppinglist.viewmodel.LoadingState
 import de.evylon.shoppinglist.utils.FetchState
 import de.evylon.shoppinglist.viewmodel.BaseViewModel
+import de.evylon.shoppinglist.viewmodel.LoadingState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -71,14 +72,34 @@ class ShoppingListViewModel : BaseViewModel() {
 
     private fun updateSyncState(syncResponse: SyncResponse) {
         scope.launch {
-            _uiState.emit(
-                _uiState.value.copy(
-                    shoppingList = syncResponse.list,
+            _uiState.update { oldState ->
+                val selectedOrder = oldState.selectedOrder ?: syncResponse.orders.firstOrNull()
+                oldState.copy(
+                    shoppingList = syncResponse.list.copy(
+                        items = syncResponse.list.items.sortedWith(
+                            compareBy(nullsLast(orderComparator(selectedOrder))) { it.category }
+                        )
+                    ),
                     categories = syncResponse.categories,
                     orders = syncResponse.orders,
+                    selectedOrder = selectedOrder,
                     loadingState = LoadingState.Done
                 )
-            )
+            }
+        }
+    }
+
+    private fun orderComparator(selectedOrder: Order?) =
+        Comparator { category1: String, category2: String ->
+            selectedOrder?.categoryOrder?.let {
+                it.indexOfOrMax(category1) - it.indexOfOrMax(category2)
+            } ?: category1.compareTo(category2)
+        }
+
+    private fun <T> List<T>.indexOfOrMax(element: T): Int {
+        return when (val index = indexOf(element)) {
+            -1 -> Int.MAX_VALUE
+            else -> index
         }
     }
 }

@@ -82,6 +82,7 @@ fun ShoppingListItem(
 }
 
 @Composable
+@Suppress("LongMethod")
 private fun ItemTextField(
     itemText: String,
     isEnabled: Boolean,
@@ -104,7 +105,11 @@ private fun ItemTextField(
 
     LaunchedEffect(isEditing) {
         if (isEditing) {
-            focusRequester.requestFocus()
+            try {
+                focusRequester.requestFocus()
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
+            }
         }
     }
     if (isEditing) {

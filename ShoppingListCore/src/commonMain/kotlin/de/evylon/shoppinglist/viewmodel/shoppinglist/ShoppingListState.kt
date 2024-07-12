@@ -12,6 +12,7 @@ data class ShoppingListState(
     val shoppingList: SyncedShoppingList,
     val categories: List<CategoryDefinition>,
     val orders: List<Order>,
+    val selectedOrder: Order? = orders.firstOrNull(),
     val loadingState: LoadingState
 ) {
     companion object {

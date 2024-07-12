@@ -4,9 +4,6 @@ import de.evylon.shoppinglist.models.Amount
 import de.evylon.shoppinglist.models.CSSColor
 import de.evylon.shoppinglist.models.CategoryDefinition
 import de.evylon.shoppinglist.models.Item
-import io.github.oshai.kotlinlogging.KotlinLogging
-
-private val logger = KotlinLogging.logger {}
 
 data class ItemState(
     val item: Item,
