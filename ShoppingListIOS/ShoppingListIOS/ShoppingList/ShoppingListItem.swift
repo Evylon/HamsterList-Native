@@ -30,9 +30,10 @@ struct ShoppingListItem : View {
                     .fill(itemState.categoryColor.toColor())
                 if (itemState.categoryTextLight) {
                     Text(itemState.category)
-                        .colorInvert()
+                        .foregroundStyle(.white)
                 } else {
                     Text(itemState.category)
+                        .foregroundStyle(.black)
                 }
             }.frame(width: 40, height: 40)
             TextField(
