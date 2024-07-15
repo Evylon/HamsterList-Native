@@ -11,11 +11,7 @@ import SwiftUI
 struct BackgroundContrastStyle : TextFieldStyle {
     public func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
-            .padding(4)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(lineWidth: 0.2)
-            )
+            .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color(UIColor.secondarySystemBackground))

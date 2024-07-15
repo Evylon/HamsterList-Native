@@ -11,17 +11,14 @@ import ShoppingListCore
 
 struct ShoppingListItem : View {
     private let itemState: ItemState
-    private let deleteItem: (Item) -> Void
     private let changeItem: (_ newItem: String) -> Void
 
     @State private var itemText: String
 
     init(itemState: ItemState,
-         deleteItem: @escaping (Item) -> Void,
          changeItem: @escaping (_ newItem: String) -> Void) {
         self.itemState = itemState
         self.itemText = itemState.item.description
-        self.deleteItem = deleteItem
         self.changeItem = changeItem
     }
 
@@ -57,12 +54,10 @@ struct ShoppingListItemPreview: PreviewProvider {
         VStack {
             ShoppingListItem(
                 itemState: ItemState.companion.mockItemLight,
-                deleteItem: { _ in },
                 changeItem: { _ in }
             ).padding(24)
             ShoppingListItem(
                 itemState: ItemState.companion.mockItemDark,
-                deleteItem: { _ in },
                 changeItem: { _ in }
             ).padding(24)
         }

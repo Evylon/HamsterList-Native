@@ -5,12 +5,12 @@ struct ContentView: View {
     @State private var listId = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 TextField("Enter Listname", text: $listId)
                     .disableAutocorrection(true)
                     .textFieldStyle(BackgroundContrastStyle())
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 32)
                 NavigationLink("Load", destination: ShoppingListPage(listId: listId))
                     .padding(.top, 8)
                     .disabled(listId.isEmpty)

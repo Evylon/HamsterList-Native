@@ -23,6 +23,14 @@ struct ShoppingListPage: View {
         uiState.value.loadingState is LoadingState.Loading
     }
 
+    private var title: String {
+        if (uiState.value.shoppingList.title.isEmpty) {
+            listId
+        } else {
+            uiState.value.shoppingList.title
+        }
+    }
+
     let listId: String
 
     init(listId: String) {
@@ -36,38 +44,82 @@ struct ShoppingListPage: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                switch uiState.value.loadingState {
-                    case LoadingState.Loading(), LoadingState.Done():
-                        ZStack {
-                            ShoppingListView(
-                                shoppingListState: uiState.value,
-                                deleteItem: { item in viewModel.deleteItem(item: item) },
-                                changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
-                                addItem: { newItem in viewModel.addItem(newItem: newItem) },
-                                selectOrder: { order in viewModel.selectOrder(order: order) },
-                                refresh: { viewModel.fetchList(listId: listId) }
-                            ).allowsHitTesting(!isLoading)
-                                .opacity(isLoading ? 0.5 : 1)
-                            if isLoading {
-                                ProgressView()
-                            }
+        VStack {
+            switch uiState.value.loadingState {
+                case LoadingState.Loading(), LoadingState.Done():
+                    ZStack {
+                        ShoppingListView(
+                            shoppingListState: uiState.value,
+                            deleteItem: { item in viewModel.deleteItem(item: item) },
+                            changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
+                            refresh: { viewModel.fetchList(listId: listId) }
+                        )
+                        if isLoading {
+                            ProgressView()
                         }
-                    case LoadingState.Error():
-                        Text("Error")
-                    default:
-                        Text("Should not happen")
-                }
+                    }.allowsHitTesting(!isLoading)
+                        .opacity(isLoading ? 0.5 : 1)
+                case LoadingState.Error():
+                    Text("Error")
+                default:
+                    Text("Should not happen")
             }
         }.onAppear {
             viewModel.fetchList(listId: listId)
+        }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                if (!uiState.value.orders.isEmpty) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        OrderMenu(
+                            orders: uiState.value.orders,
+                            selectedOrder: uiState.value.selectedOrder,
+                            selectOrder: { order in viewModel.selectOrder(order: order) }
+                        )
+                    }
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    AddItemView
+                }
+            }
+    }
+    
+    private var AddItemView: some View {
+        HStack {
+            TextField("New Item", text: $newItem)
+                .textFieldStyle(BackgroundContrastStyle())
+            Button(
+                action: {
+                    if (!newItem.isEmpty) {
+                        viewModel.addItem(newItem: newItem)
+                        newItem = ""
+                    }
+                },
+                label: { Image(systemName: "plus") }
+            ).tint(Color.primary)
+        }
+    }
+
+    private func OrderMenu(
+        orders: [Order],
+        selectedOrder: Order?,
+        selectOrder: @escaping (Order) -> Void
+    ) -> some View {
+        Menu {
+            ForEach(orders) { order in
+                Button(order.name) { selectOrder(order) }
+            }
+        } label: {
+            Label(selectedOrder?.name ?? "Create Order", systemImage: "slider.horizontal.3")
         }
     }
 }
 
 struct ShoppingListPagePreview: PreviewProvider {
     static var previews: some View {
-        ShoppingListPage(listId: "Demo")
+        NavigationStack {
+            ShoppingListPage(listId: "Demo")
+        }
     }
 }
