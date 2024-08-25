@@ -8,6 +8,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -40,6 +41,8 @@ internal class ShoppingListApi {
         }
     }
 
+    internal var username: String? = null
+
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
     suspend fun getSyncedShoppingList(listId: String): SyncResponse {
         return httpClient.get(baseUrl) {
@@ -47,6 +50,11 @@ internal class ShoppingListApi {
                 appendPathSegments(listId, "sync")
                 parameters.append("includeInResponse", AdditionalData.orders.toString())
                 parameters.append("includeInResponse", AdditionalData.categories.toString())
+            }
+            username?.let { username ->
+                headers {
+                    append("X-ShoppingList-Username", username)
+                }
             }
         }.body()
     }
@@ -57,6 +65,11 @@ internal class ShoppingListApi {
             url { appendPathSegments(listId, "sync") }
             contentType(ContentType.Application.Json)
             setBody(syncRequest)
+            username?.let { username ->
+                headers {
+                    append("X-ShoppingList-Username", username)
+                }
+            }
         }.body()
     }
 }

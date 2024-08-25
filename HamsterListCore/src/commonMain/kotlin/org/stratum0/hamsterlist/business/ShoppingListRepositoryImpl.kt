@@ -1,5 +1,7 @@
 package org.stratum0.hamsterlist.business
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.SyncRequest
@@ -8,8 +10,6 @@ import org.stratum0.hamsterlist.models.SyncedShoppingList
 import org.stratum0.hamsterlist.network.ShoppingListApi
 import org.stratum0.hamsterlist.utils.FetchState
 import org.stratum0.hamsterlist.utils.loadCatchingAndEmit
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class ShoppingListRepositoryImpl : ShoppingListRepository {
     private val shoppingListApi = ShoppingListApi()
@@ -77,4 +77,10 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
             list
         }
     }
+
+    override var username: String
+        get() = shoppingListApi.username.orEmpty()
+        set(value) {
+            shoppingListApi.username = value
+        }
 }
