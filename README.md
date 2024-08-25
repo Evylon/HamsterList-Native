@@ -1,3 +1,3 @@
-# ShoppingList Native
+# HamsterList Native
 
-A native app for ShoppingList implemented with Kotlin Multiplatform Mobile.
+A native app for HamsterList implemented with Kotlin Multiplatform Mobile.

@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ShoppingList"
-include(":ShoppingListAndroid")
-include(":ShoppingListCore")
+rootProject.name = "HamsterList"
+include(":HamsterListAndroid")
+include(":HamsterListCore")
