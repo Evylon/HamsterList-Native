@@ -19,6 +19,7 @@
 		0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */; };
 		079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */; };
 		07BE15372B8CBF77003C0501 /* Models+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BE15362B8CBF77003C0501 /* Models+Identifiable.swift */; };
+		07D7DC842C7B967D00F7E57A /* HamsterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7DC832C7B967D00F7E57A /* HamsterTheme.swift */; };
 		07FA12ED293D564400714895 /* ShoppingListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FA12EC293D564400714895 /* ShoppingListPage.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
@@ -46,6 +47,7 @@
 		0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
 		079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyles.swift; sourceTree = "<group>"; };
 		07BE15362B8CBF77003C0501 /* Models+Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Models+Identifiable.swift"; sourceTree = "<group>"; };
+		07D7DC832C7B967D00F7E57A /* HamsterTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HamsterTheme.swift; sourceTree = "<group>"; };
 		07FA12EC293D564400714895 /* ShoppingListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListPage.swift; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* HamsterList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HamsterList.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */,
+				07D7DC832C7B967D00F7E57A /* HamsterTheme.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */,
+				07D7DC842C7B967D00F7E57A /* HamsterTheme.swift in Sources */,
 				07BE15372B8CBF77003C0501 /* Models+Identifiable.swift in Sources */,
 				07FA12ED293D564400714895 /* ShoppingListPage.swift in Sources */,
 				0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */,
