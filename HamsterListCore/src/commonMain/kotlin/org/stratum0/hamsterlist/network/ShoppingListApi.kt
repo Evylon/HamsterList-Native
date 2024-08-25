@@ -1,8 +1,5 @@
 package org.stratum0.hamsterlist.network
 
-import org.stratum0.hamsterlist.models.AdditionalData
-import org.stratum0.hamsterlist.models.SyncRequest
-import org.stratum0.hamsterlist.models.SyncResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -20,6 +17,9 @@ import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.json.Json
+import org.stratum0.hamsterlist.models.AdditionalData
+import org.stratum0.hamsterlist.models.SyncRequest
+import org.stratum0.hamsterlist.models.SyncResponse
 import kotlin.coroutines.cancellation.CancellationException
 
 internal class ShoppingListApi {
