@@ -7,12 +7,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.stratum0.hamsterlist.android.gui.HomePage
 import org.stratum0.hamsterlist.android.gui.shoppinglist.ShoppingListPage
+import org.stratum0.hamsterlist.viewmodel.HomeViewModel
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +41,28 @@ fun NavigationHost() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
+            val viewModel: HomeViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             HomePage(
-                onNavigateToShoppingList = { navController.navigate("shoppingList/$it") },
+                uiState = uiState,
+                onLoadHamsterList = { username, hamsterListName ->
+                    viewModel.setUsername(newName = username)
+                    navController.navigate("shoppingList/$hamsterListName")
+                },
             )
         }
         composable("shoppingList/{id}") {
-            ShoppingListPage(shoppingListId = it.arguments?.getString("id") ?: "")
+            val shoppingListId = it.arguments?.getString("id") ?: ""
+            val viewModel: ShoppingListViewModel = koinViewModel { parametersOf(shoppingListId) }
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            ShoppingListPage(
+                uiState = uiState,
+                fetchList = viewModel::fetchList,
+                deleteItem = viewModel::deleteItem,
+                addItem = viewModel::addItem,
+                changeItem = viewModel::changeItem,
+                selectOrder = viewModel::selectOrder
+            )
         }
     }
 }

@@ -6,8 +6,12 @@ plugins {
     id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-25"
 }
 
-val ktorVersion = "2.3.12"
-val coroutinesVersion = "1.8.0"
+object Versions {
+    const val KTOR = "2.3.12"
+    const val COROUTINE = "1.8.1"
+    const val KOIN = "3.5.6"
+    const val LIFECYCLE = "2.8.6"
+}
 
 kotlin {
     androidTarget()
@@ -22,18 +26,20 @@ kotlin {
         }
     }
 
+    @Suppress("UnusedPrivateProperty")
     sourceSets {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINE}")
+                implementation("io.ktor:ktor-client-core:${Versions.KTOR}")
+                implementation("io.ktor:ktor-client-content-negotiation:${Versions.KTOR}")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.KTOR}")
+                implementation("io.ktor:ktor-client-logging:${Versions.KTOR}")
                 implementation("io.github.oshai:kotlin-logging:5.1.4")
+                implementation("io.insert-koin:koin-core:${Versions.KOIN}")
             }
         }
         val commonTest by getting {
@@ -43,10 +49,13 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-android:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+                implementation("io.ktor:ktor-client-android:${Versions.KTOR}")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINE}")
                 implementation("org.slf4j:slf4j-android:1.7.36")
-                api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+                api("androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.LIFECYCLE}")
+                api("androidx.lifecycle:lifecycle-runtime-compose:${Versions.LIFECYCLE}")
+                api("io.insert-koin:koin-android:${Versions.KOIN}")
+                api("io.insert-koin:koin-androidx-compose:${Versions.KOIN}")
             }
         }
         val iosX64Main by getting
@@ -54,7 +63,7 @@ kotlin {
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation("io.ktor:ktor-client-darwin:${Versions.KTOR}")
             }
         }
         val iosX64Test by getting

@@ -9,28 +9,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.LoadingState
-import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 
 const val ALPHA_LOADING = 0.5f
 
+@Suppress("LongParameterList")
 @Composable
-fun ShoppingListPage(shoppingListId: String) {
-    val viewModel by remember { mutableStateOf(ShoppingListViewModel()) }
-    val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(shoppingListId) {
-        viewModel.fetchList(shoppingListId)
+fun ShoppingListPage(
+    uiState: ShoppingListState,
+    fetchList: () -> Unit,
+    deleteItem: (Item) -> Unit,
+    addItem: (item: String) -> Unit,
+    changeItem: (id: String, item: String) -> Unit,
+    selectOrder: (Order) -> Unit
+) {
+    LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+        fetchList()
     }
 
     Crossfade(
@@ -56,13 +60,15 @@ fun ShoppingListPage(shoppingListId: String) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     ShoppingListView(
                         uiState = uiState,
-                        deleteItem = { viewModel.deleteItem(it) },
-                        changeItem = { id, item -> viewModel.changeItem(id, item) },
-                        addItem = { item -> viewModel.addItem(item) },
-                        selectOrder = { order -> viewModel.selectOrder(order) },
-                        refresh = { viewModel.fetchList(listId = shoppingListId) },
+                        deleteItem = deleteItem,
+                        changeItem = changeItem,
+                        addItem = addItem,
+                        selectOrder = selectOrder,
+                        refresh = fetchList,
                         isEnabled = !isLoading,
-                        modifier = Modifier.alpha(ALPHA_LOADING).takeIf { isLoading } ?: Modifier
+                        modifier = Modifier
+                            .alpha(ALPHA_LOADING)
+                            .takeIf { isLoading } ?: Modifier
                     )
                     if (isLoading) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))

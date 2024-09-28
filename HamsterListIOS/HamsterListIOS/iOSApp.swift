@@ -1,8 +1,13 @@
 import SwiftUI
+import HamsterListCore
 
 @main
 struct iOSApp: App {
-	var body: some Scene {
+    init() {
+        KoinModule_iosKt.doInitKoin()
+    }
+
+    var body: some Scene {
 		WindowGroup {
 			ContentView()
 		}

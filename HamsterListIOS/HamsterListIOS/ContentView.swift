@@ -3,7 +3,9 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var listId = ""
-    @State private var username = ShoppingListRepositoryCompanion.shared.instance.username
+    @State private var username = ""
+
+    let homeViewModel = KoinViewModelHelper().homeViewModel
 
     var body: some View {
         NavigationStack {
@@ -12,21 +14,17 @@ struct ContentView: View {
                     .disableAutocorrection(true)
                     .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
-                TextField(
-                    "Enter list name",
-                    text: $listId,
-                    onEditingChanged: { isEditing in
-                        if !isEditing {
-                            ShoppingListRepositoryCompanion.shared.instance.username = username
-                        }
-                    }
-                )
+                TextField("Enter list name", text: $listId)
                     .disableAutocorrection(true)
                     .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
-                NavigationLink("Load", destination: ShoppingListPage(listId: listId))
+                NavigationLink(
+                    "Load",
+                    destination: ShoppingListPage(listId: listId)
+                        .onAppear { homeViewModel.setUsername(newName: username) }
+                )
                     .padding(.top, 8)
-                    .disabled(listId.isEmpty)
+                    .disabled(listId.isEmpty || username.isEmpty)
             }
         }
     }

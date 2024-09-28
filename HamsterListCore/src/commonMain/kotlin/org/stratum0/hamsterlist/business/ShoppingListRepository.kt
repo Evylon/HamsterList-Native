@@ -11,8 +11,6 @@ interface ShoppingListRepository {
     @NativeCoroutinesState
     val syncState: StateFlow<FetchState<SyncResponse>>
 
-    var username: String
-
     @NativeCoroutines
     suspend fun loadListById(id: String)
 
@@ -24,9 +22,4 @@ interface ShoppingListRepository {
 
     @NativeCoroutines
     suspend fun changeItem(listId: String, item: Item)
-
-    companion object {
-        // TODO temporary solution for fast setup/testing, use dependency injection
-        val instance: ShoppingListRepository = ShoppingListRepositoryImpl()
-    }
 }

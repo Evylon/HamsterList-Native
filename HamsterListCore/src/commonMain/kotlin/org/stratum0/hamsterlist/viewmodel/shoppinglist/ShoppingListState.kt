@@ -9,25 +9,20 @@ import org.stratum0.hamsterlist.viewmodel.LoadingState
 import kotlin.random.Random
 
 data class ShoppingListState(
-    val shoppingList: SyncedShoppingList,
-    val categories: List<CategoryDefinition>,
-    val orders: List<Order>,
+    val shoppingList: SyncedShoppingList = SyncedShoppingList(
+        id = "",
+        title = "",
+        token = Random.nextInt().toString(),
+        changeId = Random.nextInt().toString(),
+        items = emptyList()
+    ),
+    val categories: List<CategoryDefinition> = emptyList(),
+    val orders: List<Order> = emptyList(),
     val selectedOrder: Order? = orders.firstOrNull(),
-    val loadingState: LoadingState
+    val loadingState: LoadingState = LoadingState.Loading
 ) {
     companion object {
-        val empty = ShoppingListState(
-            shoppingList = SyncedShoppingList(
-                id = "",
-                title = "",
-                token = Random.nextInt().toString(),
-                changeId = Random.nextInt().toString(),
-                items = emptyList()
-            ),
-            categories = emptyList(),
-            orders = emptyList(),
-            loadingState = LoadingState.Loading
-        )
+        val empty = ShoppingListState()
         val mock = ShoppingListState(
             shoppingList = SyncedShoppingList(
                 id = "Mock",

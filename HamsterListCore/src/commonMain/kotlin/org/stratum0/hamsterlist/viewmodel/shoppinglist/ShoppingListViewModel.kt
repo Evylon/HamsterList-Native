@@ -14,10 +14,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.stratum0.hamsterlist.models.SyncedShoppingList
 
-class ShoppingListViewModel : BaseViewModel() {
-    private val shoppingListRepository: ShoppingListRepository = ShoppingListRepository.instance
-    private val _uiState = MutableStateFlow(ShoppingListState.empty)
+class ShoppingListViewModel(
+    private val hamsterListId: String,
+    private val shoppingListRepository: ShoppingListRepository
+) : BaseViewModel() {
+    private val _uiState = MutableStateFlow(
+        ShoppingListState(shoppingList = SyncedShoppingList(id = hamsterListId))
+    )
 
     @NativeCoroutinesState
     val uiState = _uiState.asStateFlow()
@@ -37,9 +42,9 @@ class ShoppingListViewModel : BaseViewModel() {
         }.launchIn(scope)
     }
 
-    fun fetchList(listId: String) {
+    fun fetchList() {
         scope.launch {
-            shoppingListRepository.loadListById(listId)
+            shoppingListRepository.loadListById(hamsterListId)
         }
     }
 

@@ -35,7 +35,7 @@ struct ShoppingListPage: View {
 
     init(listId: String) {
         self.listId = listId
-        self.viewModel = ShoppingListViewModel()
+        self.viewModel = KoinViewModelHelper().shoppingListViewModel(listId: listId)
         self.uiState = FlowPublisher(
             publisher: createPublisher(for: self.viewModel.uiStateFlow),
             initial: ShoppingListState.companion.empty
@@ -52,7 +52,7 @@ struct ShoppingListPage: View {
                             shoppingListState: uiState.value,
                             deleteItem: { item in viewModel.deleteItem(item: item) },
                             changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
-                            refresh: { viewModel.fetchList(listId: listId) }
+                            refresh: { viewModel.fetchList() }
                         )
                         if isLoading {
                             ProgressView()
@@ -65,7 +65,7 @@ struct ShoppingListPage: View {
                     Text("Should not happen")
             }
         }.onAppear {
-            viewModel.fetchList(listId: listId)
+            viewModel.fetchList()
         }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.large)

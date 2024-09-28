@@ -18,12 +18,15 @@ import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.json.Json
+import org.stratum0.hamsterlist.business.UserRepository
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.SyncRequest
 import org.stratum0.hamsterlist.models.SyncResponse
 import kotlin.coroutines.cancellation.CancellationException
 
-internal class ShoppingListApi {
+internal class ShoppingListApi(
+    private val userRepository: UserRepository
+) {
     private val baseUrl = "https://list.tilman.ninja/api"
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
@@ -41,8 +44,6 @@ internal class ShoppingListApi {
         }
     }
 
-    internal var username: String? = null
-
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
     suspend fun getSyncedShoppingList(listId: String): SyncResponse {
         return httpClient.get(baseUrl) {
@@ -51,7 +52,7 @@ internal class ShoppingListApi {
                 parameters.append("includeInResponse", AdditionalData.orders.toString())
                 parameters.append("includeInResponse", AdditionalData.categories.toString())
             }
-            username?.let { username ->
+            userRepository.username.value?.let { username ->
                 headers {
                     append("X-ShoppingList-Username", username)
                 }
@@ -65,7 +66,7 @@ internal class ShoppingListApi {
             url { appendPathSegments(listId, "sync") }
             contentType(ContentType.Application.Json)
             setBody(syncRequest)
-            username?.let { username ->
+            userRepository.username.value?.let { username ->
                 headers {
                     append("X-ShoppingList-Username", username)
                 }

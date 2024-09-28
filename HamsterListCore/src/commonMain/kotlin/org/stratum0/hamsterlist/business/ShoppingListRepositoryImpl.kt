@@ -11,8 +11,9 @@ import org.stratum0.hamsterlist.network.ShoppingListApi
 import org.stratum0.hamsterlist.utils.FetchState
 import org.stratum0.hamsterlist.utils.loadCatchingAndEmit
 
-class ShoppingListRepositoryImpl : ShoppingListRepository {
-    private val shoppingListApi = ShoppingListApi()
+internal class ShoppingListRepositoryImpl(
+    private val shoppingListApi: ShoppingListApi
+) : ShoppingListRepository {
 
     // Flows
     private val _syncStateFlow = MutableStateFlow<FetchState<SyncResponse>>(FetchState.Loading)
@@ -77,10 +78,4 @@ class ShoppingListRepositoryImpl : ShoppingListRepository {
             list
         }
     }
-
-    override var username: String
-        get() = shoppingListApi.username.orEmpty()
-        set(value) {
-            shoppingListApi.username = value
-        }
 }

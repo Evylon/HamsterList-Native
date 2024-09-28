@@ -11,18 +11,26 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.viewmodel.HomeUiState
 
 @Composable
-fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
-    var listId by remember { mutableStateOf("") }
+fun HomePage(
+    uiState: HomeUiState,
+    onLoadHamsterList: (username: String, hamsterListName: String) -> Unit,
+) {
+    var listId by rememberSaveable {
+        mutableStateOf("")
+    }
+    var username by rememberSaveable(uiState.username) {
+        mutableStateOf(uiState.username)
+    }
+    val isInputValid = listId.isNotBlank() && !username.isNullOrBlank()
 
     Column(
         modifier = Modifier
@@ -31,27 +39,21 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
     ) {
-        var username by remember {
-            mutableStateOf(ShoppingListRepository.instance.username)
-        }
         TextField(
-            value = username,
+            value = username.orEmpty(),
             onValueChange = { username = it },
             placeholder = { Text("Enter username") },
-            modifier = Modifier.onFocusChanged { focusState ->
-                if (!focusState.isFocused) {
-                    ShoppingListRepository.instance.username = username
-                }
-            }
         )
         TextField(
-            value = listId,
+            value = listId.orEmpty(),
             onValueChange = { listId = it },
             placeholder = { Text("Enter list name") },
         )
         Button(
-            onClick = { onNavigateToShoppingList(listId) },
-            enabled = listId.isNotEmpty()
+            onClick = {
+                onLoadHamsterList(username.orEmpty(), listId.orEmpty())
+            },
+            enabled = isInputValid
         ) {
             Text(text = "Load")
         }
@@ -62,6 +64,9 @@ fun HomePage(onNavigateToShoppingList: (String) -> Unit) {
 @Composable
 fun HomePagePreview() {
     Surface {
-        HomePage {}
+        HomePage(
+            uiState = HomeUiState(),
+            onLoadHamsterList = { _, _ -> }
+        )
     }
 }
