@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -16,6 +18,17 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+    signingConfigs {
+        register("app") {
+            val localProperties = Properties().apply {
+                load(project.rootProject.file("local.properties").inputStream())
+            }
+            keyAlias = localProperties.getProperty("keyAlias")
+            keyPassword = localProperties.getProperty("storePassword")
+            storeFile = file(localProperties.getProperty("storeFile"))
+            storePassword = localProperties.getProperty("storePassword")
+        }
+    }
     buildFeatures {
         compose = true
     }
@@ -30,6 +43,11 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs["app"]
+        }
+        named("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
     compileOptions {

@@ -7,7 +7,7 @@
         android:name=".HamsterListApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:label="HamsterList"
+        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
