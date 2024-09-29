@@ -46,7 +46,7 @@ fun NavigationHost() {
             HomePage(
                 uiState = uiState,
                 onLoadHamsterList = { username, hamsterListName ->
-                    viewModel.setUsername(newName = username)
+                    viewModel.setUsernameAndListId(newName = username, listId = hamsterListName)
                     navController.navigate("shoppingList/$hamsterListName")
                 },
             )

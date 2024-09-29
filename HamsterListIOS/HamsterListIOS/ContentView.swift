@@ -2,12 +2,16 @@ import HamsterListCore
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage(UserDefaultsIdentifier.currentListId.rawValue)
-    private var listId = ""
-    @AppStorage(UserDefaultsIdentifier.username.rawValue)
-    private var username = ""
+    let homeViewModel: HomeViewModel
 
-    let homeViewModel = KoinViewModelHelper().homeViewModel
+    @State private var listId = ""
+    @State private var username = ""
+
+    init() {
+        self.homeViewModel = KoinViewModelHelper().homeViewModel
+        _listId = State(initialValue: homeViewModel.uiState.currentListId ?? "")
+        _username = State(initialValue: homeViewModel.uiState.username ?? "")
+    }
 
     var body: some View {
         NavigationStack {
@@ -23,7 +27,7 @@ struct ContentView: View {
                 NavigationLink(
                     "Load",
                     destination: ShoppingListPage(listId: listId)
-                        .onAppear { homeViewModel.setUsername(newName: username) }
+                        .onAppear { homeViewModel.setUsernameAndListId(newName: username, listId: listId) }
                 )
                     .padding(.top, 8)
                     .disabled(listId.isEmpty || username.isEmpty)

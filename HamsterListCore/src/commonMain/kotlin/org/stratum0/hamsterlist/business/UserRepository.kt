@@ -1,20 +1,24 @@
 package org.stratum0.hamsterlist.business
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.coroutines.getStringOrNullStateFlow
+import com.russhwolf.settings.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-class UserRepository {
-    private val _username = MutableStateFlow<String?>(null)
-
+class UserRepository(
+    private val settings: ObservableSettings
+) {
     @NativeCoroutinesState
-    val username: StateFlow<String?> = _username.asStateFlow()
+    val username: StateFlow<String?> = settings.getStringOrNullStateFlow(
+        coroutineScope = CoroutineScope(Dispatchers.IO),
+        key = SettingsKeys.USERNAME.name
+    )
 
     fun setUsername(newName: String) {
-        _username.update {
-            newName.trim().takeIf { it.isNotBlank() }
-        }
+        settings[SettingsKeys.USERNAME.name] = newName.trim().takeIf { it.isNotBlank() }
     }
 }

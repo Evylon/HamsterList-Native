@@ -14,7 +14,6 @@
 		072DB8482B8BEF0E00C41167 /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8472B8BEF0E00C41167 /* KMPNativeCoroutinesCombine */; };
 		072DB84A2B8BEF0E00C41167 /* KMPNativeCoroutinesCore in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8492B8BEF0E00C41167 /* KMPNativeCoroutinesCore */; };
 		072DB84C2B8BEF0E00C41167 /* KMPNativeCoroutinesRxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB84B2B8BEF0E00C41167 /* KMPNativeCoroutinesRxSwift */; };
-		0731FE8F2CA984D4005E04E3 /* UserDefaultsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0731FE8E2CA984D4005E04E3 /* UserDefaultsIdentifier.swift */; };
 		0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */; };
 		0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */; };
 		0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */; };
@@ -45,7 +44,6 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		070B99012C4083290062BE1A /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
-		0731FE8E2CA984D4005E04E3 /* UserDefaultsIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsIdentifier.swift; sourceTree = "<group>"; };
 		0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowPublisher.swift; sourceTree = "<group>"; };
 		0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListItem.swift; sourceTree = "<group>"; };
 		0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
-				0731FE8E2CA984D4005E04E3 /* UserDefaultsIdentifier.swift */,
 			);
 			path = HamsterListIOS;
 			sourceTree = "<group>";
@@ -265,7 +262,6 @@
 				07BE15372B8CBF77003C0501 /* Models+Identifiable.swift in Sources */,
 				07FA12ED293D564400714895 /* ShoppingListPage.swift in Sources */,
 				07F5B17C2CA962C50000938A /* CategoryCircle.swift in Sources */,
-				0731FE8F2CA984D4005E04E3 /* UserDefaultsIdentifier.swift in Sources */,
 				0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */,
 				0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,

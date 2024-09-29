@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.viewmodel.HomeUiState
@@ -26,12 +25,12 @@ fun HomePage(
     onLoadHamsterList: (username: String, hamsterListName: String) -> Unit,
 ) {
     var listId by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(uiState.currentListId)
     }
     var username by rememberSaveable(uiState.username) {
         mutableStateOf(uiState.username)
     }
-    val isInputValid = listId.isNotBlank() && !username.isNullOrBlank()
+    val isInputValid = !listId.isNullOrBlank() && !username.isNullOrBlank()
 
     Column(
         modifier = Modifier

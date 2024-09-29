@@ -11,6 +11,7 @@ object Versions {
     const val COROUTINE = "1.8.1"
     const val KOIN = "3.5.6"
     const val LIFECYCLE = "2.8.6"
+    const val MULTIPLATFORM_SETTINGS = "1.2.0"
 }
 
 kotlin {
@@ -40,6 +41,9 @@ kotlin {
                 implementation("io.ktor:ktor-client-logging:${Versions.KTOR}")
                 implementation("io.github.oshai:kotlin-logging:5.1.4")
                 implementation("io.insert-koin:koin-core:${Versions.KOIN}")
+                implementation("com.russhwolf:multiplatform-settings-no-arg:${Versions.MULTIPLATFORM_SETTINGS}")
+                implementation("com.russhwolf:multiplatform-settings-coroutines:${Versions.MULTIPLATFORM_SETTINGS}")
+                implementation("com.russhwolf:multiplatform-settings-make-observable:${Versions.MULTIPLATFORM_SETTINGS}")
             }
         }
         val commonTest by getting {
