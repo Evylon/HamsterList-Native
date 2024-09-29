@@ -47,7 +47,7 @@ import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 fun ShoppingListView(
     uiState: ShoppingListState,
     deleteItem: (Item) -> Unit,
-    changeItemById: (id: String, item: String) -> Unit,
+    changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
     addItem: (item: String) -> Unit,
     selectOrder: (Order) -> Unit,
@@ -115,7 +115,7 @@ fun ShoppingListView(
                         showCategoryChooser = {
                             categoryChooserItem = item
                         },
-                        changeItem = { itemText -> changeItemById(item.id, itemText) },
+                        changeItem = { itemText -> changeItem(item, itemText) },
                     )
                 }
             }
@@ -183,7 +183,7 @@ fun ShoppingListViewPreview() {
             ShoppingListView(
                 uiState = ShoppingListState.mock,
                 deleteItem = {},
-                changeItemById = { _, _ -> },
+                changeItem = { _, _ -> },
                 changeCategoryForItem = { _, _ -> },
                 selectOrder = {},
                 isEnabled = true,

@@ -52,7 +52,7 @@ struct ShoppingListPage: View {
                         ShoppingListView(
                             shoppingListState: uiState.value,
                             deleteItem: { item in viewModel.deleteItem(item: item) },
-                            changeItemById: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
+                            changeItem: { oldItem, newItem in viewModel.changeItem(oldItem: oldItem, newItem: newItem) },
                             changeCategoryForItem: { item, newCategoryId in viewModel.changeCategoryForItem(item: item, newCategoryId: newCategoryId) },
                             refresh: { viewModel.fetchList() }
                         )

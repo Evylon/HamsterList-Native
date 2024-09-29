@@ -30,7 +30,7 @@ fun ShoppingListPage(
     fetchList: () -> Unit,
     deleteItem: (Item) -> Unit,
     addItem: (item: String) -> Unit,
-    changeItemById: (id: String, item: String) -> Unit,
+    changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
     selectOrder: (Order) -> Unit
 ) {
@@ -62,7 +62,7 @@ fun ShoppingListPage(
                     ShoppingListView(
                         uiState = uiState,
                         deleteItem = deleteItem,
-                        changeItemById = changeItemById,
+                        changeItem = changeItem,
                         changeCategoryForItem = changeCategoryForItem,
                         addItem = addItem,
                         selectOrder = selectOrder,

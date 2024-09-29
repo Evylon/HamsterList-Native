@@ -15,7 +15,8 @@ data class Item(
         // TODO add automatic category assignment
         fun parse(
             stringRepresentation: String,
-            id: String = randomUUID()
+            id: String = randomUUID(),
+            category: String? = null
         ): Item {
             val components = stringRepresentation.trim().split(' ', limit = 3)
             for (i in components.size downTo 1) {
@@ -26,7 +27,8 @@ data class Item(
                         name = components
                             .subList(i, components.size)
                             .joinToString(separator = " ") { it },
-                        amount = it
+                        amount = it,
+                        category = category
                     )
                 }
             }

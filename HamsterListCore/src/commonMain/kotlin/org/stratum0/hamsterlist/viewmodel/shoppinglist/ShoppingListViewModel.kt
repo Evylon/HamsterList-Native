@@ -67,11 +67,11 @@ class ShoppingListViewModel(
         }
     }
 
-    fun changeItem(id: String, newItem: String) {
+    fun changeItem(oldItem: Item, newItem: String) {
         scope.launch {
             shoppingListRepository.changeItem(
                 listId = _uiState.value.shoppingList.id,
-                item = Item.parse(stringRepresentation = newItem, id = id)
+                item = Item.parse(stringRepresentation = newItem, id = oldItem.id, category = oldItem.category)
             )
         }
     }

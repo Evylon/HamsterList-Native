@@ -13,7 +13,7 @@ struct ShoppingListView: View {
     let shoppingListState: ShoppingListState
 
     let deleteItem: (Item) -> Void
-    let changeItemById: (_ id: String, _ newItem: String) -> Void
+    let changeItem: (_ oldItem: Item, _ newItem: String) -> Void
     let changeCategoryForItem: (_ item: Item, _ newCategoryId: String) -> Void
     let refresh: () -> Void
 
@@ -33,7 +33,7 @@ struct ShoppingListView: View {
                         categories: shoppingListState.categories
                     )
                 ),
-                changeItem: { itemText in changeItemById(item.id, itemText) },
+                changeItem: { itemText in changeItem(item, itemText) },
                 showCategoryChooser: { categoryChooserItem = item }
             ).swipeActions {
                 Button(action: {
@@ -60,7 +60,7 @@ struct ShoppingListViewPreview: PreviewProvider {
     static var previews: some View {
         ShoppingListView(shoppingListState: ShoppingListState.companion.mock,
                          deleteItem: { _ in },
-                         changeItemById: { (_, _) in },
+                         changeItem: { (_, _) in },
                          changeCategoryForItem: { _, _ in },
                          refresh: {}
         )

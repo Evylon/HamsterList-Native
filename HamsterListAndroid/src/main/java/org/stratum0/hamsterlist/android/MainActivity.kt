@@ -60,7 +60,7 @@ fun NavigationHost() {
                 fetchList = viewModel::fetchList,
                 deleteItem = viewModel::deleteItem,
                 addItem = viewModel::addItem,
-                changeItemById = viewModel::changeItem,
+                changeItem = viewModel::changeItem,
                 changeCategoryForItem = viewModel::changeCategoryForItem,
                 selectOrder = viewModel::selectOrder
             )
