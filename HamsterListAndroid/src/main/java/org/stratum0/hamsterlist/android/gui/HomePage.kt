@@ -48,18 +48,20 @@ fun HomePage(
         TextField(
             value = username.orEmpty(),
             onValueChange = { username = it },
+            singleLine = true,
             placeholder = { Text("Enter username") },
             keyboardOptions = KeyboardOptions(autoCorrect = false, capitalization = KeyboardCapitalization.None)
         )
         TextField(
             value = listId.orEmpty(),
             onValueChange = { listId = it },
+            singleLine = true,
             placeholder = { Text("Enter list name") },
-            keyboardOptions = KeyboardOptions(autoCorrect = false, capitalization = KeyboardCapitalization.None)
         )
         TextField(
             value = serverHostName.orEmpty(),
             onValueChange = { serverHostName = it },
+            singleLine = true,
             placeholder = { Text("Enter server host name") },
             keyboardOptions = KeyboardOptions(
                 autoCorrect = false,

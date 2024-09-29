@@ -1,7 +1,7 @@
 import HamsterListCore
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
     let homeViewModel: HomeViewModel
 
     @State private var listId = ""
@@ -44,8 +44,8 @@ struct ContentView: View {
     }
 }
 
-struct ContentViewPreview: PreviewProvider {
+struct HomeViewPreview: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        HomeView()
     }
 }

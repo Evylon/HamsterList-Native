@@ -61,6 +61,7 @@ struct ShoppingListPage: View {
                         }
                     }.allowsHitTesting(!isLoading)
                         .opacity(isLoading ? 0.5 : 1)
+                    AddItemView
                 case LoadingState.Error():
                     Text("Error")
                 default:
@@ -81,9 +82,6 @@ struct ShoppingListPage: View {
                         )
                     }
                 }
-                ToolbarItem(placement: .bottomBar) {
-                    AddItemView
-                }
             }
     }
     
@@ -100,7 +98,9 @@ struct ShoppingListPage: View {
                 },
                 label: { Image(systemName: "plus") }
             ).tint(Color.primary)
-        }
+                .padding(4)
+        }.padding(8)
+            .background(Color.gray.opacity(0.3))
     }
 
     private func OrderMenu(
