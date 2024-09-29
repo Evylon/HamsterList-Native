@@ -2,8 +2,10 @@ import HamsterListCore
 import SwiftUI
 
 struct ContentView: View {
-    @State private var listId = ""
-    @State private var username = ""
+    @AppStorage(UserDefaultsIdentifier.currentListId.rawValue)
+    private var listId = ""
+    @AppStorage(UserDefaultsIdentifier.username.rawValue)
+    private var username = ""
 
     let homeViewModel = KoinViewModelHelper().homeViewModel
 
