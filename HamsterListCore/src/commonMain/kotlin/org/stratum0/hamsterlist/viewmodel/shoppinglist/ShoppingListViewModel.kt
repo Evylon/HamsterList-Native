@@ -62,7 +62,7 @@ class ShoppingListViewModel(
         scope.launch {
             shoppingListRepository.addItem(
                 listId = _uiState.value.shoppingList.id,
-                item = Item.parse(stringRepresentation = newItem)
+                item = Item.parse(stringRepresentation = newItem, categories = uiState.value.categories)
             )
         }
     }
@@ -71,7 +71,12 @@ class ShoppingListViewModel(
         scope.launch {
             shoppingListRepository.changeItem(
                 listId = _uiState.value.shoppingList.id,
-                item = Item.parse(stringRepresentation = newItem, id = oldItem.id, category = oldItem.category)
+                item = Item.parse(
+                    stringRepresentation = newItem,
+                    id = oldItem.id,
+                    category = oldItem.category,
+                    categories = uiState.value.categories
+                )
             )
         }
     }
