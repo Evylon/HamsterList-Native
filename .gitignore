@@ -16,3 +16,4 @@ ios.xcworkspace/
 .externalNativeBuild
 DerivedData
 *.jks
+release
