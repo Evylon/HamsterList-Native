@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -27,7 +25,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +48,7 @@ fun ShoppingListView(
     deleteItem: (Item) -> Unit,
     changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
-    addItem: (item: String) -> Unit,
+    addItem: (item: String, completion: String?, category: String?) -> Unit,
     selectOrder: (Order) -> Unit,
     refresh: () -> Unit,
     isEnabled: Boolean,
@@ -60,7 +58,10 @@ fun ShoppingListView(
         refreshing = uiState.loadingState is LoadingState.Loading,
         onRefresh = refresh
     )
-    var categoryChooserItem by remember {
+    var addItemInput by rememberSaveable {
+        mutableStateOf("")
+    }
+    var categoryChooserItem by rememberSaveable {
         mutableStateOf<Item?>(null)
     }
     categoryChooserItem?.let { selectedItem ->
@@ -95,9 +96,8 @@ fun ShoppingListView(
                 .weight(1f)
         ) {
             LazyColumn(
-                state = rememberLazyListState(),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
+                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.Top),
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .pullRefresh(pullRefreshState)
@@ -126,9 +126,22 @@ fun ShoppingListView(
                 modifier = Modifier.align(Alignment.TopCenter),
                 scale = true
             )
+            if (addItemInput.isNotBlank()) {
+                CompletionsChooser(
+                    uiState = uiState,
+                    userInput = addItemInput,
+                    addItem = { item, completion, category ->
+                        addItem(item, completion, category)
+                        addItemInput = ""
+                    },
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
+            }
         }
         AddItemView(
+            addItemInput = addItemInput,
             addItem = addItem,
+            onItemInputChange = { addItemInput = it },
             isEnabled = isEnabled,
             modifier = Modifier.padding(top = 12.dp)
         )
@@ -137,13 +150,12 @@ fun ShoppingListView(
 
 @Composable
 private fun AddItemView(
-    addItem: (item: String) -> Unit,
+    addItemInput: String,
+    addItem: (item: String, completion: String?, category: String?) -> Unit,
+    onItemInputChange: (input: String) -> Unit,
     isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var itemText by remember {
-        mutableStateOf("")
-    }
     val focusManager = LocalFocusManager.current
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -151,9 +163,9 @@ private fun AddItemView(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
-                value = itemText,
+                value = addItemInput,
                 placeholder = { Text("New Item") },
-                onValueChange = { itemText = it },
+                onValueChange = onItemInputChange,
                 singleLine = true,
                 enabled = isEnabled,
                 modifier = Modifier.weight(1f)
@@ -161,8 +173,9 @@ private fun AddItemView(
             IconButton(
                 enabled = isEnabled,
                 onClick = {
-                    addItem(itemText)
-                    itemText = ""
+                    // TODO display category suggestion and allow user to choose category
+                    addItem(addItemInput, null, null)
+                    onItemInputChange("")
                     focusManager.clearFocus()
                 }
             ) {
@@ -188,7 +201,7 @@ fun ShoppingListViewPreview() {
                 changeCategoryForItem = { _, _ -> },
                 selectOrder = {},
                 isEnabled = true,
-                addItem = {},
+                addItem = { _, _, _ -> },
                 refresh = {}
             )
         }

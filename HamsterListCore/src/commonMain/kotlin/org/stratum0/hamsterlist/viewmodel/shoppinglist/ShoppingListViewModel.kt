@@ -58,11 +58,19 @@ class ShoppingListViewModel(
         }
     }
 
-    fun addItem(newItem: String) {
+    fun addItem(newItem: String, completion: String?, category: String?) {
+        val parsedItem = Item.parse(
+            stringRepresentation = newItem,
+            category = category,
+            categories = uiState.value.categories
+        ).let {
+            // change name to completion if it is present
+            if (completion != null) it.copy(name = completion) else it
+        }
         scope.launch {
             shoppingListRepository.addItem(
                 listId = _uiState.value.shoppingList.id,
-                item = Item.parse(stringRepresentation = newItem, categories = uiState.value.categories)
+                item = parsedItem
             )
         }
     }
@@ -109,6 +117,7 @@ class ShoppingListViewModel(
                     items = syncResponse.list.items.sortedByOrder(selectedOrder)
                 ),
                 categories = syncResponse.categories,
+                completions = syncResponse.completions.distinctBy { it.name },
                 orders = syncResponse.orders,
                 selectedOrder = selectedOrder,
                 loadingState = LoadingState.Done

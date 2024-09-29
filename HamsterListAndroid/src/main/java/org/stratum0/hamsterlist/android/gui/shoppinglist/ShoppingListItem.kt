@@ -51,7 +51,10 @@ fun ShoppingListItem(
         modifier = modifier.fillMaxWidth(),
         elevation = 4.dp
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(2.dp)
+        ) {
             CategoryCircle(
                 uiState = itemState.categoryCircleState,
                 modifier = Modifier.clickable {
@@ -153,7 +156,6 @@ private class ItemPreviewProvider : PreviewParameterProvider<ItemState> {
     override val values: Sequence<ItemState> = sequenceOf(ItemState.mockItemLight, ItemState.mockItemDark)
 }
 
-@Suppress("MagicNumber")
 @PreviewLightDark
 @Composable
 fun ShoppingListItemRowPreview(@PreviewParameter(ItemPreviewProvider::class) itemState: ItemState) {

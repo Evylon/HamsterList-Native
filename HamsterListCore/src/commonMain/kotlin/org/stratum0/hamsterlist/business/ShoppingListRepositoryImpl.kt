@@ -62,7 +62,7 @@ internal class ShoppingListRepositoryImpl(
         val syncRequest = SyncRequest(
             previousSync = previousList,
             currentState = updatedList.toShoppingList(),
-            includeInResponse = listOf(AdditionalData.orders, AdditionalData.categories)
+            includeInResponse = listOf(AdditionalData.orders, AdditionalData.categories, AdditionalData.completions)
         )
         _syncStateFlow.loadCatchingAndEmit {
             shoppingListApi.requestSync(previousList.id, syncRequest)

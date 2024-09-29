@@ -1,3 +1,13 @@
 naming:
   FunctionNaming:
     functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+
+complexity:
+  LongParameterList:
+    ignoreDefaultParameters: true
+
+style:
+  MagicNumber:
+    ignorePropertyDeclaration: true
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview', 'PreviewLightDark', 'PreviewDarkLight']

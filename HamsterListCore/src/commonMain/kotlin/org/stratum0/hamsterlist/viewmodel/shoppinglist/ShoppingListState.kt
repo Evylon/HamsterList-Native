@@ -2,6 +2,7 @@ package org.stratum0.hamsterlist.viewmodel.shoppinglist
 
 import org.stratum0.hamsterlist.models.Amount
 import org.stratum0.hamsterlist.models.CategoryDefinition
+import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.models.SyncedShoppingList
@@ -18,10 +19,12 @@ data class ShoppingListState(
     ),
     val categories: List<CategoryDefinition> = emptyList(),
     val orders: List<Order> = emptyList(),
+    val completions: List<CompletionItem> = emptyList(),
     val selectedOrder: Order? = orders.firstOrNull(),
     val loadingState: LoadingState = LoadingState.Loading
 ) {
     companion object {
+        // used on iOS
         val empty = ShoppingListState()
         val mock = ShoppingListState(
             shoppingList = SyncedShoppingList(
@@ -50,6 +53,10 @@ data class ShoppingListState(
                 )
             ),
             orders = listOf(Order("", "SomeOrder", listOf("cat1", "cat2"))),
+            completions = listOf(
+                CompletionItem.mockCompletionWithCategory,
+                CompletionItem.mockCompletionWithoutCategory
+            ),
             categories = listOf(
                 CategoryDefinition.mockLight,
                 CategoryDefinition.mockDark

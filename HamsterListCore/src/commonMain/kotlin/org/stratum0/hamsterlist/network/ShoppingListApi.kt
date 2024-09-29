@@ -67,6 +67,7 @@ internal class ShoppingListApi(
                 appendPathSegments(listId, "sync")
                 parameters.append("includeInResponse", AdditionalData.orders.toString())
                 parameters.append("includeInResponse", AdditionalData.categories.toString())
+                parameters.append("includeInResponse", AdditionalData.completions.toString())
             }
             userRepository.username.value?.let { username ->
                 headers {

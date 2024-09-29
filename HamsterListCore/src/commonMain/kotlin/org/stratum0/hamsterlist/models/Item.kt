@@ -1,8 +1,8 @@
 package org.stratum0.hamsterlist.models
 
+import kotlinx.serialization.Serializable
 import org.stratum0.hamsterlist.utils.prettyFormat
 import org.stratum0.hamsterlist.utils.randomUUID
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class Item(

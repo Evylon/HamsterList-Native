@@ -29,7 +29,7 @@ fun ShoppingListPage(
     uiState: ShoppingListState,
     fetchList: () -> Unit,
     deleteItem: (Item) -> Unit,
-    addItem: (item: String) -> Unit,
+    addItem: (item: String, completion: String?, category: String?) -> Unit,
     changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
     selectOrder: (Order) -> Unit
