@@ -4,6 +4,7 @@ import SwiftUI
 struct HomeView: View {
     let homeViewModel: HomeViewModel
 
+    @State private var navigationPath = NavigationPath()
     @State private var listId = ""
     @State private var serverHostName = ""
     @State private var username = ""
@@ -16,7 +17,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack(spacing: 20) {
                 TextField("Enter username", text: $username)
                     .disableAutocorrection(true)
@@ -32,13 +33,18 @@ struct HomeView: View {
                     .keyboardType(.URL)
                     .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
-                NavigationLink(
-                    "Load",
-                    destination: ShoppingListPage(listId: listId)
-                        .onAppear { homeViewModel.updateSettings(newName: username, listId: listId, serverHostName: serverHostName) }
-                )
-                    .padding(.top, 8)
-                    .disabled(listId.isEmpty || username.isEmpty || serverHostName.isEmpty)
+                Button(action: {
+                    homeViewModel.updateSettings(newName: username,
+                                                 listId: listId,
+                                                 serverHostName: serverHostName)
+                    navigationPath.append(listId)
+                }) {
+                    Text("Load")
+                }
+                .disabled(listId.isEmpty || username.isEmpty || serverHostName.isEmpty)
+            }
+            .navigationDestination(for: String.self) { listId in
+                ShoppingListPage(listId: listId)
             }
         }
     }
