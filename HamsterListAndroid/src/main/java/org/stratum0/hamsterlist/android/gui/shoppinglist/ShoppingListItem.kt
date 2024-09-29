@@ -1,11 +1,9 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
@@ -24,11 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -38,17 +34,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
-import org.stratum0.hamsterlist.android.gui.utils.toColor
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ItemState
 
-@Suppress("LongMethod")
+@Suppress("LongParameterList")
 @Composable
 fun ShoppingListItem(
     itemState: ItemState,
+    isEnabled: Boolean,
     deleteItem: (Item) -> Unit,
     changeItem: (itemText: String) -> Unit,
-    isEnabled: Boolean,
+    showCategoryChooser: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -57,9 +53,10 @@ fun ShoppingListItem(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CategoryCircle(
-                category = itemState.category,
-                categoryColor = itemState.categoryColor.toColor(),
-                categoryTextLight = itemState.categoryTextLight
+                uiState = itemState.categoryCircleState,
+                modifier = Modifier.clickable {
+                    showCategoryChooser()
+                }
             )
             ItemTextField(
                 itemText = itemState.item.toString(),
@@ -152,31 +149,7 @@ private fun ItemTextField(
     }
 }
 
-@Composable
-private fun CategoryCircle(
-    category: String,
-    categoryColor: Color,
-    categoryTextLight: Boolean,
-) {
-    Box(
-        modifier = Modifier
-            .padding(4.dp)
-            .size(40.dp)
-            .drawBehind {
-                drawCircle(color = categoryColor)
-            }
-    ) {
-        HamsterListTheme(darkTheme = categoryTextLight) {
-            Text(
-                text = category,
-                color = HamsterListTheme.colors.primaryTextColor,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-}
-
-private class ItemPreviewProvider: PreviewParameterProvider<ItemState> {
+private class ItemPreviewProvider : PreviewParameterProvider<ItemState> {
     override val values: Sequence<ItemState> = sequenceOf(ItemState.mockItemLight, ItemState.mockItemDark)
 }
 
@@ -187,9 +160,10 @@ fun ShoppingListItemRowPreview(@PreviewParameter(ItemPreviewProvider::class) ite
     HamsterListTheme {
         ShoppingListItem(
             itemState = itemState,
+            isEnabled = true,
             deleteItem = {},
             changeItem = { _ -> },
-            isEnabled = true
+            showCategoryChooser = {}
         )
     }
 }

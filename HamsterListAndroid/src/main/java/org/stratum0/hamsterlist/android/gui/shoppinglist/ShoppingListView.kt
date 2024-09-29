@@ -1,6 +1,5 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.models.Item
@@ -48,7 +47,8 @@ import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 fun ShoppingListView(
     uiState: ShoppingListState,
     deleteItem: (Item) -> Unit,
-    changeItem: (id: String, item: String) -> Unit,
+    changeItemById: (id: String, item: String) -> Unit,
+    changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
     addItem: (item: String) -> Unit,
     selectOrder: (Order) -> Unit,
     refresh: () -> Unit,
@@ -59,6 +59,17 @@ fun ShoppingListView(
         refreshing = uiState.loadingState is LoadingState.Loading,
         onRefresh = refresh
     )
+    var categoryChooserItem by remember {
+        mutableStateOf<Item?>(null)
+    }
+    categoryChooserItem?.let { selectedItem ->
+        CategoryChooser(
+            selectedItem = selectedItem,
+            categories = uiState.categories,
+            changeCategoryForItem = changeCategoryForItem,
+            dismiss = { categoryChooserItem = null }
+        )
+    }
     Column(modifier = modifier.fillMaxSize()) {
         Surface(color = MaterialTheme.colors.background) {
             Column {
@@ -99,9 +110,12 @@ fun ShoppingListView(
                             item = item,
                             categoryDefinition = ItemState.getCategory(item, uiState.categories)
                         ),
+                        isEnabled = isEnabled,
                         deleteItem = deleteItem,
-                        changeItem = { itemText -> changeItem(item.id, itemText) },
-                        isEnabled = isEnabled
+                        showCategoryChooser = {
+                            categoryChooserItem = item
+                        },
+                        changeItem = { itemText -> changeItemById(item.id, itemText) },
                     )
                 }
             }
@@ -161,8 +175,7 @@ private fun AddItemView(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, group = "light")
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, group = "dark")
+@PreviewLightDark
 @Composable
 fun ShoppingListViewPreview() {
     HamsterListTheme {
@@ -170,7 +183,8 @@ fun ShoppingListViewPreview() {
             ShoppingListView(
                 uiState = ShoppingListState.mock,
                 deleteItem = {},
-                changeItem = { _, _ -> },
+                changeItemById = { _, _ -> },
+                changeCategoryForItem = { _, _ -> },
                 selectOrder = {},
                 isEnabled = true,
                 addItem = {},

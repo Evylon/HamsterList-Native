@@ -13,10 +13,14 @@ struct ShoppingListView: View {
     let shoppingListState: ShoppingListState
 
     let deleteItem: (Item) -> Void
-    let changeItem: (_ id: String, _ newItem: String) -> Void
+    let changeItemById: (_ id: String, _ newItem: String) -> Void
+    let changeCategoryForItem: (_ item: Item, _ newCategoryId: String) -> Void
     let refresh: () -> Void
 
     @State private var newItem = ""
+
+    @State
+    private var categoryChooserItem: Item? = nil
 
     var body: some View {
         // TODO for some reason the divider line is not symmetrical
@@ -29,7 +33,8 @@ struct ShoppingListView: View {
                         categories: shoppingListState.categories
                     )
                 ),
-                changeItem: { itemText in changeItem(item.id, itemText) }
+                changeItem: { itemText in changeItemById(item.id, itemText) },
+                showCategoryChooser: { categoryChooserItem = item }
             ).swipeActions {
                 Button(action: {
                     deleteItem(item)
@@ -39,6 +44,15 @@ struct ShoppingListView: View {
             }
         }
         .refreshable { refresh() }
+        .sheet(
+            item: $categoryChooserItem,
+            onDismiss: { categoryChooserItem = nil },
+            content: { selectedItem in
+                CategoryChooser(categories: shoppingListState.categories,
+                                selectedItem: selectedItem,
+                                changeCategoryForItem: changeCategoryForItem,
+                                dismiss: { self.categoryChooserItem = nil })
+        })
     }
 }
 
@@ -46,7 +60,8 @@ struct ShoppingListViewPreview: PreviewProvider {
     static var previews: some View {
         ShoppingListView(shoppingListState: ShoppingListState.companion.mock,
                          deleteItem: { _ in },
-                         changeItem: { (_, _) in },
+                         changeItemById: { (_, _) in },
+                         changeCategoryForItem: { _, _ in },
                          refresh: {}
         )
     }

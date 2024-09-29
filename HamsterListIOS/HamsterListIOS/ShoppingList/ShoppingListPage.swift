@@ -17,8 +17,9 @@ struct ShoppingListPage: View {
     @ObservedObject
     private var uiState: FlowPublisher<ShoppingListState, Error>
     
-    @State private var newItem = ""
-    
+    @State
+    private var newItem = ""
+
     private var isLoading: Bool {
         uiState.value.loadingState is LoadingState.Loading
     }
@@ -51,7 +52,8 @@ struct ShoppingListPage: View {
                         ShoppingListView(
                             shoppingListState: uiState.value,
                             deleteItem: { item in viewModel.deleteItem(item: item) },
-                            changeItem: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
+                            changeItemById: { id, newItem in viewModel.changeItem(id: id, newItem: newItem) },
+                            changeCategoryForItem: { item, newCategoryId in viewModel.changeCategoryForItem(item: item, newCategoryId: newCategoryId) },
                             refresh: { viewModel.fetchList() }
                         )
                         if isLoading {

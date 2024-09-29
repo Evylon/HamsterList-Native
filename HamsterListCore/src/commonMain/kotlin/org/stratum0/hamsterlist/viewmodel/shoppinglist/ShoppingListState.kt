@@ -51,8 +51,8 @@ data class ShoppingListState(
             ),
             orders = listOf(Order("", "SomeOrder", listOf("cat1", "cat2"))),
             categories = listOf(
-                CategoryDefinition("", "cat1", "c1", "lime", false),
-                CategoryDefinition("", "cat2", "c2", "black", true)
+                CategoryDefinition.mockLight,
+                CategoryDefinition.mockDark
             ),
             loadingState = LoadingState.Done
         )

@@ -12,30 +12,29 @@ import HamsterListCore
 struct ShoppingListItem : View {
     private let itemState: ItemState
     private let changeItem: (_ newItem: String) -> Void
+    private let showCategoryChooser: () -> Void
 
     @State private var itemText: String
 
-    init(itemState: ItemState,
-         changeItem: @escaping (_ newItem: String) -> Void) {
+    init(
+        itemState: ItemState,
+        changeItem: @escaping (_ newItem: String) -> Void,
+        showCategoryChooser: @escaping () -> Void
+    ) {
         self.itemState = itemState
         self.itemText = itemState.item.description
         self.changeItem = changeItem
+        self.showCategoryChooser = showCategoryChooser
     }
 
     var body: some View {
         HStack {
-            ZStack(alignment: .center) {
-                Circle()
-                    .size(CGSize(width: 40, height: 40))
-                    .fill(itemState.categoryColor.toColor())
-                if (itemState.categoryTextLight) {
-                    Text(itemState.category)
-                        .foregroundStyle(.white)
-                } else {
-                    Text(itemState.category)
-                        .foregroundStyle(.black)
+            // do not use Button https://www.hackingwithswift.com/quick-start/swiftui/how-to-control-the-tappable-area-of-a-view-using-contentshape
+            CategoryCircle(uiState: itemState.categoryCircleState)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    showCategoryChooser()
                 }
-            }.frame(width: 40, height: 40)
             TextField(
                 "",
                 text: $itemText,
@@ -52,15 +51,17 @@ struct ShoppingListItem : View {
 
 struct ShoppingListItemPreview: PreviewProvider {
     static var previews: some View {
-        VStack {
+        List {
             ShoppingListItem(
                 itemState: ItemState.companion.mockItemLight,
-                changeItem: { _ in }
-            ).padding(24)
+                changeItem: { _ in },
+                showCategoryChooser: {}
+            )
             ShoppingListItem(
                 itemState: ItemState.companion.mockItemDark,
-                changeItem: { _ in }
-            ).padding(24)
+                changeItem: { _ in },
+                showCategoryChooser: {}
+            )
         }
     }
 }

@@ -7,22 +7,18 @@ import org.stratum0.hamsterlist.models.Item
 
 data class ItemState(
     val item: Item,
-    val category: String,
-    val categoryColor: CSSColor,
-    val categoryTextLight: Boolean,
+    val categoryCircleState: CategoryCircleState,
     val isEnabled: Boolean,
 ) {
     constructor(item: Item, categoryDefinition: CategoryDefinition?) : this(
         item = item,
-        category = categoryDefinition?.shortName ?: DEFAULT_CATEGORY_TEXT,
-        categoryColor = categoryDefinition?.cssColor ?: DEFAULT_CATEGORY_COLOR,
-        categoryTextLight = categoryDefinition?.lightText ?: false,
+        categoryCircleState = CategoryCircleState(categoryDefinition),
         isEnabled = false
     )
 
     companion object {
         val DEFAULT_CATEGORY_COLOR = CSSColor.RGBAColor(alpha = 0xFF, red = 0xCC, green = 0xCC, blue = 0xCC)
-        private const val DEFAULT_CATEGORY_TEXT = "?"
+        const val DEFAULT_CATEGORY_TEXT = "?"
 
         fun getCategory(item: Item, categories: List<CategoryDefinition>) =
             categories.firstOrNull { it.id == item.category }

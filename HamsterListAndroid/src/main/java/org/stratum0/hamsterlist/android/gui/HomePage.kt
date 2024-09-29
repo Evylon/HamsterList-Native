@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.viewmodel.HomeUiState
 
@@ -60,7 +61,7 @@ fun HomePage(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun HomePagePreview() {
     Surface {

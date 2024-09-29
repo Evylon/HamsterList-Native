@@ -1,20 +1,20 @@
 package org.stratum0.hamsterlist.viewmodel.shoppinglist
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import org.stratum0.hamsterlist.business.ShoppingListRepository
-import org.stratum0.hamsterlist.models.Item
-import org.stratum0.hamsterlist.models.Order
-import org.stratum0.hamsterlist.models.SyncResponse
-import org.stratum0.hamsterlist.utils.FetchState
-import org.stratum0.hamsterlist.viewmodel.BaseViewModel
-import org.stratum0.hamsterlist.viewmodel.LoadingState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.models.Order
+import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.models.SyncedShoppingList
+import org.stratum0.hamsterlist.utils.FetchState
+import org.stratum0.hamsterlist.viewmodel.BaseViewModel
+import org.stratum0.hamsterlist.viewmodel.LoadingState
 
 class ShoppingListViewModel(
     private val hamsterListId: String,
@@ -35,6 +35,7 @@ class ShoppingListViewModel(
                     networkResult.throwable.printStackTrace()
                     oldState.copy(loadingState = LoadingState.Error)
                 }
+
                 is FetchState.Loading -> _uiState.update { oldState ->
                     oldState.copy(loadingState = LoadingState.Loading)
                 }
@@ -71,6 +72,15 @@ class ShoppingListViewModel(
             shoppingListRepository.changeItem(
                 listId = _uiState.value.shoppingList.id,
                 item = Item.parse(stringRepresentation = newItem, id = id)
+            )
+        }
+    }
+
+    fun changeCategoryForItem(item: Item, newCategoryId: String) {
+        scope.launch {
+            shoppingListRepository.changeItem(
+                listId = _uiState.value.shoppingList.id,
+                item = item.copy(category = newCategoryId)
             )
         }
     }

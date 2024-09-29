@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -30,7 +30,8 @@ fun ShoppingListPage(
     fetchList: () -> Unit,
     deleteItem: (Item) -> Unit,
     addItem: (item: String) -> Unit,
-    changeItem: (id: String, item: String) -> Unit,
+    changeItemById: (id: String, item: String) -> Unit,
+    changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
     selectOrder: (Order) -> Unit
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
@@ -61,7 +62,8 @@ fun ShoppingListPage(
                     ShoppingListView(
                         uiState = uiState,
                         deleteItem = deleteItem,
-                        changeItem = changeItem,
+                        changeItemById = changeItemById,
+                        changeCategoryForItem = changeCategoryForItem,
                         addItem = addItem,
                         selectOrder = selectOrder,
                         refresh = fetchList,
@@ -79,7 +81,7 @@ fun ShoppingListPage(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun ShoppingListPagePreview() {
     ShoppingListViewPreview()
