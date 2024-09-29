@@ -44,7 +44,8 @@ struct ShoppingListItem : View {
                         changeItem(itemText)
                     }
                 }
-            )
+            ).frame(maxHeight: .infinity)
+                .textFieldStyle(ImprovedFocusStyle())
         }
     }
 }
