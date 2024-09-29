@@ -5,11 +5,13 @@ struct ContentView: View {
     let homeViewModel: HomeViewModel
 
     @State private var listId = ""
+    @State private var serverHostName = ""
     @State private var username = ""
 
     init() {
         self.homeViewModel = KoinViewModelHelper().homeViewModel
         _listId = State(initialValue: homeViewModel.uiState.currentListId ?? "")
+        _serverHostName = State(initialValue: homeViewModel.uiState.serverHostName ?? "")
         _username = State(initialValue: homeViewModel.uiState.username ?? "")
     }
 
@@ -24,13 +26,19 @@ struct ContentView: View {
                     .disableAutocorrection(true)
                     .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
+                TextField("Enter server host name", text: $serverHostName)
+                    .disableAutocorrection(true)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+                    .textFieldStyle(BackgroundContrastStyle())
+                    .padding(.horizontal, 32)
                 NavigationLink(
                     "Load",
                     destination: ShoppingListPage(listId: listId)
-                        .onAppear { homeViewModel.setUsernameAndListId(newName: username, listId: listId) }
+                        .onAppear { homeViewModel.updateSettings(newName: username, listId: listId, serverHostName: serverHostName) }
                 )
                     .padding(.top, 8)
-                    .disabled(listId.isEmpty || username.isEmpty)
+                    .disabled(listId.isEmpty || username.isEmpty || serverHostName.isEmpty)
             }
         }
     }

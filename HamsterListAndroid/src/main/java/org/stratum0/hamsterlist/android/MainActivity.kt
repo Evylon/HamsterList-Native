@@ -45,8 +45,12 @@ fun NavigationHost() {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             HomePage(
                 uiState = uiState,
-                onLoadHamsterList = { username, hamsterListName ->
-                    viewModel.setUsernameAndListId(newName = username, listId = hamsterListName)
+                onLoadHamsterList = { username, hamsterListName, serverHostName ->
+                    viewModel.updateSettings(
+                        newName = username,
+                        listId = hamsterListName,
+                        serverHostName = serverHostName
+                    )
                     navController.navigate("shoppingList/$hamsterListName")
                 },
             )

@@ -1,6 +1,7 @@
 package org.stratum0.hamsterlist.viewmodel
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getStringOrNullStateFlow
 import com.russhwolf.settings.set
@@ -19,29 +20,33 @@ class HomeViewModel(
     private val settings: ObservableSettings
 ) : BaseViewModel() {
 
+    @OptIn(ExperimentalSettingsApi::class)
     private val currentListId = settings.getStringOrNullStateFlow(
         coroutineScope = CoroutineScope(Dispatchers.IO),
         key = SettingsKeys.CURRENT_LIST_ID.name
+    )
+
+    @OptIn(ExperimentalSettingsApi::class)
+    private val serverHostName = settings.getStringOrNullStateFlow(
+        coroutineScope = CoroutineScope(Dispatchers.IO),
+        key = SettingsKeys.SERVER_HOST_NAME.name
     )
 
     @NativeCoroutinesState
     val uiState: StateFlow<HomeUiState> = combine(
         userRepository.username,
         currentListId,
+        serverHostName,
         ::HomeUiState
     ).stateIn(
         scope = scope,
         started = SharingStarted.Eagerly,
-        initialValue = HomeUiState(userRepository.username.value, currentListId.value)
+        initialValue = HomeUiState(userRepository.username.value, currentListId.value, serverHostName.value)
     )
 
-    fun setUsernameAndListId(newName: String, listId: String) {
+    fun updateSettings(newName: String, listId: String, serverHostName: String) {
         userRepository.setUsername(newName)
         settings[SettingsKeys.CURRENT_LIST_ID.name] = listId
+        settings[SettingsKeys.SERVER_HOST_NAME.name] = serverHostName
     }
 }
-
-data class HomeUiState(
-    val username: String? = null,
-    val currentListId: String? = null
-)

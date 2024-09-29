@@ -1,5 +1,8 @@
 package org.stratum0.hamsterlist.network
 
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.coroutines.getStringOrNullStateFlow
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -17,7 +20,11 @@ import io.ktor.http.contentType
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.serialization.json.Json
+import org.stratum0.hamsterlist.business.SettingsKeys
 import org.stratum0.hamsterlist.business.UserRepository
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.SyncRequest
@@ -25,9 +32,18 @@ import org.stratum0.hamsterlist.models.SyncResponse
 import kotlin.coroutines.cancellation.CancellationException
 
 internal class ShoppingListApi(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val settings: ObservableSettings
 ) {
-    private val baseUrl = "https://list.tilman.ninja/api"
+    private val baseUrl
+        get() = "https://${serverHostName.value.orEmpty()}/api"
+
+    @OptIn(ExperimentalSettingsApi::class)
+    private val serverHostName = settings.getStringOrNullStateFlow(
+        coroutineScope = CoroutineScope(Dispatchers.IO),
+        key = SettingsKeys.SERVER_HOST_NAME.name
+    )
+
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(
