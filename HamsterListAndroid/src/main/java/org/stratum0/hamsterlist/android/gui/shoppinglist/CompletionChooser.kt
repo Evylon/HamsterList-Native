@@ -30,36 +30,38 @@ fun CompletionsChooser(
 ) {
     val parsedItem = Item.parse(userInput, categories = uiState.categories)
     val filteredCompletions = uiState.completions.filter { it.name.contains(parsedItem.name) }
-    Card(modifier = modifier.fillMaxWidth()) {
-        LazyColumn() {
-            items(
-                items = filteredCompletions,
-                key = { it.name }
-            ) { completion ->
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
-                        val category = uiState.categories.firstOrNull { it.id == completion.category }
-                        CategoryCircle(uiState = CategoryCircleState(category))
-                        Text(
-                            text = completion.name,
-                            color = HamsterListTheme.colors.primaryTextColor,
-                            style = MaterialTheme.typography.body1,
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .fillMaxWidth()
-                                .clickable {
-                                    addItem(userInput, completion.name, completion.category)
-                                }
-                        )
-                    }
-                    if (filteredCompletions.last() != completion) {
-                        Divider(
-                            color = MaterialTheme.colors.primary,
-                            thickness = 1.dp
-                        )
+    if (filteredCompletions.isNotEmpty()) {
+        Card(modifier = modifier.fillMaxWidth()) {
+            LazyColumn {
+                items(
+                    items = filteredCompletions,
+                    key = { it.name }
+                ) { completion ->
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        ) {
+                            val category = uiState.categories.firstOrNull { it.id == completion.category }
+                            CategoryCircle(uiState = CategoryCircleState(category))
+                            Text(
+                                text = completion.name,
+                                color = HamsterListTheme.colors.primaryTextColor,
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        addItem(userInput, completion.name, completion.category)
+                                    }
+                            )
+                        }
+                        if (filteredCompletions.last() != completion) {
+                            Divider(
+                                color = MaterialTheme.colors.primary,
+                                thickness = 1.dp
+                            )
+                        }
                     }
                 }
             }

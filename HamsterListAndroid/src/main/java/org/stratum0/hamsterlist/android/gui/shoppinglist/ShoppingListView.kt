@@ -25,6 +25,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,10 +59,10 @@ fun ShoppingListView(
         refreshing = uiState.loadingState is LoadingState.Loading,
         onRefresh = refresh
     )
-    var addItemInput by rememberSaveable {
+    var addItemInput by remember {
         mutableStateOf("")
     }
-    var categoryChooserItem by rememberSaveable {
+    var categoryChooserItem by remember {
         mutableStateOf<Item?>(null)
     }
     categoryChooserItem?.let { selectedItem ->

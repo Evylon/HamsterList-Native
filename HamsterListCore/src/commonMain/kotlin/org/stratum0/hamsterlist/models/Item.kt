@@ -12,6 +12,17 @@ data class Item(
     val category: String? = null
 ) {
     companion object {
+        // redundant overload for iOS
+        fun parse(
+            stringRepresentation: String,
+            categories: List<CategoryDefinition>
+        ) = parse(
+            stringRepresentation = stringRepresentation,
+            id = randomUUID(),
+            category = null,
+            categories = categories
+        )
+
         fun parse(
             stringRepresentation: String,
             id: String = randomUUID(),
@@ -50,7 +61,8 @@ data class Item(
             }
             return Item(
                 id = id,
-                name = components.joinToString(separator = " ") { it }
+                name = components.joinToString(separator = " ") { it },
+                category = category
             )
         }
     }
