@@ -21,7 +21,7 @@ android {
     }
     signingConfigs {
         register("app") {
-            keyAlias = "HamsterListKey"
+            keyAlias = "hamsterList_release"
             keyPassword = System.getenv("SIGNING_PASSWORD") ?: ""
             storeFile = file("../keystore.jks")
             storePassword = System.getenv("SIGNING_PASSWORD") ?: ""
