@@ -1,4 +1,5 @@
-import java.util.Properties
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 plugins {
     id("com.android.application")
@@ -6,7 +7,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
 }
 
-apply(plugin = "io.gitlab.arturbosch.detekt")
+val buildTag = System.getenv("GITHUB_RUN_NUMBER") ?: DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())!!
 
 android {
     namespace = "org.stratum0.hamsterlist.android"
@@ -15,18 +16,15 @@ android {
         applicationId = "org.stratum0.hamsterlist.android"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.1+$buildTag"
     }
     signingConfigs {
         register("app") {
-            val localProperties = Properties().apply {
-                load(project.rootProject.file("local.properties").inputStream())
-            }
-            keyAlias = localProperties.getProperty("keyAlias")
-            keyPassword = localProperties.getProperty("storePassword")
-            storeFile = file(localProperties.getProperty("storeFile"))
-            storePassword = localProperties.getProperty("storePassword")
+            keyAlias = "hamsterList_release"
+            keyPassword = System.getenv("SIGNING_PASSWORD") ?: ""
+            storeFile = file("../keystore.jks")
+            storePassword = System.getenv("SIGNING_PASSWORD") ?: ""
         }
     }
     buildFeatures {

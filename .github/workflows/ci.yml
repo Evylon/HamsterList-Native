@@ -1,0 +1,32 @@
+name: Continuous Integration
+
+on:
+  pull_request: null
+  push:
+    branches: [ main ]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    container: alvrme/alpine-android:android-34-jdk17
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Detekt
+        run: ./gradlew detekt
+
+  build:
+    runs-on: ubuntu-latest
+    container: alvrme/alpine-android:android-34-jdk17
+    env:
+      SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Decode keystore
+        run: echo $KEYSTORE_BASE64 | base64 --decode > keystore.jks
+      - name: Build AAB
+        run: ./gradlew bundleRelease
+      - uses: actions/upload-artifact@v3
+        with:
+          name: App Bundle
+          path: HamsterListAndroid/build/outputs/bundle/release/*.aab
