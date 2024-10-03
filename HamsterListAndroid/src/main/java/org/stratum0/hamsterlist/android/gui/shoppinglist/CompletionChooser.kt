@@ -29,7 +29,9 @@ fun CompletionsChooser(
     modifier: Modifier = Modifier
 ) {
     val parsedItem = Item.parse(userInput, categories = uiState.categories)
-    val filteredCompletions = uiState.completions.filter { it.name.contains(parsedItem.name) }
+    val filteredCompletions = uiState.completions.filter {
+        it.name.contains(parsedItem.name, ignoreCase = true)
+    }
     if (filteredCompletions.isNotEmpty()) {
         Card(modifier = modifier.fillMaxWidth()) {
             LazyColumn {

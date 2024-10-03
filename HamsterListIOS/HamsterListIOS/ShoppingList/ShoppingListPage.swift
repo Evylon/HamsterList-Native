@@ -94,7 +94,9 @@ struct ShoppingListPage: View {
     }
 
     private var filteredCompletions: [CompletionItem] {
-        uiState.value.completions.filter { $0.name.contains(parsedItem.name) }
+        uiState.value.completions.filter {
+            $0.name.lowercased().contains(parsedItem.name.lowercased())
+        }
     }
     
     func category(for completion: CompletionItem) -> CategoryDefinition? {
