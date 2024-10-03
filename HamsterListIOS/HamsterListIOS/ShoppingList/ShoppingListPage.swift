@@ -137,6 +137,12 @@ struct ShoppingListPage: View {
         HStack {
             TextField("New Item", text: $newItem)
                 .textFieldStyle(BackgroundContrastStyle())
+                .onSubmit {
+                    if (!newItem.isEmpty) {
+                        viewModel.addItem(newItem: newItem, completion: nil, category: nil)
+                        newItem = ""
+                    }
+                }
             Button(
                 action: {
                     if (!newItem.isEmpty) {

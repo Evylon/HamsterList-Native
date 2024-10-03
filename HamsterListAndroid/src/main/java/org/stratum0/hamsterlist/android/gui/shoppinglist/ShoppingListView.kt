@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -168,6 +169,13 @@ private fun AddItemView(
                 placeholder = { Text("New Item") },
                 onValueChange = onItemInputChange,
                 singleLine = true,
+                keyboardActions = KeyboardActions(onDone = {
+                    if (addItemInput.isNotBlank()) {
+                        addItem(addItemInput, null, null)
+                        onItemInputChange("")
+                        focusManager.clearFocus()
+                    }
+                }),
                 enabled = isEnabled,
                 modifier = Modifier.weight(1f)
             )
@@ -175,9 +183,11 @@ private fun AddItemView(
                 enabled = isEnabled,
                 onClick = {
                     // TODO display category suggestion and allow user to choose category
-                    addItem(addItemInput, null, null)
-                    onItemInputChange("")
-                    focusManager.clearFocus()
+                    if (addItemInput.isNotBlank()) {
+                        addItem(addItemInput, null, null)
+                        onItemInputChange("")
+                        focusManager.clearFocus()
+                    }
                 }
             ) {
                 Icon(
