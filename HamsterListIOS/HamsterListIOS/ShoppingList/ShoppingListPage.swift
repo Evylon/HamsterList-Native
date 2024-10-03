@@ -45,10 +45,10 @@ struct ShoppingListPage: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             switch uiState.value.loadingState {
                 case LoadingState.Loading(), LoadingState.Done():
-                    ZStack {
+                    ZStack(alignment: .bottom) {
                         ShoppingListView(
                             shoppingListState: uiState.value,
                             deleteItem: { item in viewModel.deleteItem(item: item) },
@@ -63,6 +63,8 @@ struct ShoppingListPage: View {
                         if isLoading {
                             ProgressView()
                         }
+                        LinearGradient(colors: [HamsterTheme.colors.background, Color.clear], startPoint: .bottom, endPoint: .top)
+                            .frame(height: 12, alignment: .bottom)
                     }.allowsHitTesting(!isLoading)
                         .opacity(isLoading ? 0.5 : 1)
                     AddItemView

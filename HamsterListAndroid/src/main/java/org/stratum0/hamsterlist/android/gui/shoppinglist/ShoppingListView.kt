@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.android.gui.components.ShadowGradient
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.LoadingState
@@ -139,13 +139,13 @@ fun ShoppingListView(
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
             }
+            ShadowGradient()
         }
         AddItemView(
             addItemInput = addItemInput,
             addItem = addItem,
             onItemInputChange = { addItemInput = it },
             isEnabled = isEnabled,
-            modifier = Modifier.padding(top = 12.dp)
         )
     }
 }
