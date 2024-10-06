@@ -50,19 +50,17 @@ struct ShoppingListItem : View {
     }
 }
 
-struct ShoppingListItemPreview: PreviewProvider {
-    static var previews: some View {
-        List {
-            ShoppingListItem(
-                itemState: ItemState.companion.mockItemLight,
-                changeItem: { _ in },
-                showCategoryChooser: {}
-            )
-            ShoppingListItem(
-                itemState: ItemState.companion.mockItemDark,
-                changeItem: { _ in },
-                showCategoryChooser: {}
-            )
-        }
+#Preview {
+    List {
+        ShoppingListItem(
+            itemState: ItemState.companion.mockItemLight,
+            changeItem: { _ in },
+            showCategoryChooser: {}
+        )
+        ShoppingListItem(
+            itemState: ItemState.companion.mockItemDark,
+            changeItem: { _ in },
+            showCategoryChooser: {}
+        )
     }
 }

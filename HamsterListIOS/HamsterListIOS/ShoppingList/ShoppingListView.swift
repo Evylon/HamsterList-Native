@@ -56,13 +56,12 @@ struct ShoppingListView: View {
     }
 }
 
-struct ShoppingListViewPreview: PreviewProvider {
-    static var previews: some View {
-        ShoppingListView(shoppingListState: ShoppingListState.companion.mock,
-                         deleteItem: { _ in },
-                         changeItem: { (_, _) in },
-                         changeCategoryForItem: { _, _ in },
-                         refresh: {}
-        )
-    }
+#Preview {
+    ShoppingListView(
+        shoppingListState: ShoppingListState.companion.mock,
+        deleteItem: { _ in },
+        changeItem: { (_, _) in },
+        changeCategoryForItem: { _, _ in },
+        refresh: {}
+    )
 }

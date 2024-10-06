@@ -56,9 +56,16 @@ struct ShoppingListPage: View {
                             changeCategoryForItem: { item, newCategoryId in viewModel.changeCategoryForItem(item: item, newCategoryId: newCategoryId) },
                             refresh: { viewModel.fetchList() }
                         )
-                        if (!newItem.isEmpty && !filteredCompletions.isEmpty) {
-                            CompletionChooser
-                                .padding(.top, 80)
+                        if (!newItem.isEmpty) {
+                            CompletionChooser(
+                                newItem: $newItem,
+                                completions: uiState.value.completions,
+                                categories: uiState.value.categories,
+                                addItem: { newItem, completion, category in
+                                    viewModel.addItem(newItem: newItem, completion: completion, category: category)
+                                }
+                            )
+                            .padding(.top, 80)
                         }
                         if isLoading {
                             ProgressView()
@@ -67,7 +74,11 @@ struct ShoppingListPage: View {
                             .frame(height: 12, alignment: .bottom)
                     }.allowsHitTesting(!isLoading)
                         .opacity(isLoading ? 0.5 : 1)
-                    AddItemView
+                    AddItemView(
+                        newItem: $newItem,
+                        addItem: { newItem in 
+                            viewModel.addItem(newItem: newItem, completion: nil, category: nil)
+                        })
                 case LoadingState.Error():
                     Text("Error")
                 default:
@@ -91,74 +102,6 @@ struct ShoppingListPage: View {
             }
     }
 
-    private var parsedItem: Item {
-        Item.companion.parse(stringRepresentation: newItem, categories: uiState.value.categories)
-    }
-
-    private var filteredCompletions: [CompletionItem] {
-        uiState.value.completions.filter {
-            $0.name.lowercased().contains(parsedItem.name.lowercased())
-        }
-    }
-    
-    func category(for completion: CompletionItem) -> CategoryDefinition? {
-        return uiState.value.categories.first { $0.id == completion.category }
-    }
-
-    private var CompletionChooser: some View {
-        // TODO Jesus SwiftUI Lists really don't like items being added to them. Performance is really bad
-        // TODO also the List takes up too much space if few items are in it. Maybe use UIKit Stackview Instead :/
-        VStack {
-            Divider()
-                .overlay(Color.gray)
-            List {
-                Section {
-                    ForEach(filteredCompletions, id: \.name) {completion in
-                        HStack {
-                            CategoryCircle(
-                                uiState: CategoryCircleState(categoryDefinition: category(for: completion))
-                            )
-                            // TODO ensure accessibility, i.e. by using button with custom Theme
-                            Text(completion.name)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .onTapGesture {
-                                    viewModel.addItem(newItem: newItem, completion: completion.name, category: completion.category)
-                                    newItem = ""
-                                }
-                        }
-                        .listRowSeparatorTint(HamsterTheme.colors.primary)
-                    }
-                } header: { Text("Suggestions") }
-            }
-            .padding(.top, -8)
-        }
-        .background(HamsterTheme.colors.background)
-    }
-
-    private var AddItemView: some View {
-        HStack {
-            TextField("New Item", text: $newItem)
-                .textFieldStyle(BackgroundContrastStyle())
-                .onSubmit {
-                    if (!newItem.isEmpty) {
-                        viewModel.addItem(newItem: newItem, completion: nil, category: nil)
-                        newItem = ""
-                    }
-                }
-            Button(
-                action: {
-                    if (!newItem.isEmpty) {
-                        viewModel.addItem(newItem: newItem, completion: nil, category: nil)
-                        newItem = ""
-                    }
-                },
-                label: { Image(systemName: "plus") }
-            ).tint(Color.primary)
-                .padding(4)
-        }.padding(8)
-            .background(Color.gray.opacity(0.3))
-    }
-
     private func OrderMenu(
         orders: [Order],
         selectedOrder: Order?,
@@ -170,14 +113,6 @@ struct ShoppingListPage: View {
             }
         } label: {
             Label(selectedOrder?.name ?? "Create Order", systemImage: "slider.horizontal.3")
-        }
-    }
-}
-
-struct ShoppingListPagePreview: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            ShoppingListPage(listId: "Demo")
         }
     }
 }

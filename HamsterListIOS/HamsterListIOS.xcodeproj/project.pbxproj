@@ -14,6 +14,8 @@
 		072DB8482B8BEF0E00C41167 /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8472B8BEF0E00C41167 /* KMPNativeCoroutinesCombine */; };
 		072DB84A2B8BEF0E00C41167 /* KMPNativeCoroutinesCore in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB8492B8BEF0E00C41167 /* KMPNativeCoroutinesCore */; };
 		072DB84C2B8BEF0E00C41167 /* KMPNativeCoroutinesRxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 072DB84B2B8BEF0E00C41167 /* KMPNativeCoroutinesRxSwift */; };
+		072E7E672CB2644500BD27E6 /* CompletionChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072E7E662CB2644500BD27E6 /* CompletionChooser.swift */; };
+		072E7E6B2CB278B300BD27E6 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072E7E6A2CB278B300BD27E6 /* AddItemView.swift */; };
 		0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */; };
 		0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */; };
 		0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */; };
@@ -44,6 +46,8 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		070B99012C4083290062BE1A /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
+		072E7E662CB2644500BD27E6 /* CompletionChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionChooser.swift; sourceTree = "<group>"; };
+		072E7E6A2CB278B300BD27E6 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 		0746F03C2B8CBE6D0062F7FD /* FlowPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowPublisher.swift; sourceTree = "<group>"; };
 		0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListItem.swift; sourceTree = "<group>"; };
 		0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
@@ -82,6 +86,18 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		072E7E682CB2789600BD27E6 /* components */ = {
+			isa = PBXGroup;
+			children = (
+				07F5B17B2CA962C50000938A /* CategoryCircle.swift */,
+				07F5B17D2CA96B710000938A /* CategoryChooser.swift */,
+				072E7E662CB2644500BD27E6 /* CompletionChooser.swift */,
+				0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */,
+				072E7E6A2CB278B300BD27E6 /* AddItemView.swift */,
+			);
+			path = components;
+			sourceTree = "<group>";
+		};
 		077EAE23298FD80300CBB7E2 /* SharedUtils */ = {
 			isa = PBXGroup;
 			children = (
@@ -95,11 +111,9 @@
 		077EAE28298FE9CB00CBB7E2 /* ShoppingList */ = {
 			isa = PBXGroup;
 			children = (
+				072E7E682CB2789600BD27E6 /* components */,
 				07FA12EC293D564400714895 /* ShoppingListPage.swift */,
-				0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */,
 				0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */,
-				07F5B17B2CA962C50000938A /* CategoryCircle.swift */,
-				07F5B17D2CA96B710000938A /* CategoryChooser.swift */,
 			);
 			path = ShoppingList;
 			sourceTree = "<group>";
@@ -258,9 +272,11 @@
 				079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */,
+				072E7E672CB2644500BD27E6 /* CompletionChooser.swift in Sources */,
 				07D7DC842C7B967D00F7E57A /* HamsterTheme.swift in Sources */,
 				07BE15372B8CBF77003C0501 /* Models+Identifiable.swift in Sources */,
 				07FA12ED293D564400714895 /* ShoppingListPage.swift in Sources */,
+				072E7E6B2CB278B300BD27E6 /* AddItemView.swift in Sources */,
 				07F5B17C2CA962C50000938A /* CategoryCircle.swift in Sources */,
 				0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */,
 				0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */,
