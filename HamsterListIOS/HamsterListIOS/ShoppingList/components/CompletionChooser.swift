@@ -46,7 +46,7 @@ struct CompletionChooser: View {
                                 )
                                 // TODO ensure accessibility, i.e. by using button with custom Theme
                                 Text(completion.name)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                                     .onTapGesture {
                                         addItem(newItem, completion.name, completion.category)
                                         newItem = ""
