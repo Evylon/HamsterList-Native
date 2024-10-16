@@ -5,6 +5,8 @@ naming:
 complexity:
   LongParameterList:
     ignoreDefaultParameters: true
+  LongMethod:
+    threshold: 80
 
 style:
   MagicNumber:
