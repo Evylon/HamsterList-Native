@@ -19,19 +19,16 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 20) {
-                TextField("Enter username", text: $username)
+                FloatingLabelTextField(label: "Username", text: $username)
                     .disableAutocorrection(true)
-                    .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
-                TextField("Enter list name", text: $listId)
+                FloatingLabelTextField(label: "List name", text: $listId)
                     .disableAutocorrection(true)
-                    .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
-                TextField("Enter server host name", text: $serverHostName)
+                FloatingLabelTextField(label: "Server host name", text: $serverHostName)
                     .disableAutocorrection(true)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
-                    .textFieldStyle(BackgroundContrastStyle())
                     .padding(.horizontal, 32)
                 Button(action: {
                     homeViewModel.updateSettings(newName: username,
@@ -46,6 +43,8 @@ struct HomeView: View {
             .navigationDestination(for: String.self) { listId in
                 ShoppingListPage(listId: listId)
             }
+            .frame(maxHeight: .infinity)
+            .background(Color(UIColor.systemGroupedBackground))
         }
     }
 }

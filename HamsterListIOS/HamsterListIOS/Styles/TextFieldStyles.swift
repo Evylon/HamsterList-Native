@@ -9,13 +9,12 @@
 import SwiftUI
 
 struct BackgroundContrastStyle : TextFieldStyle {
-    @FocusState private var isFocused: Bool
     public func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(UIColor.secondarySystemBackground))
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
             )
             .textFieldStyle(ImprovedFocusStyle())
     }

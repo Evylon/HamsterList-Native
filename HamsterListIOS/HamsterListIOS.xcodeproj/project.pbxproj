@@ -25,6 +25,7 @@
 		07F5B17C2CA962C50000938A /* CategoryCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F5B17B2CA962C50000938A /* CategoryCircle.swift */; };
 		07F5B17E2CA96B710000938A /* CategoryChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F5B17D2CA96B710000938A /* CategoryChooser.swift */; };
 		07FA12ED293D564400714895 /* ShoppingListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FA12EC293D564400714895 /* ShoppingListPage.swift */; };
+		07FB59BC2CBFD2C600DBA3D0 /* FloatingLabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FB59BB2CBFD2BD00DBA3D0 /* FloatingLabelTextField.swift */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* HomeView.swift */; };
 /* End PBXBuildFile section */
@@ -57,6 +58,7 @@
 		07F5B17B2CA962C50000938A /* CategoryCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCircle.swift; sourceTree = "<group>"; };
 		07F5B17D2CA96B710000938A /* CategoryChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryChooser.swift; sourceTree = "<group>"; };
 		07FA12EC293D564400714895 /* ShoppingListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListPage.swift; sourceTree = "<group>"; };
+		07FB59BB2CBFD2BD00DBA3D0 /* FloatingLabelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingLabelTextField.swift; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* HamsterList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HamsterList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 		079716B82C4049D700FDBBC2 /* Styles */ = {
 			isa = PBXGroup;
 			children = (
+				07FB59BB2CBFD2BD00DBA3D0 /* FloatingLabelTextField.swift */,
 				079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */,
 				07D7DC832C7B967D00F7E57A /* HamsterTheme.swift */,
 			);
@@ -271,6 +274,7 @@
 				07F5B17E2CA96B710000938A /* CategoryChooser.swift in Sources */,
 				079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				07FB59BC2CBFD2C600DBA3D0 /* FloatingLabelTextField.swift in Sources */,
 				0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */,
 				072E7E672CB2644500BD27E6 /* CompletionChooser.swift in Sources */,
 				07D7DC842C7B967D00F7E57A /* HamsterTheme.swift in Sources */,
