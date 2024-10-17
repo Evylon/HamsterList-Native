@@ -16,6 +16,7 @@ import org.stratum0.hamsterlist.utils.FetchState
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 
+@Suppress("TooManyFunctions")
 class ShoppingListViewModel(
     private val hamsterListId: String,
     private val shoppingListRepository: ShoppingListRepository
@@ -41,6 +42,12 @@ class ShoppingListViewModel(
                 }
             }
         }.launchIn(scope)
+    }
+
+    fun updateAddItemInput(newInput: String) {
+        _uiState.update { oldState ->
+            oldState.copy(addItemInput = newInput)
+        }
     }
 
     fun fetchList() {

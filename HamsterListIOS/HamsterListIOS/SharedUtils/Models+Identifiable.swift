@@ -11,4 +11,4 @@ import HamsterListCore
 extension Item: Identifiable {}
 extension Order: Identifiable {}
 extension CategoryDefinition : Identifiable {}
-extension CompletionItem : Identifiable {}
+extension CompletionItemState : Identifiable {}

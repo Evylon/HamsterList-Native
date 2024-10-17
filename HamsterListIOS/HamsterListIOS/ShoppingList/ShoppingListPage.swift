@@ -16,9 +16,6 @@ struct ShoppingListPage: View {
 
     @ObservedObject
     private var uiState: FlowPublisher<ShoppingListState, Error>
-    
-    @State
-    private var newItem = ""
 
     private var isLoading: Bool {
         uiState.value.loadingState is LoadingState.Loading
@@ -56,13 +53,12 @@ struct ShoppingListPage: View {
                             changeCategoryForItem: { item, newCategoryId in viewModel.changeCategoryForItem(item: item, newCategoryId: newCategoryId) },
                             refresh: { viewModel.fetchList() }
                         )
-                        if (!newItem.isEmpty) {
+                        if (!uiState.value.addItemInput.isEmpty) {
                             CompletionChooser(
-                                newItem: $newItem,
-                                completions: uiState.value.completions,
-                                categories: uiState.value.categories,
-                                addItem: { newItem, completion, category in
-                                    viewModel.addItem(newItem: newItem, completion: completion, category: category)
+                                uiState: uiState.value.completionChooserState,
+                                addItem: { completion, category in
+                                    viewModel.addItem(newItem: uiState.value.addItemInput, completion: completion, category: category)
+                                    viewModel.updateAddItemInput(newInput: "")
                                 }
                             )
                             .padding(.top, 80)
@@ -75,8 +71,9 @@ struct ShoppingListPage: View {
                     }.allowsHitTesting(!isLoading)
                         .opacity(isLoading ? 0.5 : 1)
                     AddItemView(
-                        newItem: $newItem,
-                        addItem: { newItem in 
+                        newItem: .init(get: { uiState.value.addItemInput },
+                                       set: { viewModel.updateAddItemInput(newInput: $0) }),
+                        addItem: { newItem in
                             viewModel.addItem(newItem: newItem, completion: nil, category: nil)
                         })
                 case LoadingState.Error():

@@ -47,6 +47,7 @@ import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 @Suppress("LongParameterList", "LongMethod")
 fun ShoppingListView(
     uiState: ShoppingListState,
+    updateAddItemInput: (String) -> Unit,
     deleteItem: (Item) -> Unit,
     changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
@@ -60,9 +61,6 @@ fun ShoppingListView(
         refreshing = uiState.loadingState is LoadingState.Loading,
         onRefresh = refresh
     )
-    var addItemInput by remember {
-        mutableStateOf("")
-    }
     var categoryChooserItem by remember {
         mutableStateOf<Item?>(null)
     }
@@ -128,13 +126,12 @@ fun ShoppingListView(
                 modifier = Modifier.align(Alignment.TopCenter),
                 scale = true
             )
-            if (addItemInput.isNotBlank()) {
+            if (uiState.addItemInput.isNotBlank()) {
                 CompletionsChooser(
-                    uiState = uiState,
-                    userInput = addItemInput,
-                    addItem = { item, completion, category ->
-                        addItem(item, completion, category)
-                        addItemInput = ""
+                    uiState = uiState.completionChooserState,
+                    addItem = { completion, category ->
+                        addItem(uiState.addItemInput, completion, category)
+                        updateAddItemInput("")
                     },
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
@@ -142,9 +139,9 @@ fun ShoppingListView(
             ShadowGradient()
         }
         AddItemView(
-            addItemInput = addItemInput,
+            addItemInput = uiState.addItemInput,
             addItem = addItem,
-            onItemInputChange = { addItemInput = it },
+            onItemInputChange = updateAddItemInput,
             isEnabled = isEnabled,
         )
     }
@@ -207,6 +204,7 @@ fun ShoppingListViewPreview() {
         Surface(color = MaterialTheme.colors.background) {
             ShoppingListView(
                 uiState = ShoppingListState.mock,
+                updateAddItemInput = {},
                 deleteItem = {},
                 changeItem = { _, _ -> },
                 changeCategoryForItem = { _, _ -> },

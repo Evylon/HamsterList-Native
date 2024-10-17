@@ -71,6 +71,7 @@ fun NavigationHost(autoLoadListId: String? = null) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             ShoppingListPage(
                 uiState = uiState,
+                updateAddItemInput = viewModel::updateAddItemInput,
                 fetchList = viewModel::fetchList,
                 deleteItem = viewModel::deleteItem,
                 addItem = viewModel::addItem,

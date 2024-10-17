@@ -10,46 +10,29 @@ import SwiftUI
 import HamsterListCore
 
 struct CompletionChooser: View {
-    
-    @Binding var newItem: String
-    var completions: [CompletionItem]
-    var categories: [CategoryDefinition]
-    let addItem: (_ newItem: String, _ completion: String, _ category: String?) -> Void
 
-    private var parsedItem: Item {
-        Item.companion.parse(stringRepresentation: newItem, categories: categories)
-    }
+    let uiState: CompletionChooserState
+    let addItem: (_ completion: String, _ category: String?) -> Void
 
-    private var filteredCompletions: [CompletionItem] {
-        completions.filter {
-            $0.name.lowercased().contains(parsedItem.name.lowercased())
-        }
-    }
-
-    func resolveCategory(for completion: CompletionItem) -> CategoryDefinition? {
-        return categories.first { $0.id == completion.category }
-    }
-
-    // Performance is really bad on Debug builds, but seems fine on release builds
     // TODO the List takes up too much space if few items are in it. Maybe use UIKit Stackview Instead :/
     var body: some View {
-        if (!filteredCompletions.isEmpty) {
+        if (!uiState.filteredCompletions.isEmpty) {
             VStack {
                 Divider()
                     .overlay(Color.gray)
                 List {
                     Section {
-                        ForEach(filteredCompletions) { completion in
+                        ForEach(uiState.filteredCompletions) { completionState in
                             HStack {
                                 CategoryCircle(
-                                    uiState: CategoryCircleState(categoryDefinition: resolveCategory(for: completion))
+                                    uiState: completionState.categoryState
                                 )
                                 // TODO ensure accessibility, i.e. by using button with custom Theme
-                                Text(completion.name)
+                                Text(completionState.completion.name)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                                     .onTapGesture {
-                                        addItem(newItem, completion.name, completion.category)
-                                        newItem = ""
+                                        addItem(completionState.completion.name,
+                                                completionState.completion.category)
                                     }
                             }
                             .listRowSeparatorTint(HamsterTheme.colors.primary)
@@ -65,9 +48,7 @@ struct CompletionChooser: View {
 
 #Preview {
     CompletionChooser(
-        newItem: .constant("Reis"),
-        completions: [CompletionItem.companion.mockCompletionWithCategory],
-        categories: [CategoryDefinition.companion.mockDark],
-        addItem: { _, _, _ in }
+        uiState: CompletionChooserState.companion.mock,
+        addItem: { _, _ in }
     )
 }

@@ -17,48 +17,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
-import org.stratum0.hamsterlist.models.Item
-import org.stratum0.hamsterlist.viewmodel.shoppinglist.CategoryCircleState
-import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.CompletionChooserState
 
 @Composable
 fun CompletionsChooser(
-    uiState: ShoppingListState,
-    userInput: String,
-    addItem: (item: String, completion: String, category: String?) -> Unit,
+    uiState: CompletionChooserState,
+    addItem: (completion: String, category: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val parsedItem = Item.parse(userInput, categories = uiState.categories)
-    val filteredCompletions = uiState.completions.filter {
-        it.name.contains(parsedItem.name, ignoreCase = true)
-    }
-    if (filteredCompletions.isNotEmpty()) {
+    if (uiState.filteredCompletions.isNotEmpty()) {
         Card(modifier = modifier.fillMaxWidth()) {
             LazyColumn {
                 items(
-                    items = filteredCompletions,
-                    key = { it.name }
-                ) { completion ->
+                    items = uiState.filteredCompletions,
+                    key = { it.completion.name }
+                ) { itemState ->
                     Column {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 8.dp)
                         ) {
-                            val category = uiState.categories.firstOrNull { it.id == completion.category }
-                            CategoryCircle(uiState = CategoryCircleState(category))
+                            CategoryCircle(uiState = itemState.categoryState)
                             Text(
-                                text = completion.name,
+                                text = itemState.completion.name,
                                 color = HamsterListTheme.colors.primaryTextColor,
                                 style = MaterialTheme.typography.body1,
                                 modifier = Modifier
                                     .padding(start = 8.dp)
                                     .fillMaxWidth()
                                     .clickable {
-                                        addItem(userInput, completion.name, completion.category)
+                                        addItem(itemState.completion.name, itemState.completion.category)
                                     }
                             )
                         }
-                        if (filteredCompletions.last() != completion) {
+                        if (uiState.filteredCompletions.last() != itemState) {
                             Divider(
                                 color = MaterialTheme.colors.primary,
                                 thickness = 1.dp
@@ -75,6 +67,6 @@ fun CompletionsChooser(
 @Composable
 private fun CompletionsChooserPreview() {
     HamsterListTheme {
-        CompletionsChooser(uiState = ShoppingListState.mock, userInput = "Te", addItem = { _, _, _ -> })
+        CompletionsChooser(uiState = CompletionChooserState.mock, addItem = { _, _ -> })
     }
 }
