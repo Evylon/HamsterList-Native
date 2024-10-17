@@ -35,14 +35,18 @@ data class Item(
                 val firstComponent = trimmedString.substringBefore(' ')
                 if (firstComponent.startsWith('(') && firstComponent.endsWith(')')) {
                     val categoryShortName = firstComponent.substring(1, firstComponent.length - 1)
-                    val parsedCategory = categories.firstOrNull { it.shortName == categoryShortName }
+                    val parsedCategory = categories.firstOrNull {
+                        it.shortName.equals(categoryShortName, ignoreCase = true)
+                    }
                     // if category was parsed sucessfully, recursively call parse with category now set
-                    if (parsedCategory != null) return parse(
-                        stringRepresentation = trimmedString.substringAfter(' '),
-                        id = id,
-                        category = parsedCategory.id,
-                        categories = categories
-                    )
+                    if (parsedCategory != null) {
+                        return parse(
+                            stringRepresentation = trimmedString.substringAfter(' '),
+                            id = id,
+                            category = parsedCategory.id,
+                            categories = categories
+                        )
+                    }
                 }
             }
             val components = trimmedString.split(' ', limit = 3)
@@ -75,4 +79,3 @@ data class Item(
         append(" ${name.trim()}")
     }
 }
-
