@@ -24,17 +24,26 @@ struct CompletionChooser: View {
                     Section {
                         ForEach(uiState.filteredCompletions) { completionState in
                             HStack {
-                                CategoryCircle(
-                                    uiState: completionState.categoryState
-                                )
-                                // TODO ensure accessibility, i.e. by using button with custom Theme
-                                Text(completionState.completion.name)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                                    .onTapGesture {
-                                        addItem(completionState.completion.name,
-                                                completionState.completion.category)
+                                Button {
+                                    print("Change Completion Category") // TODO
+                                } label: {
+                                    CategoryCircle(
+                                        uiState: completionState.categoryState
+                                    )
+                                }
+                                Button {
+                                    addItem(completionState.completion.name,
+                                            completionState.completion.category)
+                                } label: {
+                                    HStack {
+                                        Text(completionState.completion.name)
+                                        Spacer()
                                     }
+                                        .contentShape(Rectangle())
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                                }
                             }
+                            .buttonStyle(.plain)
                             .listRowSeparatorTint(HamsterTheme.colors.primary)
                         }
                     } header: { Text("Suggestions") }
