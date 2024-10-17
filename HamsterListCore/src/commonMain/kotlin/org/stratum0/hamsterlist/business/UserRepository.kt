@@ -17,10 +17,10 @@ class UserRepository(
     @NativeCoroutinesState
     val username: StateFlow<String?> = settings.getStringOrNullStateFlow(
         coroutineScope = CoroutineScope(Dispatchers.IO),
-        key = SettingsKeys.USERNAME.name
+        key = SettingsKey.USERNAME.name
     )
 
     fun setUsername(newName: String) {
-        settings[SettingsKeys.USERNAME.name] = newName.trim().takeIf { it.isNotBlank() }
+        settings[SettingsKey.USERNAME.name] = newName.trim().takeIf { it.isNotBlank() }
     }
 }

@@ -24,7 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.serialization.json.Json
-import org.stratum0.hamsterlist.business.SettingsKeys
+import org.stratum0.hamsterlist.business.SettingsKey
 import org.stratum0.hamsterlist.business.UserRepository
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.SyncRequest
@@ -41,7 +41,7 @@ internal class ShoppingListApi(
     @OptIn(ExperimentalSettingsApi::class)
     private val serverHostName = settings.getStringOrNullStateFlow(
         coroutineScope = CoroutineScope(Dispatchers.IO),
-        key = SettingsKeys.SERVER_HOST_NAME.name
+        key = SettingsKey.SERVER_HOST_NAME.name
     )
 
     private val httpClient = HttpClient {
