@@ -14,6 +14,15 @@ struct HomeView: View {
         !listId.isEmpty && !username.isEmpty && !serverHostName.isEmpty
     }
 
+    private let appVersion = if let bundleDict = Bundle.main.infoDictionary,
+                                let shortVersion = bundleDict["CFBundleShortVersionString"] as? String,
+                                let bundleVersion = bundleDict["CFBundleVersion"] as? String
+    {
+        "\(shortVersion) (\(bundleVersion))"
+    } else {
+        ""
+    }
+
     init() {
         self.homeViewModel = KoinViewModelHelper().homeViewModel
         _listId = State(initialValue: homeViewModel.uiState.currentListId ?? "")
@@ -25,6 +34,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 20) {
+                Spacer()
                 FloatingLabelTextField(label: "Username", text: $username)
                     .disableAutocorrection(true)
                 FloatingLabelTextField(label: "List name", text: $listId)
@@ -47,6 +57,10 @@ struct HomeView: View {
                     Text("Load")
                 }
                 .disabled(!areInputsValid)
+                Spacer()
+                Text(appVersion)
+                    .font(.caption)
+                    .frame(alignment: .bottom)
             }
             .padding(.horizontal, 32)
             .navigationDestination(for: String.self) { listId in

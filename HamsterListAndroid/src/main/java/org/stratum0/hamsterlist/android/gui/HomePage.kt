@@ -2,6 +2,8 @@ package org.stratum0.hamsterlist.android.gui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import org.stratum0.hamsterlist.android.BuildConfig
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
 
@@ -55,62 +58,65 @@ fun HomePage(
     }
     val isInputValid = listId.isNotBlank() && serverHostName.isNotBlank() && username.isNotBlank()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
-    ) {
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            singleLine = true,
-            label = { Text("Username") },
-            keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
-                capitalization = KeyboardCapitalization.None,
-                imeAction = ImeAction.Next
-            ),
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
-        )
-        TextField(
-            value = listId,
-            onValueChange = { listId = it },
-            singleLine = true,
-            label = { Text("HamsterList name") },
-            keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
-                capitalization = KeyboardCapitalization.None,
-                imeAction = ImeAction.Next
-            ),
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
-        )
-        TextField(
-            value = serverHostName,
-            onValueChange = { serverHostName = it },
-            singleLine = true,
-            label = { Text("Server host name") },
-            keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
-                keyboardType = KeyboardType.Uri,
-                capitalization = KeyboardCapitalization.None
-            ),
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
-        )
-        CheckboxWithLabel(
-            label = "Automatically open last list",
-            checked = autoLoadLast,
-            onCheckedChange = { autoLoadLast = it }
-        )
-        Button(
-            onClick = {
-                onLoadHamsterList(username, listId, serverHostName, autoLoadLast)
-            },
-            enabled = isInputValid
+    Box {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
         ) {
-            Text(text = "Load")
+            TextField(
+                value = username,
+                onValueChange = { username = it },
+                singleLine = true,
+                label = { Text("Username") },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = false,
+                    capitalization = KeyboardCapitalization.None,
+                    imeAction = ImeAction.Next
+                ),
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
+            )
+            TextField(
+                value = listId,
+                onValueChange = { listId = it },
+                singleLine = true,
+                label = { Text("HamsterList name") },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = false,
+                    capitalization = KeyboardCapitalization.None,
+                    imeAction = ImeAction.Next
+                ),
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
+            )
+            TextField(
+                value = serverHostName,
+                onValueChange = { serverHostName = it },
+                singleLine = true,
+                label = { Text("Server host name") },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Uri,
+                    capitalization = KeyboardCapitalization.None
+                ),
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
+            )
+            CheckboxWithLabel(
+                label = "Automatically open last list",
+                checked = autoLoadLast,
+                onCheckedChange = { autoLoadLast = it }
+            )
+            Button(
+                onClick = {
+                    onLoadHamsterList(username, listId, serverHostName, autoLoadLast)
+                },
+                enabled = isInputValid
+            ) {
+                Text(text = "Load")
+            }
         }
+        VersionNote()
     }
 }
 
@@ -142,6 +148,17 @@ fun CheckboxWithLabel(
             style = MaterialTheme.typography.subtitle1
         )
     }
+}
+
+@Composable
+private fun BoxScope.VersionNote(modifier: Modifier = Modifier) {
+    Text(
+        text = BuildConfig.VERSION_NAME,
+        style = MaterialTheme.typography.caption,
+        modifier = modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 8.dp)
+    )
 }
 
 @PreviewLightDark
