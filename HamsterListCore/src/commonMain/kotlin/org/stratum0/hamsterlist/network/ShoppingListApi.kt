@@ -19,10 +19,10 @@ import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 import org.stratum0.hamsterlist.business.SettingsKey
 import org.stratum0.hamsterlist.business.UserRepository

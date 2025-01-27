@@ -4,7 +4,8 @@ import java.time.format.DateTimeFormatter
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
 }
 
 val buildTag = System.getenv("GITHUB_RUN_NUMBER") ?: DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())!!
@@ -15,11 +16,11 @@ kotlin {
 
 android {
     namespace = "org.stratum0.hamsterlist.android"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "org.stratum0.hamsterlist.android"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 5
         versionName = "1.1+$buildTag"
     }
@@ -36,7 +37,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {
@@ -61,14 +62,14 @@ android {
 
 detekt {
     buildUponDefaultConfig = true
-    config = files("detekt.yml")
+    config.from("detekt.yml")
 }
 
 dependencies {
     implementation(project(":HamsterListCore"))
 
     // Compose Bill of Materials
-    val composeBom = platform("androidx.compose:compose-bom:2024.04.00")
+    val composeBom = platform("androidx.compose:compose-bom:2025.01.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
@@ -77,6 +78,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.activity:activity-compose:1.10.0")
+    implementation("androidx.navigation:navigation-compose:2.8.6")
 }

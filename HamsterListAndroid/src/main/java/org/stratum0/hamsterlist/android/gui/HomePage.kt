@@ -72,8 +72,8 @@ fun HomePage(
                 singleLine = true,
                 label = { Text("Username") },
                 keyboardOptions = KeyboardOptions(
-                    autoCorrect = false,
                     capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
                     imeAction = ImeAction.Next
                 ),
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
@@ -84,8 +84,8 @@ fun HomePage(
                 singleLine = true,
                 label = { Text("HamsterList name") },
                 keyboardOptions = KeyboardOptions(
-                    autoCorrect = false,
                     capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
                     imeAction = ImeAction.Next
                 ),
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
@@ -96,9 +96,9 @@ fun HomePage(
                 singleLine = true,
                 label = { Text("Server host name") },
                 keyboardOptions = KeyboardOptions(
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Uri,
-                    capitalization = KeyboardCapitalization.None
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Uri
                 ),
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
             )

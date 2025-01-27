@@ -1,17 +1,17 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.9.23"
-    id("com.google.devtools.ksp") version "1.9.23-1.0.20"
-    id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-25"
+    kotlin("plugin.serialization") version "2.1.0"
+    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-38"
 }
 
 object Versions {
-    const val KTOR = "2.3.12"
-    const val COROUTINE = "1.8.1"
-    const val KOIN = "3.5.6"
-    const val LIFECYCLE = "2.8.6"
-    const val MULTIPLATFORM_SETTINGS = "1.2.0"
+    const val KTOR = "3.0.3"
+    const val COROUTINE = "1.10.1"
+    const val KOIN = "4.0.2"
+    const val LIFECYCLE = "2.8.7"
+    const val MULTIPLATFORM_SETTINGS = "1.3.0"
 }
 
 kotlin {
@@ -40,7 +40,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:${Versions.KTOR}")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.KTOR}")
                 implementation("io.ktor:ktor-client-logging:${Versions.KTOR}")
-                implementation("io.github.oshai:kotlin-logging:5.1.4")
+                implementation("io.github.oshai:kotlin-logging:7.0.3")
                 implementation("io.insert-koin:koin-core:${Versions.KOIN}")
                 api("com.russhwolf:multiplatform-settings-no-arg:${Versions.MULTIPLATFORM_SETTINGS}")
                 api("com.russhwolf:multiplatform-settings-coroutines:${Versions.MULTIPLATFORM_SETTINGS}")
@@ -78,9 +78,13 @@ kotlin {
     }
 }
 
+dependencies {
+    add("kspCommonMainMetadata", project(":HamsterListCore"))
+}
+
 android {
     namespace = "org.stratum0.hamsterlist"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 26
     }
