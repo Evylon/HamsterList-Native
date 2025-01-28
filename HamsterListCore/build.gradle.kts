@@ -16,6 +16,7 @@ object Versions {
 
 kotlin {
     androidTarget()
+    jvmToolchain(17)
 
     listOf(
         iosX64(),

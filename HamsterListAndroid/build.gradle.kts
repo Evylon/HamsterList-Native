@@ -9,6 +9,10 @@ plugins {
 
 val buildTag = System.getenv("GITHUB_RUN_NUMBER") ?: DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())!!
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace = "org.stratum0.hamsterlist.android"
     compileSdk = 34
