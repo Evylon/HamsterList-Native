@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import org.stratum0.hamsterlist.koin.viewModelModule
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.LoadingState
