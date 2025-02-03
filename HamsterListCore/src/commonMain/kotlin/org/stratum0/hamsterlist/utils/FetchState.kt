@@ -3,8 +3,8 @@ package org.stratum0.hamsterlist.utils
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import io.ktor.serialization.JsonConvertException
 import io.ktor.utils.io.CancellationException
-import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.io.IOException
 
 sealed class FetchState<out S> {
     data class Success<S>(val value: S) : FetchState<S>()
