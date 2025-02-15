@@ -3,7 +3,9 @@ package org.stratum0.hamsterlist.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -27,13 +29,16 @@ class MainActivity : ComponentActivity() {
     private val settings: ObservableSettings by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val autoLoadLast = settings.getBooleanOrNull(SettingsKey.AUTO_LOAD_LAST.name) ?: false
         val listId = settings.getStringOrNull(SettingsKey.CURRENT_LIST_ID.name).orEmpty()
         setContent {
             HamsterListTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .safeDrawingPadding(),
                     color = MaterialTheme.colors.background
                 ) {
                     NavigationHost(
