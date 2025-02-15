@@ -16,7 +16,7 @@ object Versions {
 
 kotlin {
     androidTarget()
-    jvmToolchain(17)
+    jvmToolchain(21)
 
     listOf(
         iosX64(),
@@ -87,9 +87,5 @@ android {
     compileSdk = 35
     defaultConfig {
         minSdk = 26
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
