@@ -34,7 +34,7 @@ class ShoppingListViewModel(
                 is FetchState.Success -> updateSyncState(networkResult.value)
                 is FetchState.Failure -> _uiState.update { oldState ->
                     networkResult.throwable.printStackTrace()
-                    oldState.copy(loadingState = LoadingState.Error)
+                    oldState.copy(loadingState = LoadingState.Error(networkResult.throwable))
                 }
 
                 is FetchState.Loading -> _uiState.update { oldState ->

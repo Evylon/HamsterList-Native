@@ -2,7 +2,6 @@ package org.stratum0.hamsterlist.utils
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import io.ktor.serialization.JsonConvertException
-import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.io.IOException
 
@@ -17,10 +16,10 @@ suspend fun <T> loadCatching(apiCall: suspend () -> T): FetchState<T> {
     return try {
         FetchState.Success(apiCall())
     } catch (e: IOException) {
-        FetchState.Failure(e)
-    } catch (e: CancellationException) {
-        FetchState.Failure(e)
+        FetchState.Failure(HamsterListConnectionException(e))
     } catch (e: JsonConvertException) {
+        FetchState.Failure(HamsterListDataException(e))
+    } catch (e: Exception) {
         FetchState.Failure(e)
     }
 }
@@ -30,3 +29,13 @@ suspend fun <T> MutableStateFlow<FetchState<T>>.loadCatchingAndEmit(apiCall: sus
     this.emit(FetchState.Loading)
     this.emit(loadCatching(apiCall))
 }
+
+data class HamsterListDataException(
+    override val cause: Throwable?,
+    override val message: String = "Unable to read server response"
+) : Exception(message, cause)
+
+data class HamsterListConnectionException(
+    override val cause: Throwable?,
+    override val message: String = "A problem with the network connection occured",
+) : Exception(message, cause)

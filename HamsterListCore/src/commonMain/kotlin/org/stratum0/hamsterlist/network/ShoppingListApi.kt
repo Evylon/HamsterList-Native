@@ -33,7 +33,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 internal class ShoppingListApi(
     private val userRepository: UserRepository,
-    private val settings: ObservableSettings
+    settings: ObservableSettings
 ) {
     private val baseUrl
         get() = "https://${serverHostName.value.orEmpty()}/api"

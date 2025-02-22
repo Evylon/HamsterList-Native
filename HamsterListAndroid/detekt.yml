@@ -2,6 +2,10 @@ naming:
   FunctionNaming:
     functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
 
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+
 complexity:
   LongParameterList:
     ignoreDefaultParameters: true

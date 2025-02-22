@@ -76,8 +76,11 @@ struct ShoppingListPage: View {
                         addItem: { newItem in
                             viewModel.addItem(newItem: newItem, completion: nil, category: nil)
                         })
-                case LoadingState.Error():
-                    Text("Error")
+                case let error as LoadingState.Error:
+                    ErrorContent(
+                        throwable: error.throwable,
+                        refresh: { viewModel.fetchList() }
+                    )
                 default:
                     Text("Should not happen")
             }
