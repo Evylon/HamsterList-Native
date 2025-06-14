@@ -75,7 +75,8 @@ data class Item(
         amount?.value?.let { value ->
             append(value.prettyFormat())
             amount.unit?.let { append(" ${it.trim()}") }
+            append(" ")
         }
-        append(" ${name.trim()}")
+        append(name.trim())
     }
 }
