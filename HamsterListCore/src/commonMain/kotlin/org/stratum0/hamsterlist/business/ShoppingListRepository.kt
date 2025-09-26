@@ -9,7 +9,10 @@ import org.stratum0.hamsterlist.utils.FetchState
 
 interface ShoppingListRepository {
     @NativeCoroutinesState
-    val syncState: StateFlow<FetchState<SyncResponse>>
+    val shoppingList: StateFlow<SyncResponse?>
+
+    @NativeCoroutinesState
+    val syncState: StateFlow<FetchState<Unit>>
 
     @NativeCoroutines
     suspend fun loadListById(id: String)

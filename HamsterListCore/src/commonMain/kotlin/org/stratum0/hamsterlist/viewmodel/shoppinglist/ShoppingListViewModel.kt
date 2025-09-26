@@ -29,7 +29,7 @@ class ShoppingListViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        shoppingListRepository.syncState.onEach { networkResult ->
+        shoppingListRepository.shoppingList.onEach { networkResult ->
             when (networkResult) {
                 is FetchState.Success -> updateSyncState(networkResult.value)
                 is FetchState.Failure -> _uiState.update { oldState ->

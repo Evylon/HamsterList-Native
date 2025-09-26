@@ -11,16 +11,26 @@ sealed class FetchState<out S> {
     data class Failure(val throwable: Throwable) : FetchState<Nothing>()
 }
 
+sealed class Result<out T> {
+    data class Success<T>(val value: T) : Result<T>()
+    data class Failure(val throwable: Throwable) : Result<Nothing>()
+
+    fun toFetchState(): FetchState<T> = when (this) {
+        is Success -> FetchState.Success(this.value)
+        is Failure -> FetchState.Failure(this.throwable)
+    }
+}
+
 @NativeCoroutines
-suspend fun <T> loadCatching(apiCall: suspend () -> T): FetchState<T> {
+suspend fun <T> loadCatching(apiCall: suspend () -> T): Result<T> {
     return try {
-        FetchState.Success(apiCall())
+        Result.Success(apiCall())
     } catch (e: IOException) {
-        FetchState.Failure(HamsterListConnectionException(e))
+        Result.Failure(HamsterListConnectionException(e))
     } catch (e: JsonConvertException) {
-        FetchState.Failure(HamsterListDataException(e))
+        Result.Failure(HamsterListDataException(e))
     } catch (e: Exception) {
-        FetchState.Failure(e)
+        Result.Failure(e)
     }
 }
 
