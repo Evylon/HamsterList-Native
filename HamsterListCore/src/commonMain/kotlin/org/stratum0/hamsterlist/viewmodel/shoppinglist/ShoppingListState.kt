@@ -35,25 +35,13 @@ data class ShoppingListState(
                 title = "MockList",
                 token = Random.nextInt().toString(),
                 changeId = Random.nextInt().toString(),
-                items = mutableListOf(
+                items = List(15) {
                     Item(
-                        id = "UUID1",
-                        name = "Item1",
-                        category = "cat1"
-                    ),
-                    Item(
-                        id = "UUID2",
-                        name = "Item2",
-                        amount = Amount(1.5, "kg"),
-                        category = "cat2"
-                    ),
-                    Item(
-                        id = "UUID3",
-                        name = "Item3",
-                        amount = Amount(0.05, "hPa"),
-                        category = null
-                    ),
-                )
+                        id = "UUID$it",
+                        name = "Item$it",
+                        category = "cat$it"
+                    )
+                }
             ),
             orders = listOf(Order("", "SomeOrder", listOf("cat1", "cat2"))),
             completions = listOf(
