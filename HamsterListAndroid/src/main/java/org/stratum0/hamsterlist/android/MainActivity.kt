@@ -15,24 +15,23 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.russhwolf.settings.ObservableSettings
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.stratum0.hamsterlist.android.gui.HomePage
 import org.stratum0.hamsterlist.android.gui.shoppinglist.ShoppingListPage
-import org.stratum0.hamsterlist.business.SettingsKey
+import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.viewmodel.home.HomeViewModel
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
 
 class MainActivity : ComponentActivity() {
-    private val settings: ObservableSettings by inject()
+    private val settingsRepository: SettingsRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        val autoLoadLast = settings.getBooleanOrNull(SettingsKey.AUTO_LOAD_LAST.name) ?: false
-        val listId = settings.getStringOrNull(SettingsKey.CURRENT_LIST_ID.name).orEmpty()
+        val autoLoadLast = settingsRepository.autoLoadLast.value
+        val lastListId = settingsRepository.loadedListId.value.orEmpty()
         setContent {
             HamsterListTheme {
                 Surface(
@@ -42,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     NavigationHost(
-                        autoLoadListId = listId.takeIf { autoLoadLast && listId.isNotBlank() }
+                        autoLoadListId = lastListId.takeIf { autoLoadLast && lastListId.isNotBlank() }
                     )
                 }
             }
@@ -59,15 +58,15 @@ fun NavigationHost(autoLoadListId: String? = null) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             HomePage(
                 uiState = uiState,
-                onLoadHamsterList = { username, hamsterListName, serverHostName, autoLoadLast ->
+                onLoadHamsterList = { username, loadedList, autoLoadLast ->
                     viewModel.updateSettings(
                         newName = username,
-                        listId = hamsterListName,
-                        serverHostName = serverHostName,
+                        loadedList = loadedList,
                         autoLoadLast = autoLoadLast
                     )
-                    navController.navigate("shoppingList/$hamsterListName")
+                    navController.navigate("shoppingList/${loadedList.listId}")
                 },
+                onDeleteHamsterList = viewModel::deleteKnownList
             )
         }
         composable("shoppingList/{id}") {

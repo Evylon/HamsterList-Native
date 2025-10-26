@@ -24,22 +24,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
-import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
+import org.stratum0.hamsterlist.models.KnownHamsterList
 
 @Composable
 fun ListCreationSheet(
-    uiState: HomeUiState,
-    onLoadHamsterList: (
-        hamsterListName: String,
-        serverHostName: String,
-    ) -> Unit,
+    lastLoadedServer: String?,
+    onLoadHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var listId by rememberSaveable(uiState.currentListId) {
-        mutableStateOf(uiState.currentListId.orEmpty())
-    }
-    var serverHostName by rememberSaveable(uiState.serverHostName) {
-        mutableStateOf(uiState.serverHostName.orEmpty())
+    var listId by rememberSaveable { mutableStateOf("") }
+    var serverHostName by rememberSaveable {
+        mutableStateOf(lastLoadedServer.orEmpty())
     }
     val isInputValid = listId.isNotBlank() && serverHostName.isNotBlank()
 
@@ -77,7 +72,8 @@ fun ListCreationSheet(
         )
         Button(
             onClick = {
-                onLoadHamsterList(listId, serverHostName)
+                onLoadHamsterList(KnownHamsterList(listId, serverHostName))
+                listId = ""
             },
             enabled = isInputValid
         ) {
@@ -92,8 +88,8 @@ fun ListCreationSheetPreview() {
     HamsterListTheme {
         Surface(color = MaterialTheme.colors.background) {
             ListCreationSheet(
-                uiState = HomeUiState(),
-                onLoadHamsterList = { _, _ -> }
+                lastLoadedServer = "example.com",
+                onLoadHamsterList = {}
             )
         }
     }

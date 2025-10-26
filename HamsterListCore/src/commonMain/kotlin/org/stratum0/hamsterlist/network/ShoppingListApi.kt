@@ -1,8 +1,5 @@
 package org.stratum0.hamsterlist.network
 
-import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.ObservableSettings
-import com.russhwolf.settings.coroutines.getStringOrNullStateFlow
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -22,10 +19,12 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
-import org.stratum0.hamsterlist.business.SettingsKey
-import org.stratum0.hamsterlist.business.UserRepository
+import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.SyncRequest
 import org.stratum0.hamsterlist.models.SyncResponse
@@ -33,16 +32,21 @@ import org.stratum0.hamsterlist.utils.isDebug
 import kotlin.coroutines.cancellation.CancellationException
 
 internal class ShoppingListApi(
-    private val userRepository: UserRepository,
-    settings: ObservableSettings
+    private val settingsRepository: SettingsRepository
 ) {
     private val baseUrl
         get() = "https://${serverHostName.value.orEmpty()}/api"
 
-    @OptIn(ExperimentalSettingsApi::class)
-    private val serverHostName = settings.getStringOrNullStateFlow(
-        coroutineScope = CoroutineScope(Dispatchers.IO),
-        key = SettingsKey.SERVER_HOST_NAME.name
+    // TODO create a new API instance for each server, to support background sync with multiple servers
+    private val serverHostName = combine(
+        settingsRepository.loadedListId,
+        settingsRepository.knownHamsterLists
+    ) { loadedListId, knownHamsterLists ->
+        knownHamsterLists.find { it.listId == loadedListId }?.serverHostName
+    }.stateIn(
+        scope = CoroutineScope(Dispatchers.IO),
+        started = SharingStarted.Eagerly,
+        initialValue = null
     )
 
     private val httpClient = HttpClient {
@@ -72,7 +76,7 @@ internal class ShoppingListApi(
                 parameters.append("includeInResponse", AdditionalData.categories.toString())
                 parameters.append("includeInResponse", AdditionalData.completions.toString())
             }
-            userRepository.username.value?.let { username ->
+            settingsRepository.username.value?.let { username ->
                 headers {
                     append("X-ShoppingList-Username", username)
                 }
@@ -86,7 +90,7 @@ internal class ShoppingListApi(
             url { appendPathSegments(listId, "sync") }
             contentType(ContentType.Application.Json)
             setBody(syncRequest)
-            userRepository.username.value?.let { username ->
+            settingsRepository.username.value?.let { username ->
                 headers {
                     append("X-ShoppingList-Username", username)
                 }

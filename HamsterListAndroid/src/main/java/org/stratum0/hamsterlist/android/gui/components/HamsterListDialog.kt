@@ -11,10 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import org.stratum0.hamsterlist.android.HamsterListTheme
 
-enum class DialogState(val text: String, val confirmText: String) {
-    UsernameMissing("A username is required for loading a list.", "Dismiss")
-}
-
 @Composable
 fun HamsterListDialog(
     dialogState: DialogState,

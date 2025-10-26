@@ -40,6 +40,7 @@ import org.stratum0.hamsterlist.android.gui.components.HamsterListDialog
 import org.stratum0.hamsterlist.android.gui.listchooser.ListChooser
 import org.stratum0.hamsterlist.android.gui.listchooser.ListChooserState
 import org.stratum0.hamsterlist.android.gui.listchooser.ListCreationSheet
+import org.stratum0.hamsterlist.models.KnownHamsterList
 import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
 
 @Composable
@@ -47,19 +48,20 @@ fun HomePage(
     uiState: HomeUiState,
     onLoadHamsterList: (
         username: String,
-        hamsterListName: String,
-        serverHostName: String,
+        loadedList: KnownHamsterList,
         autoLoadLast: Boolean
     ) -> Unit,
+    onDeleteHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var autoLoadLast by rememberSaveable(uiState.autoLoadLast) {
-        mutableStateOf(uiState.autoLoadLast ?: false)
+        mutableStateOf(uiState.autoLoadLast)
     }
     var username by rememberSaveable(uiState.username) {
         mutableStateOf(uiState.username.orEmpty())
     }
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
         HamsterListDialog(
@@ -68,9 +70,10 @@ fun HomePage(
         )
     }
     // TODO switch to event based callback pattern
-    val loadHamsterList: (String, String) -> Unit = { hamsterListName, serverHostName ->
+    val loadHamsterList: (KnownHamsterList) -> Unit = { loadedList ->
         if (username.isNotBlank()) {
-            onLoadHamsterList(username, hamsterListName, serverHostName, autoLoadLast)
+            coroutineScope.launch { sheetState.hide() }
+            onLoadHamsterList(username, loadedList, autoLoadLast)
         } else {
             showDialog = true
         }
@@ -78,22 +81,23 @@ fun HomePage(
     ModalBottomSheetLayout(
         sheetContent = {
             ListCreationSheet(
-                uiState = uiState,
+                lastLoadedServer = uiState.lastLoadedServer,
                 onLoadHamsterList = loadHamsterList
             )
         },
         modifier = modifier,
         sheetState = sheetState,
+        sheetBackgroundColor = MaterialTheme.colors.background
     ) {
         HomePageContent(
-            username,
-            autoLoadLast,
-            sheetState,
+            username = username,
+            autoLoadLast = autoLoadLast,
+            knownHamsterLists = uiState.knownHamsterLists,
+            sheetState = sheetState,
             onUsernameChange = { username = it },
             onAutoLoadLastChange = { autoLoadLast = it },
-            onLoadHamsterList = { hamsterListName ->
-                loadHamsterList(hamsterListName, uiState.serverHostName.orEmpty())
-            }
+            onLoadHamsterList = loadHamsterList,
+            onDeleteHamsterList = onDeleteHamsterList
         )
     }
 }
@@ -138,13 +142,16 @@ private fun HomePageHeader(
 }
 
 @Composable
+@Suppress("LongParameterList") // TODO improve UIStates, switch to events
 private fun HomePageContent(
     username: String,
     autoLoadLast: Boolean,
+    knownHamsterLists: List<KnownHamsterList>,
     sheetState: ModalBottomSheetState,
     onUsernameChange: (String) -> Unit,
     onAutoLoadLastChange: (Boolean) -> Unit,
-    onLoadHamsterList: (hamsterListName: String) -> Unit,
+    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    onDeleteHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -162,8 +169,9 @@ private fun HomePageContent(
             onAutoLoadLastChange = onAutoLoadLastChange
         )
         ListChooser(
-            uiState = ListChooserState(listOf("Test", "Foo")), // TODO load saved lists
+            uiState = ListChooserState(knownHamsterLists),
             onLoadList = onLoadHamsterList,
+            onDeleteList = onDeleteHamsterList,
             openListCreationSheet = {
                 coroutineScope.launch { sheetState.show() }
             },
@@ -190,7 +198,8 @@ fun NewHomePagePreview() {
         Surface(color = MaterialTheme.colors.background) {
             HomePage(
                 uiState = HomeUiState(),
-                onLoadHamsterList = { _, _, _, _ -> }
+                onLoadHamsterList = { _, _, _ -> },
+                onDeleteHamsterList = {}
             )
         }
     }

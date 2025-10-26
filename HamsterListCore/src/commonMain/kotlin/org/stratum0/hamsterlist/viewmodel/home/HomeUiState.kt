@@ -1,8 +1,12 @@
 package org.stratum0.hamsterlist.viewmodel.home
 
+import org.stratum0.hamsterlist.models.KnownHamsterList
+
 data class HomeUiState(
     val username: String? = null,
-    val currentListId: String? = null,
-    val serverHostName: String? = null,
-    val autoLoadLast: Boolean? = false
-)
+    val knownHamsterLists: List<KnownHamsterList> = emptyList(),
+    val loadedListId: String? = null,
+    val autoLoadLast: Boolean = false
+) {
+    val lastLoadedServer = knownHamsterLists.find { it.listId == loadedListId }?.serverHostName
+}
