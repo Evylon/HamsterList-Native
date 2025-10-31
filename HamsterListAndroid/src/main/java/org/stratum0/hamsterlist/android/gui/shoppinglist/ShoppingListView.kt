@@ -1,6 +1,8 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,11 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -20,6 +23,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -32,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -47,7 +52,6 @@ import org.stratum0.hamsterlist.viewmodel.LoadingState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ItemState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Suppress("LongParameterList", "LongMethod")
 fun ShoppingListView(
@@ -62,10 +66,6 @@ fun ShoppingListView(
     isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.loadingState is LoadingState.Loading,
-        onRefresh = refresh
-    )
     var categoryChooserItem by remember {
         mutableStateOf<Item?>(null)
     }
@@ -98,43 +98,18 @@ fun ShoppingListView(
             }
         }
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
-            LazyColumn(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.Top),
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .pullRefresh(pullRefreshState)
-                    .animateContentSize()
-            ) {
-                items(
-                    uiState.shoppingList.items,
-                    key = { it.id }
-                ) { item ->
-                    ShoppingListItem(
-                        itemState = ItemState(
-                            item = item,
-                            categoryDefinition = ItemState.getCategory(item, uiState.categories)
-                        ),
-                        isEnabled = isEnabled,
-                        deleteItem = deleteItem,
-                        showCategoryChooser = {
-                            categoryChooserItem = item
-                        },
-                        changeItem = { itemText -> changeItem(item, itemText) },
-                    )
-                }
-            }
-            PullRefreshIndicator(
-                refreshing = false,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                scale = true
+            ShoppingItemsList(
+                uiState = uiState,
+                isEnabled = isEnabled,
+                deleteItem = deleteItem,
+                changeItem = changeItem,
+                showCategoryChooser = { item ->
+                    categoryChooserItem = item
+                },
+                refresh = refresh
             )
-            ShadowGradient()
             if (uiState.addItemInput.isNotBlank()) {
                 CompletionsChooser(
                     uiState = uiState.completionChooserState,
@@ -155,6 +130,67 @@ fun ShoppingListView(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ShoppingItemsList(
+    uiState: ShoppingListState,
+    isEnabled: Boolean,
+    deleteItem: (Item) -> Unit,
+    changeItem: (oldItem: Item, newItem: String) -> Unit,
+    showCategoryChooser: (item: Item) -> Unit,
+    refresh: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.loadingState is LoadingState.Loading,
+        onRefresh = refresh
+    )
+    val listState = rememberLazyListState()
+    Box(modifier = modifier
+        .fillMaxSize()
+    ) {
+        if (listState.canScrollBackward) {
+            ShadowGradient(isTop = true)
+        }
+        LazyColumn(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
+            state = listState,
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .pullRefresh(pullRefreshState)
+                .animateContentSize()
+        ) {
+            items(
+                uiState.shoppingList.items,
+                key = { it.id }
+            ) { item ->
+                ShoppingListItem(
+                    itemState = ItemState(
+                        item = item,
+                        categoryDefinition = ItemState.getCategory(item, uiState.categories)
+                    ),
+                    isEnabled = isEnabled,
+                    deleteItem = deleteItem,
+                    showCategoryChooser = {
+                        showCategoryChooser(item)
+                    },
+                    changeItem = { itemText -> changeItem(item, itemText) },
+                )
+            }
+        }
+        PullRefreshIndicator(
+            refreshing = false,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+            scale = true
+        )
+        if (listState.canScrollForward) {
+            ShadowGradient(isTop = false)
+        }
+    }
+}
+
 @Composable
 private fun AddItemView(
     addItemInput: String,
@@ -164,45 +200,53 @@ private fun AddItemView(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = 4.dp
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(8.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = addItemInput,
-                placeholder = { Text(stringResource(R.string.hamsterList_newItem_placeholder)) },
-                onValueChange = onItemInputChange,
-                singleLine = true,
-                keyboardActions = KeyboardActions(onDone = {
-                    if (addItemInput.isNotBlank()) {
-                        addItem(addItemInput, null, null)
-                        onItemInputChange("")
-                        focusManager.clearFocus()
-                    }
-                }),
-                enabled = isEnabled,
-                modifier = Modifier.weight(1f),
-                shape = RectangleShape
-            )
-            IconButton(
-                enabled = isEnabled,
-                onClick = {
-                    // TODO display category suggestion and allow user to choose category
-                    if (addItemInput.isNotBlank()) {
-                        addItem(addItemInput, null, null)
-                        onItemInputChange("")
-                        focusManager.clearFocus()
-                    }
+        TextField(
+            value = addItemInput,
+            placeholder = {
+                Text(stringResource(R.string.hamsterList_newItem_placeholder))
+                          },
+            onValueChange = onItemInputChange,
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                if (addItemInput.isNotBlank()) {
+                    addItem(addItemInput, null, null)
+                    onItemInputChange("")
+                    focusManager.clearFocus()
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.hamsterList_newItem_icon),
-                    tint = MaterialTheme.colors.primary
-                )
+            }),
+            enabled = isEnabled,
+            modifier = Modifier.weight(1f).border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(24.dp)),
+            shape = RoundedCornerShape(24.dp),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            trailingIcon = {
+                IconButton(
+                    enabled = isEnabled,
+                    onClick = {
+                        // TODO display category suggestion and allow user to choose category
+                        if (addItemInput.isNotBlank()) {
+                            addItem(addItemInput, null, null)
+                            onItemInputChange("")
+                            focusManager.clearFocus()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.hamsterList_newItem_icon),
+                        tint = MaterialTheme.colors.primary,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
             }
-        }
+        )
     }
 }
 
@@ -220,7 +264,8 @@ fun ShoppingListViewPreview() {
                 selectOrder = {},
                 isEnabled = true,
                 addItem = { _, _, _ -> },
-                refresh = {}
+                refresh = {},
+                modifier = Modifier.padding(vertical = 20.dp)
             )
         }
     }

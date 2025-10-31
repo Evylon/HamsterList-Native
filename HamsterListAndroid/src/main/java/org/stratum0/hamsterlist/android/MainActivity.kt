@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,14 +42,11 @@ class MainActivity : ComponentActivity() {
         val hasSharedContent = handleTextSharing(intent)
         setContent {
             HamsterListTheme {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .safeDrawingPadding(),
-                ) {
+                Surface(modifier = Modifier.fillMaxSize()) {
                     NavigationHost(
                         autoLoadListId = lastListId.takeIf { autoLoadLast && lastListId.isNotBlank() },
-                        hasSharedContentIntent = hasSharedContent
+                        hasSharedContentIntent = hasSharedContent,
+                        modifier = Modifier.safeDrawingPadding()
                     )
                 }
             }
@@ -71,7 +67,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationHost(
     autoLoadListId: String?,
-    hasSharedContentIntent: Boolean
+    hasSharedContentIntent: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
     var hasSharedContent by remember { mutableStateOf(hasSharedContentIntent) }
@@ -80,7 +77,11 @@ fun NavigationHost(
             navController.navigate("shoppingList/$autoLoadListId")
         }
     }
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(
+        navController = navController,
+        startDestination = "home",
+        modifier = modifier
+    ) {
         composable("home") {
             val viewModel: HomeViewModel = koinViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()

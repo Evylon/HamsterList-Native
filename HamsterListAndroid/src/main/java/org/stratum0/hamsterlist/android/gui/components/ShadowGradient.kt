@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoxScope.ShadowGradient(isTop: Boolean = false) {
+fun BoxScope.ShadowGradient(isTop: Boolean) {
     Box(
         modifier = Modifier
             .align(

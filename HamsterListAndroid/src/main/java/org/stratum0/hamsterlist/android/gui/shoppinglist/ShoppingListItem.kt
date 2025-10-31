@@ -58,9 +58,9 @@ fun ShoppingListItem(
             .fillMaxWidth()
             .background(
                 color = HamsterListTheme.colors.shapeBackgroundColor,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             )
-            .padding(1.dp)
+            .padding(4.dp)
     ) {
         CategoryCircle(
             uiState = itemState.categoryCircleState,
@@ -173,7 +173,8 @@ fun ShoppingListItemRowPreview(@PreviewParameter(ItemPreviewProvider::class) ite
                 isEnabled = true,
                 deleteItem = {},
                 changeItem = { _ -> },
-                showCategoryChooser = {}
+                showCategoryChooser = {},
+                modifier = Modifier.padding(8.dp)
             )
         }
     }

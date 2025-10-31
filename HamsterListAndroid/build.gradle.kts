@@ -16,11 +16,11 @@ kotlin {
 
 android {
     namespace = "org.stratum0.hamsterlist.android"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "org.stratum0.hamsterlist.android"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 10
         versionName = "1.1+$versionCode"
     }
