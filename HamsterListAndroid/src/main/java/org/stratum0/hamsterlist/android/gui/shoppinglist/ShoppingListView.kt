@@ -31,10 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.android.gui.components.ShadowGradient
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
@@ -163,7 +165,7 @@ private fun AddItemView(
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = addItemInput,
-                placeholder = { Text("New Item") },
+                placeholder = { Text(stringResource(R.string.hamsterList_newItem_placeholder)) },
                 onValueChange = onItemInputChange,
                 singleLine = true,
                 keyboardActions = KeyboardActions(onDone = {
@@ -189,7 +191,7 @@ private fun AddItemView(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add item",
+                    contentDescription = stringResource(R.string.hamsterList_newItem_icon),
                     tint = MaterialTheme.colors.primary
                 )
             }

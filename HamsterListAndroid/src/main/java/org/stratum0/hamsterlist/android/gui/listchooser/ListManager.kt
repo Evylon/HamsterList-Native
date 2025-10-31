@@ -30,10 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.KnownHamsterList
 
 @Composable
@@ -52,14 +54,14 @@ fun ListManager(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Your lists",
+                text = stringResource(R.string.listManager_headline),
                 style = MaterialTheme.typography.h5
             )
             AnimatedVisibility(uiState.hamsterLists.isNotEmpty()) {
                 IconButton(onClick = { isEditing = !isEditing }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit Hamsterlists",
+                        contentDescription = stringResource(R.string.listManager_edit_description),
                         modifier = Modifier.size(30.dp),
                         tint = if (isEditing) {
                             MaterialTheme.colors.error
@@ -94,7 +96,7 @@ fun ListManager(
                 .padding(vertical = 4.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text("Add new list")
+            Text(stringResource(R.string.listManager_addNew_button))
         }
     }
 }
@@ -137,7 +139,7 @@ private fun EmptyListsState(modifier: Modifier) {
             .padding(16.dp)
     ) {
         Text(
-            "No Lists added yet.",
+            text = stringResource(R.string.listManager_empty_label),
             textAlign = TextAlign.Center
         )
     }
@@ -166,7 +168,7 @@ private fun HamsterListItem(
         AnimatedVisibility(isEditing) {
             Icon(
                 imageVector = Icons.Filled.Delete,
-                contentDescription = "Delete",
+                contentDescription = stringResource(R.string.listManager_delete_icon),
                 modifier = Modifier.padding(end = 8.dp),
                 tint = MaterialTheme.colors.error
             )

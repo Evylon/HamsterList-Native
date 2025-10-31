@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -34,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ItemState
 
@@ -73,7 +75,7 @@ fun ShoppingListItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete item",
+                    contentDescription = stringResource(R.string.hamsterList_deleteItem_icon),
                     tint = MaterialTheme.colors.error
                 )
             }

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HamsterList</string>
+    <string name="app_name" translatable="false">HamsterList</string>
+    <string name="hamsterList_logo_description" translatable="false">Hamsterlist</string>
+    <string name="homepage_username_placeholder">Username</string>
+    <string name="homepage_openLast_checkbox">Always open last list</string>
+    <string name="hamsterList_newItem_placeholder">New Item</string>
+    <string name="hamsterList_newItem_icon">Add item</string>
+    <string name="hamsterList_deleteItem_icon">Delete item</string>
+    <string name="orders_dropdown_placeholder">No order selected</string>
+    <string name="orders_dropdown_icon">Choose Order</string>
+    <string name="listManager_headline">Your Hamsterlists</string>
+    <string name="listManager_edit_description">Edit Hamsterlists</string>
+    <string name="listManager_addNew_button">Add Hamsterlist</string>
+    <string name="listManager_empty_label">No Hamsterlists found.</string>
+    <string name="listManager_delete_icon">Delete</string>
+    <string name="listCreation_listName_placeholder">HamsterList name</string>
+    <string name="listCreation_server_placeholder">Server URL</string>
+    <string name="listCreation_load_button">Load</string>
 </resources>

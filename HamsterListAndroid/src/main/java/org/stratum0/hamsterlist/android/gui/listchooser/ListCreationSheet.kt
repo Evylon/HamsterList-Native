@@ -18,12 +18,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.KnownHamsterList
 
 @Composable
@@ -50,7 +52,7 @@ fun ListCreationSheet(
             value = listId,
             onValueChange = { listId = it },
             singleLine = true,
-            label = { Text("HamsterList name") },
+            label = { Text(stringResource(R.string.listCreation_listName_placeholder)) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
@@ -62,7 +64,7 @@ fun ListCreationSheet(
             value = serverHostName,
             onValueChange = { serverHostName = it },
             singleLine = true,
-            label = { Text("Server host name") },
+            label = { Text(stringResource(R.string.listCreation_server_placeholder)) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
@@ -77,7 +79,7 @@ fun ListCreationSheet(
             },
             enabled = isInputValid
         ) {
-            Text(text = "Load")
+            Text(text = stringResource(R.string.listCreation_load_button))
         }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -149,7 +150,7 @@ private fun HomePageHeader(
     ) {
         Image(
             painter = painterResource(R.drawable.hamster),
-            contentDescription = "Hamsterlist",
+            contentDescription = stringResource(R.string.hamsterList_logo_description),
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .size(140.dp)
@@ -158,7 +159,7 @@ private fun HomePageHeader(
             value = username,
             onValueChange = onUsernameChange,
             singleLine = true,
-            label = { Text("Username") },
+            label = { Text(stringResource(R.string.homepage_username_placeholder)) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
@@ -167,7 +168,7 @@ private fun HomePageHeader(
             colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
         )
         CheckboxWithLabel(
-            label = "Automatically open last list",
+            label = stringResource(R.string.homepage_openLast_checkbox),
             checked = autoLoadLast,
             onCheckedChange = onAutoLoadLastChange
         )

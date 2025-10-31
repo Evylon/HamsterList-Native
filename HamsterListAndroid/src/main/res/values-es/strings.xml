@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="homepage_username_placeholder">Nombre de usuario</string>
+    <string name="homepage_openLast_checkbox">Siempre abrir la última lista</string>
+    <string name="hamsterList_newItem_placeholder">Articulo nuevo</string>
+    <string name="hamsterList_newItem_icon">Agregar articulo</string>
+    <string name="hamsterList_deleteItem_icon">Borrar articulo</string>
+    <string name="orders_dropdown_placeholder">Nignuna clasificación seleccionada</string>
+    <string name="orders_dropdown_icon">Seleccionar clasificación</string>
+    <string name="listManager_headline">Tus Hámsterlistas</string>
+    <string name="listManager_edit_description">Editar Hámsterlistas</string>
+    <string name="listManager_addNew_button">Agregar una Hámsterlista</string>
+    <string name="listManager_empty_label">No encontró Hámsterlistas</string>
+    <string name="listManager_delete_icon">Borrar</string>
+    <string name="listCreation_listName_placeholder">Nombre del Hámsterlist</string>
+    <string name="listCreation_server_placeholder">URL del servidor</string>
+    <string name="listCreation_load_button">Arbrir</string>
+</resources>

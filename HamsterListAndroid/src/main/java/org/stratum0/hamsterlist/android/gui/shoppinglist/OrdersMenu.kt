@@ -23,9 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 
@@ -42,15 +44,19 @@ fun OrdersMenu(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colors.background)
-                .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(6.dp))
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.primary,
+                    shape = RoundedCornerShape(6.dp)
+                )
                 .padding(8.dp)
                 .clickable(enabled = orders.isNotEmpty()) { isExpanded = true }
         ) {
-            Text(text = selectedOrder?.name ?: "Create Order")
+            Text(text = selectedOrder?.name ?: stringResource(R.string.orders_dropdown_placeholder))
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Open Order selection"
+                contentDescription = stringResource(R.string.orders_dropdown_icon)
             )
         }
         DropdownMenu(
