@@ -46,16 +46,17 @@ fun CompletionsChooser(
                                     .padding(start = 8.dp)
                                     .fillMaxWidth()
                                     .clickable {
-                                        addItem(itemState.completion.name, itemState.completion.category)
+                                        addItem(
+                                            itemState.completion.name,
+                                            itemState.completion.category
+                                        )
                                     }
                             )
                         }
-                        if (uiState.filteredCompletions.last() != itemState) {
-                            Divider(
-                                color = MaterialTheme.colors.primary,
-                                thickness = 1.dp
-                            )
-                        }
+                        Divider(
+                            color = MaterialTheme.colors.primary,
+                            thickness = 1.dp
+                        )
                     }
                 }
             }

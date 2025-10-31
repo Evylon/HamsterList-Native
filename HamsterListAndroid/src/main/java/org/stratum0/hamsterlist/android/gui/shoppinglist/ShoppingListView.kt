@@ -1,5 +1,6 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,7 +77,7 @@ fun ShoppingListView(
     }
     Column(modifier = modifier.fillMaxSize()) {
         Surface(color = MaterialTheme.colors.background) {
-            Column {
+            Column(modifier = Modifier.animateContentSize()) {
                 Text(
                     text = uiState.shoppingList.title,
                     textAlign = TextAlign.Center,
@@ -84,12 +85,14 @@ fun ShoppingListView(
                         .fillMaxWidth()
                         .padding(vertical = 12.dp)
                 )
-                OrdersMenu(
-                    orders = uiState.orders,
-                    selectedOrder = uiState.selectedOrder,
-                    selectOrder = selectOrder,
-                    modifier = Modifier.padding(12.dp)
-                )
+                if (uiState.orders.isNotEmpty()) {
+                    OrdersMenu(
+                        orders = uiState.orders,
+                        selectedOrder = uiState.selectedOrder,
+                        selectOrder = selectOrder,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
             }
         }
         Box(
@@ -103,6 +106,7 @@ fun ShoppingListView(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .pullRefresh(pullRefreshState)
+                    .animateContentSize()
             ) {
                 items(
                     uiState.shoppingList.items,
@@ -128,6 +132,7 @@ fun ShoppingListView(
                 modifier = Modifier.align(Alignment.TopCenter),
                 scale = true
             )
+            ShadowGradient()
             if (uiState.addItemInput.isNotBlank()) {
                 CompletionsChooser(
                     uiState = uiState.completionChooserState,
@@ -138,7 +143,6 @@ fun ShoppingListView(
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
             }
-            ShadowGradient()
         }
         AddItemView(
             addItemInput = uiState.addItemInput,
