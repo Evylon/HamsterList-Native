@@ -7,6 +7,8 @@ import org.stratum0.hamsterlist.viewmodel.home.HomeViewModel
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
 
 actual val viewModelModule = module {
-    viewModel { parameters -> ShoppingListViewModel(parameters.get(), get()) }
+    viewModel { parameters ->
+        ShoppingListViewModel(parameters.get(), get())
+    }
     viewModelOf(::HomeViewModel)
 }

@@ -17,6 +17,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,15 +38,17 @@ import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.android.gui.components.CheckboxWithLabel
 import org.stratum0.hamsterlist.android.gui.components.DialogState
 import org.stratum0.hamsterlist.android.gui.components.HamsterListDialog
-import org.stratum0.hamsterlist.android.gui.listchooser.ListChooser
 import org.stratum0.hamsterlist.android.gui.listchooser.ListChooserState
 import org.stratum0.hamsterlist.android.gui.listchooser.ListCreationSheet
+import org.stratum0.hamsterlist.android.gui.listchooser.ListManager
+import org.stratum0.hamsterlist.android.gui.listchooser.ListSharingSheet
 import org.stratum0.hamsterlist.models.KnownHamsterList
 import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
 
 @Composable
 fun HomePage(
     uiState: HomeUiState,
+    hasSharedContent: Boolean,
     onLoadHamsterList: (
         username: String,
         loadedList: KnownHamsterList,
@@ -78,9 +81,16 @@ fun HomePage(
             showDialog = true
         }
     }
+    LaunchedEffect(hasSharedContent) {
+        if (hasSharedContent) {
+            coroutineScope.launch { sheetState.show() }
+        }
+    }
     ModalBottomSheetLayout(
         sheetContent = {
-            ListCreationSheet(
+            HomePageSheetContent(
+                hasSharedContent = hasSharedContent,
+                knownHamsterLists = uiState.knownHamsterLists,
                 lastLoadedServer = uiState.lastLoadedServer,
                 onLoadHamsterList = loadHamsterList
             )
@@ -98,6 +108,29 @@ fun HomePage(
             onAutoLoadLastChange = { autoLoadLast = it },
             onLoadHamsterList = loadHamsterList,
             onDeleteHamsterList = onDeleteHamsterList
+        )
+    }
+}
+
+@Composable
+private fun HomePageSheetContent(
+    hasSharedContent: Boolean,
+    knownHamsterLists: List<KnownHamsterList>,
+    lastLoadedServer: String?,
+    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (hasSharedContent) {
+        ListSharingSheet(
+            knownHamsterLists = knownHamsterLists,
+            onLoadHamsterList = onLoadHamsterList,
+            modifier = modifier
+        )
+    } else {
+        ListCreationSheet(
+            lastLoadedServer = lastLoadedServer,
+            onLoadHamsterList = onLoadHamsterList,
+            modifier = modifier
         )
     }
 }
@@ -168,7 +201,7 @@ private fun HomePageContent(
             onUsernameChange = onUsernameChange,
             onAutoLoadLastChange = onAutoLoadLastChange
         )
-        ListChooser(
+        ListManager(
             uiState = ListChooserState(knownHamsterLists),
             onLoadList = onLoadHamsterList,
             onDeleteList = onDeleteHamsterList,
@@ -198,6 +231,7 @@ fun NewHomePagePreview() {
         Surface(color = MaterialTheme.colors.background) {
             HomePage(
                 uiState = HomeUiState(),
+                hasSharedContent = false,
                 onLoadHamsterList = { _, _, _ -> },
                 onDeleteHamsterList = {}
             )

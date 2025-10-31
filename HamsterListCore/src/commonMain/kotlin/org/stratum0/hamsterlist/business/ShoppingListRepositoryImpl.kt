@@ -1,7 +1,9 @@
 package org.stratum0.hamsterlist.business
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.SyncRequest
@@ -18,6 +20,9 @@ internal class ShoppingListRepositoryImpl(
     // Flows
     private val _syncStateFlow = MutableStateFlow<FetchState<SyncResponse>>(FetchState.Loading)
     override val syncState = _syncStateFlow.asStateFlow()
+
+    private val _sharedItemsFlow = MutableStateFlow<List<String>?>(null)
+    override val sharedItems: StateFlow<List<String>?> = _sharedItemsFlow.asStateFlow()
 
     // Service Calls
     override suspend fun loadListById(id: String) {
@@ -44,6 +49,21 @@ internal class ShoppingListRepositoryImpl(
         }
     }
 
+    override suspend fun handleSharedItems(listId: String, items: List<Item>) {
+        _sharedItemsFlow.update { null }
+        trySync(listId) { previousList ->
+            previousList.copy(
+                items = previousList.items.plus(items)
+            )
+        }
+    }
+
+    override fun enqueueSharedContent(content: String) {
+        _sharedItemsFlow.update {
+            content.split("\n")
+        }
+    }
+
     override suspend fun changeItem(listId: String, item: Item) {
         trySync(listId) { previousList ->
             previousList.copy(
@@ -52,6 +72,10 @@ internal class ShoppingListRepositoryImpl(
                 }
             )
         }
+    }
+
+    override fun clear() {
+        _syncStateFlow.update { FetchState.Loading }
     }
 
     // TODO separate last saved sync state from current ShoppingList

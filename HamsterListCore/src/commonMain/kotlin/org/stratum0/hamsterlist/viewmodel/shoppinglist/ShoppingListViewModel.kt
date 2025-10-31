@@ -3,6 +3,7 @@ package org.stratum0.hamsterlist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -29,6 +30,7 @@ class ShoppingListViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
+        shoppingListRepository.clear()
         shoppingListRepository.syncState.onEach { networkResult ->
             when (networkResult) {
                 is FetchState.Success -> updateSyncState(networkResult.value)
@@ -40,6 +42,11 @@ class ShoppingListViewModel(
                 is FetchState.Loading -> _uiState.update { oldState ->
                     oldState.copy(loadingState = LoadingState.Loading)
                 }
+            }
+        }.launchIn(scope)
+        shoppingListRepository.sharedItems.onEach { sharedItems ->
+            if (sharedItems != null) {
+                handleSharedItems(sharedItems)
             }
         }.launchIn(scope)
     }
@@ -113,6 +120,22 @@ class ShoppingListViewModel(
                 ),
                 selectedOrder = order
             )
+        }
+    }
+
+    private suspend fun handleSharedItems(shareItems: List<String>) {
+        // wait for list to load
+        val uiState = uiState.first { it.loadingState !is LoadingState.Loading }
+        if (uiState.loadingState is LoadingState.Done) {
+            shoppingListRepository.handleSharedItems(
+                listId = uiState.shoppingList.id,
+                items = shareItems.map {
+                    Item.parse(it, uiState.categories)
+                }
+            )
+        } else {
+            // TODO show dialog
+            println("Error loading the list")
         }
     }
 

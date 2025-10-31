@@ -37,7 +37,7 @@ import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.models.KnownHamsterList
 
 @Composable
-fun ListChooser(
+fun ListManager(
     uiState: ListChooserState,
     onLoadList: (KnownHamsterList) -> Unit,
     onDeleteList: (KnownHamsterList) -> Unit,
@@ -74,26 +74,15 @@ fun ListChooser(
             if (isEmpty) {
                 EmptyListsState(modifier = modifier)
             } else {
-                LazyColumn(
-                    modifier
-                        .background(
-                            color = MaterialTheme.colors.surface,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .animateContentSize()
-                ) {
-                    items(uiState.hamsterLists) { hamsterList ->
-                        HamsterListItem(
-                            hamsterList = hamsterList,
-                            isEditing = isEditing,
-                            onLoadList = onLoadList,
-                            onDeleteList = onDeleteList
-                        )
-                        if (uiState.hamsterLists.last() != hamsterList) {
-                            Divider()
-                        }
-                    }
-                }
+                ListChooser(
+                    hamsterLists = uiState.hamsterLists,
+                    isEditing = isEditing,
+                    onClick = if (isEditing) {
+                        onDeleteList
+                    } else {
+                        onLoadList
+                    },
+                )
             }
         }
         Button(
@@ -106,6 +95,34 @@ fun ListChooser(
                 .align(Alignment.CenterHorizontally)
         ) {
             Text("Add new list")
+        }
+    }
+}
+
+@Composable
+fun ListChooser(
+    hamsterLists: List<KnownHamsterList>,
+    isEditing: Boolean,
+    onClick: (KnownHamsterList) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier
+            .background(
+                color = MaterialTheme.colors.surface,
+                shape = MaterialTheme.shapes.medium
+            )
+            .animateContentSize()
+    ) {
+        items(hamsterLists) { hamsterList ->
+            HamsterListItem(
+                hamsterList = hamsterList,
+                isEditing = isEditing,
+                onClick = onClick
+            )
+            if (hamsterLists.last() != hamsterList) {
+                Divider()
+            }
         }
     }
 }
@@ -130,21 +147,14 @@ private fun EmptyListsState(modifier: Modifier) {
 private fun HamsterListItem(
     hamsterList: KnownHamsterList,
     isEditing: Boolean,
-    onLoadList: (KnownHamsterList) -> Unit,
-    onDeleteList: (KnownHamsterList) -> Unit,
+    onClick: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                if (isEditing) {
-                    onDeleteList(hamsterList)
-                } else {
-                    onLoadList(hamsterList)
-                }
-            }
+            .clickable { onClick(hamsterList) }
             .padding(4.dp)
     ) {
         Text(
@@ -169,7 +179,7 @@ private fun HamsterListItem(
 fun ListChooserPreview() {
     HamsterListTheme {
         Surface(color = MaterialTheme.colors.background) {
-            ListChooser(
+            ListManager(
                 uiState = ListChooserState(
                     listOf(
                         KnownHamsterList(
@@ -195,7 +205,7 @@ fun ListChooserPreview() {
 fun EmptyListPreview() {
     HamsterListTheme {
         Surface(color = MaterialTheme.colors.background) {
-            ListChooser(
+            ListManager(
                 uiState = ListChooserState(listOf()),
                 onLoadList = {},
                 onDeleteList = {},

@@ -11,6 +11,8 @@ interface ShoppingListRepository {
     @NativeCoroutinesState
     val syncState: StateFlow<FetchState<SyncResponse>>
 
+    val sharedItems: StateFlow<List<String>?>
+
     @NativeCoroutines
     suspend fun loadListById(id: String)
 
@@ -21,5 +23,12 @@ interface ShoppingListRepository {
     suspend fun addItem(listId: String, item: Item)
 
     @NativeCoroutines
+    suspend fun handleSharedItems(listId: String, items: List<Item>)
+
+    fun enqueueSharedContent(content: String)
+
+    @NativeCoroutines
     suspend fun changeItem(listId: String, item: Item)
+
+    fun clear()
 }
