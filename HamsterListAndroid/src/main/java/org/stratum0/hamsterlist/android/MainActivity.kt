@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .safeDrawingPadding(),
-                    color = MaterialTheme.colors.background
                 ) {
                     NavigationHost(
                         autoLoadListId = lastListId.takeIf { autoLoadLast && lastListId.isNotBlank() },

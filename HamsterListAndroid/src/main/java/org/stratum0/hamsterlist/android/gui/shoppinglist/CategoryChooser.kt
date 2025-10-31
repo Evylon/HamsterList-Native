@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,28 +38,36 @@ fun CategoryChooser(
             Column(
                 modifier = Modifier
                     .heightIn(max = MAX_DIALOG_HEIGHT.dp)
-                    .verticalScroll(verticalScrollState)
                     .padding(8.dp)
             ) {
                 Text(
                     text = "Choose a category",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 4.dp)
                 )
-                categories.forEach { category ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                changeCategoryForItem(selectedItem, category.id)
-                                dismiss()
-                            }
-                    ) {
-                        CategoryCircle(uiState = CategoryCircleState(category))
-                        Text(
-                            text = category.name,
-                            modifier = Modifier.padding(horizontal = 6.dp)
-                        )
+                Column(
+                    modifier = Modifier.verticalScroll(verticalScrollState)
+                ) {
+                    categories.forEach { category ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    changeCategoryForItem(selectedItem, category.id)
+                                    dismiss()
+                                }
+                        ) {
+                            CategoryCircle(uiState = CategoryCircleState(category))
+                            Text(
+                                text = category.name,
+                                modifier = Modifier.padding(horizontal = 6.dp)
+                            )
+                        }
+                        if (categories.last() != category) {
+                            Divider()
+                        }
                     }
                 }
             }
@@ -69,18 +79,20 @@ fun CategoryChooser(
 @Composable
 fun CategoryChooserPreview() {
     HamsterListTheme {
-        CategoryChooser(
-            selectedItem = Item(
-                id = "UUID1",
-                name = "Item1",
-                category = "cat1"
-            ),
-            categories = listOf(
-                CategoryDefinition.mockLight,
-                CategoryDefinition.mockDark
-            ),
-            changeCategoryForItem = { _, _ -> },
-            dismiss = {}
-        )
+        Surface {
+            CategoryChooser(
+                selectedItem = Item(
+                    id = "UUID1",
+                    name = "Item1",
+                    category = "cat1"
+                ),
+                categories = listOf(
+                    CategoryDefinition.mockLight,
+                    CategoryDefinition.mockDark
+                ),
+                changeCategoryForItem = { _, _ -> },
+                dismiss = {}
+            )
+        }
     }
 }

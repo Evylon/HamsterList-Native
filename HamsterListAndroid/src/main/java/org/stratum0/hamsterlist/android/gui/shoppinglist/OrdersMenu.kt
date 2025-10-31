@@ -1,6 +1,5 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -43,7 +42,6 @@ fun OrdersMenu(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = MaterialTheme.colors.background)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colors.primary,

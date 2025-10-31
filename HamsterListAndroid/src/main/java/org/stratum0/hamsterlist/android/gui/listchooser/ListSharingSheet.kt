@@ -1,5 +1,6 @@
 package org.stratum0.hamsterlist.android.gui.listchooser
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -19,7 +20,11 @@ fun ListSharingSheet(
     onLoadHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(
+        modifier = modifier
+            .background(MaterialTheme.colors.surface)
+            .padding(16.dp)
+    ) {
         Text(
             "Share items to list",
             style = MaterialTheme.typography.h5,
@@ -39,7 +44,7 @@ fun ListSharingSheet(
 @Composable
 private fun ListSharingSheetPreview() {
     HamsterListTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface {
             ListSharingSheet(
                 knownHamsterLists = List(size = 4) {
                     KnownHamsterList("List$it", "")

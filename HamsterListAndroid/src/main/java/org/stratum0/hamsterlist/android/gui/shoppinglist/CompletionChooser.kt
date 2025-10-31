@@ -40,7 +40,7 @@ fun CompletionsChooser(
                             CategoryCircle(uiState = itemState.categoryState)
                             Text(
                                 text = itemState.completion.name,
-                                color = HamsterListTheme.colors.primaryTextColor,
+                                color = MaterialTheme.colors.onSurface,
                                 style = MaterialTheme.typography.body1,
                                 modifier = Modifier
                                     .padding(start = 8.dp)

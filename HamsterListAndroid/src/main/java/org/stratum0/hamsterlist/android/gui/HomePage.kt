@@ -14,7 +14,6 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -98,7 +97,6 @@ fun HomePage(
         },
         modifier = modifier,
         sheetState = sheetState,
-        sheetBackgroundColor = MaterialTheme.colors.background
     ) {
         HomePageContent(
             username = username,
@@ -165,7 +163,6 @@ private fun HomePageHeader(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
         )
         CheckboxWithLabel(
             label = stringResource(R.string.homepage_openLast_checkbox),
@@ -225,13 +222,18 @@ private fun VersionNote(modifier: Modifier = Modifier) {
     )
 }
 
+@Suppress("MagicNumber")
 @PreviewLightDark
 @Composable
 fun NewHomePagePreview() {
     HamsterListTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface {
             HomePage(
-                uiState = HomeUiState(),
+                uiState = HomeUiState(
+                    knownHamsterLists = List(3) {
+                        KnownHamsterList("List $it", "")
+                    }
+                ),
                 hasSharedContent = false,
                 onLoadHamsterList = { _, _, _ -> },
                 onDeleteHamsterList = {}

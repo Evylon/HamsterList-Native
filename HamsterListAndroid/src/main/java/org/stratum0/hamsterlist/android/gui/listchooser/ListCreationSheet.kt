@@ -1,5 +1,6 @@
 package org.stratum0.hamsterlist.android.gui.listchooser
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,7 +11,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +43,7 @@ fun ListCreationSheet(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colors.surface)
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
@@ -58,7 +59,6 @@ fun ListCreationSheet(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Next
             ),
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
         )
         TextField(
             value = serverHostName,
@@ -70,7 +70,6 @@ fun ListCreationSheet(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Uri
             ),
-            colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
         )
         Button(
             onClick = {
@@ -88,7 +87,7 @@ fun ListCreationSheet(
 @Composable
 fun ListCreationSheetPreview() {
     HamsterListTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface {
             ListCreationSheet(
                 lastLoadedServer = "example.com",
                 onLoadHamsterList = {}

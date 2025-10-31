@@ -1,15 +1,18 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
@@ -49,36 +52,37 @@ fun ShoppingListItem(
     showCategoryChooser: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = 4.dp
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = HamsterListTheme.colors.shapeBackgroundColor,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(1.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(2.dp)
-        ) {
-            CategoryCircle(
-                uiState = itemState.categoryCircleState,
-                modifier = Modifier.clickable {
-                    showCategoryChooser()
-                }
-            )
-            ItemTextField(
-                itemText = itemState.item.toString(),
-                isEnabled = isEnabled,
-                changeItem = changeItem,
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(
-                enabled = isEnabled,
-                onClick = { deleteItem(itemState.item) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.hamsterList_deleteItem_icon),
-                    tint = MaterialTheme.colors.error
-                )
+        CategoryCircle(
+            uiState = itemState.categoryCircleState,
+            modifier = Modifier.clickable {
+                showCategoryChooser()
             }
+        )
+        ItemTextField(
+            itemText = itemState.item.toString(),
+            isEnabled = isEnabled,
+            changeItem = changeItem,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(
+            enabled = isEnabled,
+            onClick = { deleteItem(itemState.item) }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(R.string.hamsterList_deleteItem_icon),
+                tint = MaterialTheme.colors.error
+            )
         }
     }
 }
@@ -155,19 +159,22 @@ private fun ItemTextField(
 }
 
 private class ItemPreviewProvider : PreviewParameterProvider<ItemState> {
-    override val values: Sequence<ItemState> = sequenceOf(ItemState.mockItemLight, ItemState.mockItemDark)
+    override val values: Sequence<ItemState> =
+        sequenceOf(ItemState.mockItemLight, ItemState.mockItemDark)
 }
 
 @PreviewLightDark
 @Composable
 fun ShoppingListItemRowPreview(@PreviewParameter(ItemPreviewProvider::class) itemState: ItemState) {
     HamsterListTheme {
-        ShoppingListItem(
-            itemState = itemState,
-            isEnabled = true,
-            deleteItem = {},
-            changeItem = { _ -> },
-            showCategoryChooser = {}
-        )
+        Surface {
+            ShoppingListItem(
+                itemState = itemState,
+                isEnabled = true,
+                deleteItem = {},
+                changeItem = { _ -> },
+                showCategoryChooser = {}
+            )
+        }
     }
 }

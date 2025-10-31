@@ -14,15 +14,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoxScope.ShadowGradient() {
+fun BoxScope.ShadowGradient(isTop: Boolean = false) {
     Box(
         modifier = Modifier
-            .align(Alignment.BottomCenter)
+            .align(
+                if (isTop) {
+                    Alignment.TopCenter
+                } else {
+                    Alignment.BottomCenter
+                }
+            )
             .height(12.dp)
             .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, MaterialTheme.colors.background)
+                    colors = if (isTop) {
+                        listOf(MaterialTheme.colors.background, Color.Transparent)
+                    } else {
+                        listOf(Color.Transparent, MaterialTheme.colors.background)
+                    }
                 )
             )
     )

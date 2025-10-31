@@ -8,6 +8,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxColors
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,10 +56,12 @@ fun CheckboxWithLabel(
 fun CheckboxWithLabelPreview() {
     var isChecked by remember { mutableStateOf(false) }
     HamsterListTheme {
-        CheckboxWithLabel(
-            label = "Hit me",
-            checked = isChecked,
-            onCheckedChange = { isChecked = it }
-        )
+        Surface {
+            CheckboxWithLabel(
+                label = "Hit me",
+                checked = isChecked,
+                onCheckedChange = { isChecked = it }
+            )
+        }
     }
 }

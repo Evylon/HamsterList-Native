@@ -50,7 +50,7 @@ fun ErrorContent(
 @Composable
 fun ShoppingListPagePreview() {
     HamsterListTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface {
             ErrorContent(
                 throwable = IOException("A problem with the network connection occured"),
                 refresh = {}

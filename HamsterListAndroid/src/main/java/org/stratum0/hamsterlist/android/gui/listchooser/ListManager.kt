@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,7 +52,9 @@ fun ListManager(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
         ) {
             Text(
                 text = stringResource(R.string.listManager_headline),
@@ -111,7 +114,7 @@ fun ListChooser(
     LazyColumn(
         modifier
             .background(
-                color = MaterialTheme.colors.surface,
+                color = HamsterListTheme.colors.shapeBackgroundColor,
                 shape = MaterialTheme.shapes.medium
             )
             .animateContentSize()
@@ -180,7 +183,7 @@ private fun HamsterListItem(
 @Composable
 fun ListChooserPreview() {
     HamsterListTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface {
             ListManager(
                 uiState = ListChooserState(
                     listOf(
@@ -206,7 +209,7 @@ fun ListChooserPreview() {
 @Composable
 fun EmptyListPreview() {
     HamsterListTheme {
-        Surface(color = MaterialTheme.colors.background) {
+        Surface {
             ListManager(
                 uiState = ListChooserState(listOf()),
                 onLoadList = {},
