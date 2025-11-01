@@ -15,4 +15,5 @@
     <string name="listCreation_listName_placeholder">Hamsterlist Name</string>
     <string name="listCreation_server_placeholder">Server URL</string>
     <string name="listCreation_load_button">Laden</string>
+    <string name="navigation_back_button">Zurück</string>
 </resources>

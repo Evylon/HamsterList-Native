@@ -106,7 +106,10 @@ fun NavigationHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             ShoppingListPage(
                 uiState = uiState,
-                onAction = viewModel::handleAction
+                onAction = viewModel::handleAction,
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }

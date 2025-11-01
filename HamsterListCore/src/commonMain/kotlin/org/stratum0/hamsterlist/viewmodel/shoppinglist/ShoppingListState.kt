@@ -1,6 +1,5 @@
 package org.stratum0.hamsterlist.viewmodel.shoppinglist
 
-import org.stratum0.hamsterlist.models.Amount
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
@@ -24,7 +23,8 @@ data class ShoppingListState(
     val addItemInput: String = "",
     val loadingState: LoadingState = LoadingState.Loading,
 ) {
-    val completionChooserState: CompletionChooserState = CompletionChooserState(addItemInput, completions, categories)
+    val completionChooserState: CompletionChooserState =
+        CompletionChooserState(addItemInput, completions, categories)
 
     companion object {
         // used on iOS
