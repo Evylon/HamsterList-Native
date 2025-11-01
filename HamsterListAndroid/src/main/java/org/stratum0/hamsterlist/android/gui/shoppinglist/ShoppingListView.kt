@@ -123,6 +123,7 @@ fun ShoppingListView(
         }
         AddItemView(
             addItemInput = uiState.addItemInput,
+            completions = uiState.completions,
             addItem = addItem,
             onItemInputChange = updateAddItemInput,
             isEnabled = isEnabled,
