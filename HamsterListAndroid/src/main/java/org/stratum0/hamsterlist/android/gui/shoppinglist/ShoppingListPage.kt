@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import org.stratum0.hamsterlist.android.gui.components.ErrorContent
+import org.stratum0.hamsterlist.android.gui.components.HamsterListLoadingIndicator
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
@@ -60,7 +61,7 @@ fun ShoppingListPage(
                             .takeIf { isLoading } ?: Modifier
                     )
                     if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        HamsterListLoadingIndicator(modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }
