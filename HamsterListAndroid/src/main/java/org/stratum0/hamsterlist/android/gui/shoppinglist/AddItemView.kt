@@ -99,7 +99,13 @@ private class AddItemInputParameters : PreviewParameterProvider<String> {
         "",
         "Short input",
         "Very long input but line breaks are for losers",
-        "Sorry about the last one.\nLine breaks are really useful.\nAlso did you notice that the\nlast preview is missing a dot at\nthe end of the sentence.",
+        buildString {
+            appendLine("Sorry about the last one.")
+            appendLine("Line breaks are really useful.")
+            appendLine("Also did you notice that the")
+            appendLine("last preview is missing a dot at")
+            append("the end of the sentence.")
+        },
     )
 }
 

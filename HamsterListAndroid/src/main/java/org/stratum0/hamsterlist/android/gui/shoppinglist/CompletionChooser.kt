@@ -27,7 +27,7 @@ fun CompletionsChooser(
 ) {
     if (uiState.filteredCompletions.isNotEmpty()) {
         Card(modifier = modifier.fillMaxWidth()) {
-            LazyColumn {
+            LazyColumn(reverseLayout = true) {
                 items(
                     items = uiState.filteredCompletions,
                     key = { it.completion.name }
