@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -68,8 +69,17 @@ fun ListCreationSheet(
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
-                keyboardType = KeyboardType.Uri
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (isInputValid) {
+                        onLoadHamsterList(KnownHamsterList(listId, serverHostName))
+                        listId = ""
+                    }
+                }
+            )
         )
         Button(
             onClick = {

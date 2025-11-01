@@ -161,7 +161,7 @@ private fun HomePageHeader(
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
         )
         CheckboxWithLabel(
