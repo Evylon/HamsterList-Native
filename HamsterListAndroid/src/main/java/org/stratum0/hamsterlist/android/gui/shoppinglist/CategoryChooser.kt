@@ -22,6 +22,7 @@ import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.CategoryCircleState
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 
 private const val MAX_DIALOG_HEIGHT = 600
 
@@ -29,7 +30,7 @@ private const val MAX_DIALOG_HEIGHT = 600
 fun CategoryChooser(
     selectedItem: Item,
     categories: List<CategoryDefinition>,
-    changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     dismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = dismiss) {
@@ -55,7 +56,12 @@ fun CategoryChooser(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    changeCategoryForItem(selectedItem, category.id)
+                                    onAction(
+                                        ShoppingListAction.ChangeCategoryForItem(
+                                            item = selectedItem,
+                                            newCategoryId = category.id
+                                        )
+                                    )
                                     dismiss()
                                 }
                         ) {
@@ -90,7 +96,7 @@ fun CategoryChooserPreview() {
                     CategoryDefinition.mockLight,
                     CategoryDefinition.mockDark
                 ),
-                changeCategoryForItem = { _, _ -> },
+                onAction = {},
                 dismiss = {}
             )
         }

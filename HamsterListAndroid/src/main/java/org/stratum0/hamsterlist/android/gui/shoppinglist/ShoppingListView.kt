@@ -30,25 +30,16 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.gui.components.ShadowGradient
-import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
-import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ItemState
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 
 @Composable
-@Suppress("LongParameterList", "LongMethod")
 fun ShoppingListView(
     uiState: ShoppingListState,
-    updateAddItemInput: (String) -> Unit,
-    deleteItem: (Item) -> Unit,
-    changeItem: (oldItem: Item, newItem: String) -> Unit,
-    changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
-    addItem: (itemInput: String) -> Unit,
-    addItemByCompletion: (completion: CompletionItem) -> Unit,
-    selectOrder: (Order) -> Unit,
-    refresh: () -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -59,7 +50,7 @@ fun ShoppingListView(
         CategoryChooser(
             selectedItem = selectedItem,
             categories = uiState.categories,
-            changeCategoryForItem = changeCategoryForItem,
+            onAction = onAction,
             dismiss = { categoryChooserItem = null }
         )
     }
@@ -77,7 +68,7 @@ fun ShoppingListView(
                     OrdersMenu(
                         orders = uiState.orders,
                         selectedOrder = uiState.selectedOrder,
-                        selectOrder = selectOrder,
+                        onAction = onAction,
                         modifier = Modifier.padding(12.dp)
                     )
                 }
@@ -89,19 +80,17 @@ fun ShoppingListView(
             ShoppingItemsList(
                 uiState = uiState,
                 isEnabled = isEnabled,
-                deleteItem = deleteItem,
-                changeItem = changeItem,
+                onAction = onAction,
                 showCategoryChooser = { item ->
                     categoryChooserItem = item
                 },
-                refresh = refresh
             )
             if (uiState.addItemInput.isNotBlank()) {
                 CompletionsChooser(
                     uiState = uiState.completionChooserState,
                     addItemByCompletion = { completion ->
-                        addItemByCompletion(completion)
-                        updateAddItemInput("")
+                        onAction(ShoppingListAction.AddItemByCompletion(completion))
+                        onAction(ShoppingListAction.UpdateAddItemInput(""))
                     },
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
@@ -109,29 +98,25 @@ fun ShoppingListView(
         }
         AddItemView(
             addItemInput = uiState.addItemInput,
-            addItem = addItem,
-            onItemInputChange = updateAddItemInput,
+            onAction = onAction,
             isEnabled = isEnabled,
             modifier = Modifier.padding(8.dp)
         )
     }
 }
 
-@Suppress("LongParameterList") // TODO switch to event channel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ShoppingItemsList(
     uiState: ShoppingListState,
     isEnabled: Boolean,
-    deleteItem: (Item) -> Unit,
-    changeItem: (oldItem: Item, newItem: String) -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     showCategoryChooser: (item: Item) -> Unit,
-    refresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.loadingState is LoadingState.Loading,
-        onRefresh = refresh
+        onRefresh = { onAction(ShoppingListAction.FetchList) }
     )
     val listState = rememberLazyListState()
     Box(modifier = modifier.fillMaxSize()) {
@@ -157,11 +142,10 @@ private fun ShoppingItemsList(
                         categoryDefinition = ItemState.getCategory(item, uiState.categories)
                     ),
                     isEnabled = isEnabled,
-                    deleteItem = deleteItem,
+                    onAction = onAction,
                     showCategoryChooser = {
                         showCategoryChooser(item)
                     },
-                    changeItem = { itemText -> changeItem(item, itemText) }
                 )
                 if (uiState.shoppingList.items.last() == item) {
                     Spacer(modifier.height(8.dp))
@@ -187,15 +171,8 @@ fun ShoppingListViewPreview() {
         Surface {
             ShoppingListView(
                 uiState = ShoppingListState.mock,
-                updateAddItemInput = {},
-                deleteItem = {},
-                changeItem = { _, _ -> },
-                changeCategoryForItem = { _, _ -> },
-                selectOrder = {},
+                onAction = {},
                 isEnabled = true,
-                addItem = {},
-                addItemByCompletion = {},
-                refresh = {},
                 modifier = Modifier.padding(vertical = 20.dp)
             )
         }

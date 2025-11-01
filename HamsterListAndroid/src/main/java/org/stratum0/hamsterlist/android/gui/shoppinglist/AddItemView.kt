@@ -27,20 +27,20 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 
 @Composable
 fun AddItemView(
     addItemInput: String,
-    addItem: (itemInput: String) -> Unit,
-    onItemInputChange: (input: String) -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     val addItemWithCompletion = {
         if (addItemInput.isNotBlank()) {
-            addItem(addItemInput)
-            onItemInputChange("")
+            onAction(ShoppingListAction.AddItem(addItemInput))
+            onAction(ShoppingListAction.UpdateAddItemInput(""))
             focusManager.clearFocus()
         }
     }
@@ -53,7 +53,9 @@ fun AddItemView(
             placeholder = {
                 Text(stringResource(R.string.hamsterList_newItem_placeholder))
             },
-            onValueChange = onItemInputChange,
+            onValueChange = { value ->
+                onAction(ShoppingListAction.UpdateAddItemInput(value))
+            },
             keyboardActions = KeyboardActions(onDone = {
                 addItemWithCompletion()
             }),
@@ -115,8 +117,7 @@ fun AddItemViewPreview(
         Surface {
             AddItemView(
                 addItemInput = input,
-                addItem = {},
-                onItemInputChange = {},
+                onAction = {},
                 isEnabled = true,
                 modifier = Modifier.padding(8.dp)
             )

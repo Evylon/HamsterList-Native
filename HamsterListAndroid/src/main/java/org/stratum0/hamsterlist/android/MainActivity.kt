@@ -106,14 +106,7 @@ fun NavigationHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             ShoppingListPage(
                 uiState = uiState,
-                updateAddItemInput = viewModel::updateAddItemInput,
-                fetchList = viewModel::fetchList,
-                deleteItem = viewModel::deleteItem,
-                addItem = viewModel::addItem,
-                addItemByCompletion = viewModel::addItemByCompletion,
-                changeItem = viewModel::changeItem,
-                changeCategoryForItem = viewModel::changeCategoryForItem,
-                selectOrder = viewModel::selectOrder
+                onAction = viewModel::handleAction
             )
         }
     }

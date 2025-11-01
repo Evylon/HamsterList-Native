@@ -53,19 +53,40 @@ class ShoppingListViewModel(
         }.launchIn(scope)
     }
 
-    fun updateAddItemInput(newInput: String) {
+    fun handleAction(action: ShoppingListAction) {
+        when (action) {
+            is ShoppingListAction.AddItem -> addItem(action.input)
+            is ShoppingListAction.AddItemByCompletion -> addItemByCompletion(action.completionItem)
+            is ShoppingListAction.ChangeCategoryForItem -> changeCategoryForItem(
+                item = action.item,
+                newCategoryId = action.newCategoryId
+            )
+
+            is ShoppingListAction.ChangeItem -> changeItem(
+                oldItem = action.oldItem,
+                newItem = action.newItem
+            )
+
+            is ShoppingListAction.DeleteItem -> deleteItem(action.item)
+            is ShoppingListAction.FetchList -> fetchList()
+            is ShoppingListAction.SelectOrder -> selectOrder(action.order)
+            is ShoppingListAction.UpdateAddItemInput -> updateAddItemInput(action.input)
+        }
+    }
+
+    private fun updateAddItemInput(newInput: String) {
         _uiState.update { oldState ->
             oldState.copy(addItemInput = newInput)
         }
     }
 
-    fun fetchList() {
+    private fun fetchList() {
         scope.launch {
             shoppingListRepository.loadListById(hamsterListId)
         }
     }
 
-    fun deleteItem(item: Item) {
+    private fun deleteItem(item: Item) {
         scope.launch {
             shoppingListRepository.deleteItem(
                 listId = _uiState.value.shoppingList.id,
@@ -74,7 +95,7 @@ class ShoppingListViewModel(
         }
     }
 
-    fun addItem(userInput: String) {
+    private fun addItem(userInput: String) {
         val parsedItems = userInput
             .split("\n")
             .map { input ->
@@ -92,7 +113,7 @@ class ShoppingListViewModel(
         }
     }
 
-    fun addItemByCompletion(completion: CompletionItem) {
+    private fun addItemByCompletion(completion: CompletionItem) {
         scope.launch {
             shoppingListRepository.addItem(
                 listId = _uiState.value.shoppingList.id,
@@ -101,7 +122,7 @@ class ShoppingListViewModel(
         }
     }
 
-    fun changeItem(oldItem: Item, newItem: String) {
+    private fun changeItem(oldItem: Item, newItem: String) {
         scope.launch {
             // filter out newlines like webclient
             val newItemFiltered = newItem.replace("\n", " ")
@@ -117,7 +138,7 @@ class ShoppingListViewModel(
         }
     }
 
-    fun changeCategoryForItem(item: Item, newCategoryId: String) {
+    private fun changeCategoryForItem(item: Item, newCategoryId: String) {
         scope.launch {
             shoppingListRepository.changeItem(
                 listId = _uiState.value.shoppingList.id,
@@ -126,7 +147,7 @@ class ShoppingListViewModel(
         }
     }
 
-    fun selectOrder(order: Order) {
+    private fun selectOrder(order: Order) {
         _uiState.update { oldState ->
             oldState.copy(
                 shoppingList = oldState.shoppingList.copy(

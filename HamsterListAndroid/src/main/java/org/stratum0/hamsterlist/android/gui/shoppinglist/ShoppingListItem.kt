@@ -35,16 +35,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
-import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ItemState
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 
 @Suppress("LongParameterList")
 @Composable
 fun ShoppingListItem(
     itemState: ItemState,
     isEnabled: Boolean,
-    deleteItem: (Item) -> Unit,
-    changeItem: (itemText: String) -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     showCategoryChooser: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -93,7 +92,7 @@ fun ShoppingListItem(
         trailingIcon = {
             IconButton(
                 enabled = isEnabled,
-                onClick = { deleteItem(itemState.item) }
+                onClick = { onAction(ShoppingListAction.DeleteItem(itemState.item)) }
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -108,7 +107,12 @@ fun ShoppingListItem(
             .onFocusChanged { focusState ->
                 if (!focusState.isFocused && wasInFocus) {
                     if (hasModified) {
-                        changeItem(itemTextFieldValue.text)
+                        onAction(
+                            ShoppingListAction.ChangeItem(
+                                oldItem = itemState.item,
+                                newItem = itemTextFieldValue.text
+                            )
+                        )
                         hasModified = false
                     }
                 }
@@ -130,8 +134,7 @@ fun ShoppingListItemRowPreview(@PreviewParameter(ItemPreviewProvider::class) ite
             ShoppingListItem(
                 itemState = itemState,
                 isEnabled = true,
-                deleteItem = {},
-                changeItem = { _ -> },
+                onAction = {},
                 showCategoryChooser = {},
                 modifier = Modifier.padding(8.dp)
             )

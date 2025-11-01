@@ -18,25 +18,18 @@ import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.LoadingState
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 
 const val ALPHA_LOADING = 0.5f
 
-@Suppress("LongParameterList")
 @Composable
 fun ShoppingListPage(
     uiState: ShoppingListState,
-    updateAddItemInput: (String) -> Unit,
-    fetchList: () -> Unit,
-    deleteItem: (Item) -> Unit,
-    addItem: (input: String) -> Unit,
-    addItemByCompletion: (CompletionItem) -> Unit,
-    changeItem: (oldItem: Item, newItem: String) -> Unit,
-    changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
-    selectOrder: (Order) -> Unit,
+    onAction: (ShoppingListAction) -> Unit
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
-        fetchList()
+        onAction(ShoppingListAction.FetchList)
     }
 
     Crossfade(
@@ -47,7 +40,7 @@ fun ShoppingListPage(
             is LoadingState.Error -> {
                 ErrorContent(
                     throwable = state.throwable,
-                    refresh = fetchList,
+                    refresh = { onAction(ShoppingListAction.FetchList) },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(12.dp)
@@ -60,14 +53,7 @@ fun ShoppingListPage(
                 Box(modifier = Modifier.fillMaxSize()) {
                     ShoppingListView(
                         uiState = uiState,
-                        updateAddItemInput = updateAddItemInput,
-                        deleteItem = deleteItem,
-                        changeItem = changeItem,
-                        changeCategoryForItem = changeCategoryForItem,
-                        addItem = addItem,
-                        addItemByCompletion = addItemByCompletion,
-                        selectOrder = selectOrder,
-                        refresh = fetchList,
+                        onAction = onAction,
                         isEnabled = !isLoading,
                         modifier = Modifier
                             .alpha(ALPHA_LOADING)

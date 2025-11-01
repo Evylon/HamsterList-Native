@@ -28,13 +28,14 @@ import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.Order
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
 
 @Composable
 fun OrdersMenu(
     orders: List<Order>,
     selectedOrder: Order?,
-    selectOrder: (Order) -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -63,7 +64,7 @@ fun OrdersMenu(
         ) {
             orders.forEach { order ->
                 DropdownMenuItem(onClick = {
-                    selectOrder(order)
+                    onAction(ShoppingListAction.SelectOrder(order))
                     isExpanded = false
                 }) {
                     Text(text = order.name)
@@ -81,7 +82,7 @@ fun OrdersMenuPreview() {
             OrdersMenu(
                 orders = ShoppingListState.mock.orders,
                 selectedOrder = ShoppingListState.mock.selectedOrder,
-                selectOrder = {}
+                onAction = {}
             )
         }
     }
