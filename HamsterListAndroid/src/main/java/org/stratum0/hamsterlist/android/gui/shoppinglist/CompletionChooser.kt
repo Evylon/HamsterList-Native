@@ -17,12 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
+import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.CompletionChooserState
 
 @Composable
 fun CompletionsChooser(
     uiState: CompletionChooserState,
-    addItem: (completion: String, category: String?) -> Unit,
+    addItemByCompletion: (completion: CompletionItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.filteredCompletions.isNotEmpty()) {
@@ -46,10 +47,7 @@ fun CompletionsChooser(
                                     .padding(start = 8.dp)
                                     .fillMaxWidth()
                                     .clickable {
-                                        addItem(
-                                            itemState.completion.name,
-                                            itemState.completion.category
-                                        )
+                                        addItemByCompletion(itemState.completion)
                                     }
                             )
                         }
@@ -68,6 +66,9 @@ fun CompletionsChooser(
 @Composable
 private fun CompletionsChooserPreview() {
     HamsterListTheme {
-        CompletionsChooser(uiState = CompletionChooserState.mock, addItem = { _, _ -> })
+        CompletionsChooser(
+            uiState = CompletionChooserState.mock,
+            addItemByCompletion = {}
+        )
     }
 }

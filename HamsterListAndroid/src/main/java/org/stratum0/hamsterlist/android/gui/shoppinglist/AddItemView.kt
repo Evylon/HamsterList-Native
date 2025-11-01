@@ -27,13 +27,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
-import org.stratum0.hamsterlist.models.CompletionItem
 
 @Composable
 fun AddItemView(
     addItemInput: String,
-    completions: List<CompletionItem>,
-    addItem: (item: String, completion: String?, category: String?) -> Unit,
+    addItem: (itemInput: String) -> Unit,
     onItemInputChange: (input: String) -> Unit,
     isEnabled: Boolean,
     modifier: Modifier = Modifier
@@ -41,8 +39,7 @@ fun AddItemView(
     val focusManager = LocalFocusManager.current
     val addItemWithCompletion = {
         if (addItemInput.isNotBlank()) {
-            val completion = completions.find { it.name == addItemInput }
-            addItem(addItemInput, completion?.name, completion?.category)
+            addItem(addItemInput)
             onItemInputChange("")
             focusManager.clearFocus()
         }
@@ -118,8 +115,7 @@ fun AddItemViewPreview(
         Surface {
             AddItemView(
                 addItemInput = input,
-                completions = emptyList(),
-                addItem = { _, _, _ -> },
+                addItem = {},
                 onItemInputChange = {},
                 isEnabled = true,
                 modifier = Modifier.padding(8.dp)

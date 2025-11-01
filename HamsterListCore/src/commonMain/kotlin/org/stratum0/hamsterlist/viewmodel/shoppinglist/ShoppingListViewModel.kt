@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.models.CategoryDefinition
+import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.models.SyncResponse
@@ -72,23 +74,29 @@ class ShoppingListViewModel(
         }
     }
 
-    fun addItem(newItem: String, completion: String?, category: String?) {
-        val parsedItems = newItem
+    fun addItem(userInput: String) {
+        val parsedItems = userInput
             .split("\n")
-            .map {
-                Item.parse(
-                    stringRepresentation = newItem,
-                    category = category,
-                    categories = uiState.value.categories
-                ).let {
-                    // change name to completion if it is present
-                    if (completion != null) it.copy(name = completion) else it
-                }
+            .map { input ->
+                parseItemAndCheckCompletions(
+                    input,
+                    uiState.value.categories,
+                    uiState.value.completions
+                )
             }
         scope.launch {
             shoppingListRepository.addItems(
                 listId = _uiState.value.shoppingList.id,
                 items = parsedItems
+            )
+        }
+    }
+
+    fun addItemByCompletion(completion: CompletionItem) {
+        scope.launch {
+            shoppingListRepository.addItem(
+                listId = _uiState.value.shoppingList.id,
+                item = completion.toItem()
             )
         }
     }
@@ -135,13 +143,39 @@ class ShoppingListViewModel(
         if (uiState.loadingState is LoadingState.Done) {
             shoppingListRepository.handleSharedItems(
                 listId = uiState.shoppingList.id,
-                items = shareItems.map {
-                    Item.parse(it, uiState.categories)
+                items = shareItems.map { sharedItem ->
+                    parseItemAndCheckCompletions(
+                        input = sharedItem,
+                        categories = uiState.categories,
+                        completions = uiState.completions
+                    )
                 }
             )
         } else {
             // TODO show dialog
             println("Error loading the list")
+        }
+    }
+
+    private fun parseItemAndCheckCompletions(
+        input: String,
+        categories: List<CategoryDefinition>,
+        completions: List<CompletionItem>
+    ): Item {
+        val parsedItem = Item.parse(
+            stringRepresentation = input,
+            categories = categories
+        )
+        val completion = completions.find { it.name == parsedItem.name }
+        return if (completion != null) {
+            parsedItem.copy(
+                id = parsedItem.id,
+                name = completion.name,
+                amount = parsedItem.amount,
+                category = parsedItem.category ?: completion.category
+            )
+        } else {
+            parsedItem
         }
     }
 

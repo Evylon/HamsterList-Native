@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import org.stratum0.hamsterlist.android.gui.components.ErrorContent
+import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.viewmodel.LoadingState
@@ -28,10 +29,11 @@ fun ShoppingListPage(
     updateAddItemInput: (String) -> Unit,
     fetchList: () -> Unit,
     deleteItem: (Item) -> Unit,
-    addItem: (item: String, completion: String?, category: String?) -> Unit,
+    addItem: (input: String) -> Unit,
+    addItemByCompletion: (CompletionItem) -> Unit,
     changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
-    selectOrder: (Order) -> Unit
+    selectOrder: (Order) -> Unit,
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
         fetchList()
@@ -46,7 +48,9 @@ fun ShoppingListPage(
                 ErrorContent(
                     throwable = state.throwable,
                     refresh = fetchList,
-                    modifier = Modifier.fillMaxSize().padding(12.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
                 )
             }
 
@@ -61,6 +65,7 @@ fun ShoppingListPage(
                         changeItem = changeItem,
                         changeCategoryForItem = changeCategoryForItem,
                         addItem = addItem,
+                        addItemByCompletion = addItemByCompletion,
                         selectOrder = selectOrder,
                         refresh = fetchList,
                         isEnabled = !isLoading,
