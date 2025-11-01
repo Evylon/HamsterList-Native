@@ -39,7 +39,7 @@ data class ShoppingListState(
                     Item(
                         id = "UUID$it",
                         name = "Item$it",
-                        category = "cat$it"
+                        category = "cat${it % 2}"
                     )
                 }
             ),

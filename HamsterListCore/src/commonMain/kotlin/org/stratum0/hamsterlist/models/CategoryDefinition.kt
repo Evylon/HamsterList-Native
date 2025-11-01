@@ -14,7 +14,7 @@ data class CategoryDefinition(
         get() = CSSColor.invoke(color)
 
     companion object {
-        val mockLight = CategoryDefinition("", "cat1", "C1", "#32CD32", false)
-        val mockDark = CategoryDefinition("", "cat2", "C2", "#000000", true)
+        val mockLight = CategoryDefinition("cat0", "cat0", "C0", "#32CD32", false)
+        val mockDark = CategoryDefinition("cat1", "cat1", "C1", "#000000", true)
     }
 }

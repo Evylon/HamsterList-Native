@@ -1,14 +1,15 @@
 package org.stratum0.hamsterlist.android.gui.shoppinglist
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -126,10 +126,12 @@ fun ShoppingListView(
             addItem = addItem,
             onItemInputChange = updateAddItemInput,
             isEnabled = isEnabled,
+            modifier = Modifier.padding(8.dp)
         )
     }
 }
 
+@Suppress("LongParameterList") // TODO switch to event channel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ShoppingItemsList(
@@ -146,9 +148,7 @@ private fun ShoppingItemsList(
         onRefresh = refresh
     )
     val listState = rememberLazyListState()
-    Box(modifier = modifier
-        .fillMaxSize()
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         if (listState.canScrollBackward) {
             ShadowGradient(isTop = true)
         }
@@ -175,8 +175,11 @@ private fun ShoppingItemsList(
                     showCategoryChooser = {
                         showCategoryChooser(item)
                     },
-                    changeItem = { itemText -> changeItem(item, itemText) },
+                    changeItem = { itemText -> changeItem(item, itemText) }
                 )
+                if (uiState.shoppingList.items.last() == item) {
+                    Spacer(modifier.height(8.dp))
+                }
             }
         }
         PullRefreshIndicator(
@@ -202,13 +205,13 @@ private fun AddItemView(
     val focusManager = LocalFocusManager.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(8.dp)
+        modifier = modifier
     ) {
         TextField(
             value = addItemInput,
             placeholder = {
                 Text(stringResource(R.string.hamsterList_newItem_placeholder))
-                          },
+            },
             onValueChange = onItemInputChange,
             singleLine = true,
             keyboardActions = KeyboardActions(onDone = {
@@ -219,7 +222,13 @@ private fun AddItemView(
                 }
             }),
             enabled = isEnabled,
-            modifier = Modifier.weight(1f).border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(24.dp)),
+            modifier = Modifier
+                .weight(1f)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.primary,
+                    shape = RoundedCornerShape(24.dp)
+                ),
             shape = RoundedCornerShape(24.dp),
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
