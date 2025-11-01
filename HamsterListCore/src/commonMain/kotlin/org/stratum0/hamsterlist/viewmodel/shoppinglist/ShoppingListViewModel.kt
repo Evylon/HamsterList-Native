@@ -73,28 +73,34 @@ class ShoppingListViewModel(
     }
 
     fun addItem(newItem: String, completion: String?, category: String?) {
-        val parsedItem = Item.parse(
-            stringRepresentation = newItem,
-            category = category,
-            categories = uiState.value.categories
-        ).let {
-            // change name to completion if it is present
-            if (completion != null) it.copy(name = completion) else it
-        }
+        val parsedItems = newItem
+            .split("\n")
+            .map {
+                Item.parse(
+                    stringRepresentation = newItem,
+                    category = category,
+                    categories = uiState.value.categories
+                ).let {
+                    // change name to completion if it is present
+                    if (completion != null) it.copy(name = completion) else it
+                }
+            }
         scope.launch {
-            shoppingListRepository.addItem(
+            shoppingListRepository.addItems(
                 listId = _uiState.value.shoppingList.id,
-                item = parsedItem
+                items = parsedItems
             )
         }
     }
 
     fun changeItem(oldItem: Item, newItem: String) {
         scope.launch {
+            // filter out newlines like webclient
+            val newItemFiltered = newItem.replace("\n", " ")
             shoppingListRepository.changeItem(
                 listId = _uiState.value.shoppingList.id,
                 item = Item.parse(
-                    stringRepresentation = newItem,
+                    stringRepresentation = newItemFiltered,
                     id = oldItem.id,
                     category = oldItem.category,
                     categories = uiState.value.categories

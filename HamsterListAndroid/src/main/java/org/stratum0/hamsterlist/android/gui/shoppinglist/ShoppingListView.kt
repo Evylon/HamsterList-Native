@@ -60,7 +60,7 @@ fun ShoppingListView(
     deleteItem: (Item) -> Unit,
     changeItem: (oldItem: Item, newItem: String) -> Unit,
     changeCategoryForItem: (item: Item, newCategoryId: String) -> Unit,
-    addItem: (item: String, completion: String?, category: String?) -> Unit,
+    addItem: (itemInput: String, completion: String?, category: String?) -> Unit,
     selectOrder: (Order) -> Unit,
     refresh: () -> Unit,
     isEnabled: Boolean,
@@ -191,71 +191,6 @@ private fun ShoppingItemsList(
         if (listState.canScrollForward) {
             ShadowGradient(isTop = false)
         }
-    }
-}
-
-@Composable
-private fun AddItemView(
-    addItemInput: String,
-    addItem: (item: String, completion: String?, category: String?) -> Unit,
-    onItemInputChange: (input: String) -> Unit,
-    isEnabled: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val focusManager = LocalFocusManager.current
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        TextField(
-            value = addItemInput,
-            placeholder = {
-                Text(stringResource(R.string.hamsterList_newItem_placeholder))
-            },
-            onValueChange = onItemInputChange,
-            singleLine = true,
-            keyboardActions = KeyboardActions(onDone = {
-                if (addItemInput.isNotBlank()) {
-                    addItem(addItemInput, null, null)
-                    onItemInputChange("")
-                    focusManager.clearFocus()
-                }
-            }),
-            enabled = isEnabled,
-            modifier = Modifier
-                .weight(1f)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colors.primary,
-                    shape = RoundedCornerShape(24.dp)
-                ),
-            shape = RoundedCornerShape(24.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            trailingIcon = {
-                IconButton(
-                    enabled = isEnabled,
-                    onClick = {
-                        // TODO display category suggestion and allow user to choose category
-                        if (addItemInput.isNotBlank()) {
-                            addItem(addItemInput, null, null)
-                            onItemInputChange("")
-                            focusManager.clearFocus()
-                        }
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = stringResource(R.string.hamsterList_newItem_icon),
-                        tint = MaterialTheme.colors.primary,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
-            }
-        )
     }
 }
 

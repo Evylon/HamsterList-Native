@@ -49,13 +49,17 @@ internal class ShoppingListRepositoryImpl(
         }
     }
 
-    override suspend fun handleSharedItems(listId: String, items: List<Item>) {
-        _sharedItemsFlow.update { null }
+    override suspend fun addItems(listId: String, items: List<Item>) {
         trySync(listId) { previousList ->
             previousList.copy(
                 items = previousList.items.plus(items)
             )
         }
+    }
+
+    override suspend fun handleSharedItems(listId: String, items: List<Item>) {
+        _sharedItemsFlow.update { null }
+        addItems(listId, items)
     }
 
     override fun enqueueSharedContent(content: String) {

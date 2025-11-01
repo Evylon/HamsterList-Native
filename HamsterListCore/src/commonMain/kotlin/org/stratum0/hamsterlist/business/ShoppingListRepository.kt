@@ -23,6 +23,9 @@ interface ShoppingListRepository {
     suspend fun addItem(listId: String, item: Item)
 
     @NativeCoroutines
+    suspend fun addItems(listId: String, items: List<Item>)
+
+    @NativeCoroutines
     suspend fun handleSharedItems(listId: String, items: List<Item>)
 
     fun enqueueSharedContent(content: String)
