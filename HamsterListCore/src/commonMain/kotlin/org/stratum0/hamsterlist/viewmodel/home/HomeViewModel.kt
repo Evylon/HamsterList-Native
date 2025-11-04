@@ -1,46 +1,112 @@
 package org.stratum0.hamsterlist.viewmodel.home
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.update
 import org.stratum0.hamsterlist.business.SettingsRepository
+import org.stratum0.hamsterlist.models.DialogState
 import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.utils.parseUrlLenient
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 
 class HomeViewModel(
     private val settingsRepository: SettingsRepository,
 ) : BaseViewModel() {
 
-    init {
-        settingsRepository.migrateToKnownLists()
-    }
-
-    @NativeCoroutinesState
-    val uiState: StateFlow<HomeUiState> = combine(
-        settingsRepository.username,
-        settingsRepository.knownHamsterLists,
-        settingsRepository.loadedListId,
-        settingsRepository.autoLoadLast,
-        ::HomeUiState
-    ).stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly,
-        initialValue = HomeUiState(
-            settingsRepository.username.value,
-            settingsRepository.knownHamsterLists.value,
-            settingsRepository.loadedListId.value,
-            settingsRepository.autoLoadLast.value
+    private val _uiState = MutableStateFlow(
+        HomeUiState(
+            username = settingsRepository.username.value,
+            knownHamsterLists = settingsRepository.knownHamsterLists.value,
+            loadedListId = settingsRepository.loadedListId.value,
+            autoLoadLast = settingsRepository.autoLoadLast.value
         )
     )
 
-    fun updateSettings(
-        newName: String,
-        loadedList: KnownHamsterList,
-        autoLoadLast: Boolean
+    @NativeCoroutinesState
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    init {
+        settingsRepository.migrateToKnownLists()
+        subscribeSettings()
+    }
+
+    fun handleHomeAction(action: HomeAction) {
+        when (action) {
+            is HomeAction.UpdateUsername -> updateUsername(username = action.username)
+            is HomeAction.UpdateAutoLoadLast -> updateAutoLoadLast(autoLoadLast = action.autoLoadLast)
+            is HomeAction.DeleteHamsterList -> deleteKnownList(action.knownHamsterList)
+            is HomeAction.LoadHamsterlist -> loadHamsterList(action = action)
+
+            is HomeAction.OpenListCreationSheet -> updateSheetState(HomeSheetState.ListCreation)
+            is HomeAction.OpenShareContentSheet -> {
+                updateSheetState(HomeSheetState.ContentSharing(uiState.value.knownHamsterLists))
+            }
+
+            is HomeAction.DismissSheet -> updateSheetState(null)
+
+            is HomeAction.OpenDialog -> updateDialogState(action.dialogState)
+            is HomeAction.DismissDialog -> updateDialogState(null)
+        }
+    }
+
+    private fun subscribeSettings() {
+        combine(
+            settingsRepository.username,
+            settingsRepository.knownHamsterLists,
+            settingsRepository.loadedListId,
+            settingsRepository.autoLoadLast
+        ) { username, knownHamsterLists, loadedListId, autoLoadLast ->
+            _uiState.update { oldValue ->
+                oldValue.copy(
+                    username = username,
+                    knownHamsterLists = knownHamsterLists,
+                    loadedListId = loadedListId,
+                    autoLoadLast = autoLoadLast
+                )
+            }
+        }.launchIn(scope)
+    }
+
+    private fun loadHamsterList(action: HomeAction.LoadHamsterlist) {
+        handleHomeAction(HomeAction.DismissSheet)
+        val selectedList = action.selectedList
+        val uiState = uiState.value
+        if (uiState.username.isNullOrBlank()) {
+            updateDialogState(DialogState.UsernameMissing)
+        } else if (parseUrlLenient(selectedList.serverHostName) == null) {
+            updateDialogState(DialogState.ServerInvalid)
+        } else {
+            updateSettings(
+                username = uiState.username,
+                loadedList = selectedList,
+                autoLoadLast = uiState.autoLoadLast
+            )
+            action.navigateToList()
+        }
+    }
+
+    private fun updateUsername(username: String) {
+        _uiState.update { oldValue ->
+            oldValue.copy(username = username)
+        }
+    }
+
+    private fun updateAutoLoadLast(autoLoadLast: Boolean) {
+        _uiState.update { oldValue ->
+            oldValue.copy(autoLoadLast = autoLoadLast)
+        }
+    }
+
+    private fun updateSettings(
+        username: String,
+        autoLoadLast: Boolean,
+        loadedList: KnownHamsterList
     ) {
-        settingsRepository.setUsername(newName)
+        settingsRepository.setUsername(username)
         settingsRepository.setAutoLoadLast(autoLoadLast)
         settingsRepository.setLoadedListId(loadedList.listId)
         if (!settingsRepository.knownHamsterLists.value.contains(loadedList)) {
@@ -48,7 +114,19 @@ class HomeViewModel(
         }
     }
 
-    fun deleteKnownList(knownHamsterList: KnownHamsterList) {
+    private fun deleteKnownList(knownHamsterList: KnownHamsterList) {
         settingsRepository.deleteKnownList(knownHamsterList)
+    }
+
+    private fun updateSheetState(sheetState: HomeSheetState?) {
+        _uiState.update { oldState ->
+            oldState.copy(sheetState = sheetState)
+        }
+    }
+
+    private fun updateDialogState(dialogState: DialogState?) {
+        _uiState.update { oldState ->
+            oldState.copy(dialogState = dialogState)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package org.stratum0.hamsterlist.android.gui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -17,12 +17,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,106 +25,87 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.android.BuildConfig
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.android.gui.components.CheckboxWithLabel
-import org.stratum0.hamsterlist.android.gui.components.DialogState
 import org.stratum0.hamsterlist.android.gui.components.HamsterListDialog
 import org.stratum0.hamsterlist.android.gui.listchooser.ListChooserState
 import org.stratum0.hamsterlist.android.gui.listchooser.ListCreationSheet
 import org.stratum0.hamsterlist.android.gui.listchooser.ListManager
 import org.stratum0.hamsterlist.android.gui.listchooser.ListSharingSheet
 import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.viewmodel.home.HomeAction
+import org.stratum0.hamsterlist.viewmodel.home.HomeSheetState
 import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
 
 @Composable
 fun HomePage(
     uiState: HomeUiState,
-    hasSharedContent: Boolean,
-    onLoadHamsterList: (
-        username: String,
-        loadedList: KnownHamsterList,
-        autoLoadLast: Boolean
-    ) -> Unit,
-    onDeleteHamsterList: (KnownHamsterList) -> Unit,
+    onAction: (HomeAction) -> Unit,
+    onLoadHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var autoLoadLast by rememberSaveable(uiState.autoLoadLast) {
-        mutableStateOf(uiState.autoLoadLast)
-    }
-    var username by rememberSaveable(uiState.username) {
-        mutableStateOf(uiState.username.orEmpty())
-    }
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val coroutineScope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
-    if (showDialog) {
+    uiState.dialogState?.let { dialogState ->
         HamsterListDialog(
-            dialogState = DialogState.UsernameMissing,
-            onDismiss = { showDialog = false }
+            dialogState = dialogState,
+            onDismiss = { onAction(HomeAction.DismissDialog) }
         )
     }
-    // TODO switch to event based callback pattern
-    val loadHamsterList: (KnownHamsterList) -> Unit = { loadedList ->
-        if (username.isNotBlank()) {
-            coroutineScope.launch { sheetState.hide() }
-            onLoadHamsterList(username, loadedList, autoLoadLast)
-        } else {
-            showDialog = true
+        if (uiState.sheetState != null && !sheetState.isVisible) {
+            LaunchedEffect(uiState.sheetState) {
+                sheetState.show()
+            }
+        } else if (uiState.sheetState == null && sheetState.isVisible) {
+            LaunchedEffect(null) {
+                sheetState.hide()
+            }
         }
-    }
-    LaunchedEffect(hasSharedContent) {
-        if (hasSharedContent) {
-            coroutineScope.launch { sheetState.show() }
-        }
-    }
     ModalBottomSheetLayout(
         sheetContent = {
+            BackHandler { onAction(HomeAction.DismissSheet) }
             HomePageSheetContent(
-                hasSharedContent = hasSharedContent,
+                sheetState = uiState.sheetState,
                 knownHamsterLists = uiState.knownHamsterLists,
                 lastLoadedServer = uiState.lastLoadedServer,
-                onLoadHamsterList = loadHamsterList
+                onLoadHamsterList = onLoadHamsterList
             )
         },
         modifier = modifier,
         sheetState = sheetState,
     ) {
         HomePageContent(
-            username = username,
-            autoLoadLast = autoLoadLast,
+            uiState = uiState,
             knownHamsterLists = uiState.knownHamsterLists,
-            sheetState = sheetState,
-            onUsernameChange = { username = it },
-            onAutoLoadLastChange = { autoLoadLast = it },
-            onLoadHamsterList = loadHamsterList,
-            onDeleteHamsterList = onDeleteHamsterList
+            onAction = onAction,
+            onLoadHamsterList = onLoadHamsterList,
         )
     }
 }
 
 @Composable
 private fun HomePageSheetContent(
-    hasSharedContent: Boolean,
+    sheetState: HomeSheetState?,
     knownHamsterLists: List<KnownHamsterList>,
     lastLoadedServer: String?,
     onLoadHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (hasSharedContent) {
-        ListSharingSheet(
+    when (sheetState) {
+        is HomeSheetState.ContentSharing -> ListSharingSheet(
             knownHamsterLists = knownHamsterLists,
             onLoadHamsterList = onLoadHamsterList,
             modifier = modifier
         )
-    } else {
-        ListCreationSheet(
+
+        is HomeSheetState.ListCreation -> ListCreationSheet(
             lastLoadedServer = lastLoadedServer,
             onLoadHamsterList = onLoadHamsterList,
             modifier = modifier
         )
+
+        null -> {}
     }
 }
 
@@ -138,8 +113,7 @@ private fun HomePageSheetContent(
 private fun HomePageHeader(
     username: String,
     autoLoadLast: Boolean,
-    onUsernameChange: (String) -> Unit,
-    onAutoLoadLastChange: (Boolean) -> Unit,
+    onAction: (HomeAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -155,7 +129,7 @@ private fun HomePageHeader(
         )
         TextField(
             value = username,
-            onValueChange = onUsernameChange,
+            onValueChange = { onAction(HomeAction.UpdateUsername(it)) },
             singleLine = true,
             label = { Text(stringResource(R.string.homepage_username_placeholder)) },
             keyboardOptions = KeyboardOptions(
@@ -167,7 +141,7 @@ private fun HomePageHeader(
         CheckboxWithLabel(
             label = stringResource(R.string.homepage_openLast_checkbox),
             checked = autoLoadLast,
-            onCheckedChange = onAutoLoadLastChange
+            onCheckedChange = { onAction(HomeAction.UpdateAutoLoadLast(it)) }
         )
     }
 }
@@ -175,17 +149,12 @@ private fun HomePageHeader(
 @Composable
 @Suppress("LongParameterList") // TODO improve UIStates, switch to events
 private fun HomePageContent(
-    username: String,
-    autoLoadLast: Boolean,
+    uiState: HomeUiState,
     knownHamsterLists: List<KnownHamsterList>,
-    sheetState: ModalBottomSheetState,
-    onUsernameChange: (String) -> Unit,
-    onAutoLoadLastChange: (Boolean) -> Unit,
+    onAction: (HomeAction) -> Unit,
     onLoadHamsterList: (KnownHamsterList) -> Unit,
-    onDeleteHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -194,18 +163,15 @@ private fun HomePageContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HomePageHeader(
-            username = username,
-            autoLoadLast = autoLoadLast,
-            onUsernameChange = onUsernameChange,
-            onAutoLoadLastChange = onAutoLoadLastChange
+            username = uiState.username.orEmpty(),
+            autoLoadLast = uiState.autoLoadLast,
+            onAction = onAction
         )
         ListManager(
             uiState = ListChooserState(knownHamsterLists),
             onLoadList = onLoadHamsterList,
-            onDeleteList = onDeleteHamsterList,
-            openListCreationSheet = {
-                coroutineScope.launch { sheetState.show() }
-            },
+            onDeleteList = { list -> onAction(HomeAction.DeleteHamsterList(list)) },
+            openListCreationSheet = { onAction(HomeAction.OpenListCreationSheet) },
             modifier = Modifier.padding(vertical = 24.dp)
         )
         Spacer(Modifier.weight(1f))
@@ -234,9 +200,8 @@ fun NewHomePagePreview() {
                         KnownHamsterList("List $it", "")
                     }
                 ),
-                hasSharedContent = false,
-                onLoadHamsterList = { _, _, _ -> },
-                onDeleteHamsterList = {}
+                onAction = {},
+                onLoadHamsterList = {},
             )
         }
     }
