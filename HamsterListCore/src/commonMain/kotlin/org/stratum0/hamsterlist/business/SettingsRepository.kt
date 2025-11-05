@@ -58,8 +58,8 @@ class SettingsRepository(
         settings[SettingsKey.USERNAME.name] = newName.trim().takeIf { it.isNotBlank() }
     }
 
-    fun setLoadedListId(listId: String) {
-        settings[SettingsKey.LOADED_LIST_ID.name] = listId.trim().takeIf { it.isNotBlank() }
+    fun setLoadedListId(listId: String?) {
+        settings[SettingsKey.LOADED_LIST_ID.name] = listId?.trim().takeIf { !it.isNullOrBlank() }
     }
 
     fun setAutoLoadLast(autoLoadLast: Boolean) {
@@ -83,6 +83,10 @@ class SettingsRepository(
         updatedList.sortBy { it.listId }
         try {
             updateKnownLists(updatedList)
+            if (loadedListId.value == listToDelete.listId) {
+                setAutoLoadLast(false)
+                setLoadedListId(null)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
