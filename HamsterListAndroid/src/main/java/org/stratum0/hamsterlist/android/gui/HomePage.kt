@@ -2,7 +2,6 @@ package org.stratum0.hamsterlist.android.gui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -162,7 +161,8 @@ private fun HomePageContent(
             onLoadList = onLoadHamsterList,
             onDeleteList = { list -> onAction(HomeAction.DeleteHamsterList(list)) },
             openListCreationSheet = { onAction(HomeAction.OpenListCreationSheet) },
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier
+                .padding(vertical = 12.dp)
                 .weight(1f)
         )
         VersionNote(Modifier.padding(bottom = 8.dp))
