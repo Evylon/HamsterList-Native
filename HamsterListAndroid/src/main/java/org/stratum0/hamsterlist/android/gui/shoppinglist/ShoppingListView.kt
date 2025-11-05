@@ -4,9 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -50,19 +48,21 @@ fun ShoppingListView(
         )
     }
     Column(
-        modifier = modifier.animateContentSize()
+        modifier = modifier
+            .padding(vertical = 12.dp)
+            .animateContentSize()
     ) {
         if (uiState.orders.isNotEmpty()) {
             OrdersMenu(
                 orders = uiState.orders,
                 selectedOrder = uiState.selectedOrder,
                 onAction = onAction,
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp)
             )
         }
-        Box(
-            modifier = Modifier
-        ) {
+        Box(modifier = Modifier) {
             ShoppingItemsList(
                 uiState = uiState,
                 isEnabled = isEnabled,
@@ -70,6 +70,7 @@ fun ShoppingListView(
                 showCategoryChooser = { item ->
                     categoryChooserItem = item
                 },
+                modifier = Modifier
             )
             if (uiState.addItemInput.isNotBlank()) {
                 CompletionsChooser(
@@ -126,9 +127,6 @@ private fun ShoppingItemsList(
                         showCategoryChooser(item)
                     },
                 )
-                if (uiState.shoppingList.items.last() == item) {
-                    Spacer(modifier.height(8.dp))
-                }
             }
         }
         if (listState.canScrollForward) {
@@ -145,8 +143,7 @@ fun ShoppingListViewPreview() {
             ShoppingListView(
                 uiState = ShoppingListState.mock,
                 onAction = {},
-                isEnabled = true,
-                modifier = Modifier.padding(vertical = 20.dp)
+                isEnabled = true
             )
         }
     }

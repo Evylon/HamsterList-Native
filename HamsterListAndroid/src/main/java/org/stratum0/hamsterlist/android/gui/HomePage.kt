@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -44,31 +45,35 @@ fun HomePage(
     onLoadHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    uiState.dialogState?.let { dialogState ->
-        HamsterListDialog(
-            dialogState = dialogState,
-            onDismiss = { onAction(HomeAction.DismissDialog) }
-        )
-    }
-    uiState.sheetState?.let { sheetState ->
-        ModalBottomSheet(
-            onDismissRequest = { onAction(HomeAction.DismissSheet) }
-        ) {
-            HomePageSheetContent(
-                sheetState = sheetState,
-                knownHamsterLists = uiState.knownHamsterLists,
-                lastLoadedServer = uiState.lastLoadedServer,
-                onLoadHamsterList = onLoadHamsterList
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface
+    ) { paddingValues ->
+        uiState.dialogState?.let { dialogState ->
+            HamsterListDialog(
+                dialogState = dialogState,
+                onDismiss = { onAction(HomeAction.DismissDialog) }
             )
         }
+        uiState.sheetState?.let { sheetState ->
+            ModalBottomSheet(
+                onDismissRequest = { onAction(HomeAction.DismissSheet) }
+            ) {
+                HomePageSheetContent(
+                    sheetState = sheetState,
+                    knownHamsterLists = uiState.knownHamsterLists,
+                    lastLoadedServer = uiState.lastLoadedServer,
+                    onLoadHamsterList = onLoadHamsterList
+                )
+            }
+        }
+        HomePageContent(
+            uiState = uiState,
+            knownHamsterLists = uiState.knownHamsterLists,
+            onAction = onAction,
+            onLoadHamsterList = onLoadHamsterList,
+            modifier = modifier.padding(paddingValues)
+        )
     }
-    HomePageContent(
-        uiState = uiState,
-        knownHamsterLists = uiState.knownHamsterLists,
-        onAction = onAction,
-        onLoadHamsterList = onLoadHamsterList,
-        modifier = modifier
-    )
 }
 
 @Composable

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     NavigationHost(
                         autoLoadListId = lastListId.takeIf { autoLoadLast && lastListId.isNotBlank() },
                         hasSharedContentIntent = hasSharedContent,
-                        modifier = Modifier.safeDrawingPadding()
+                        modifier = Modifier
                     )
                 }
             }

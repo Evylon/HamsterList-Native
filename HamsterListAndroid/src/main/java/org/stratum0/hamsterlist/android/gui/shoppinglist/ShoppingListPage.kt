@@ -4,17 +4,20 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,82 +49,109 @@ fun ShoppingListPage(
         onAction(ShoppingListAction.FetchList)
     }
     BackHandler { onBack() }
-
-    Column(modifier = modifier.fillMaxSize()) {
-        ShoppingListHeader(
-            title = uiState.shoppingList.title,
-            onBack = onBack
-        )
-        Crossfade(
-            targetState = uiState.loadingState,
-            label = "loading state",
-            modifier = Modifier.weight(1f)
-        ) { state ->
-            when (state) {
-                is LoadingState.Error -> {
-                    ErrorContent(
-                        throwable = state.throwable,
-                        refresh = { onAction(ShoppingListAction.FetchList) },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(12.dp)
-                    )
-                }
-
-                is LoadingState.Done,
-                is LoadingState.Loading -> {
-                    val isLoading = state is LoadingState.Loading
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        ShoppingListView(
-                            uiState = uiState,
-                            onAction = onAction,
-                            isEnabled = !isLoading,
-                            modifier = Modifier
-                                .alpha(ALPHA_LOADING)
-                                .takeIf { isLoading } ?: Modifier
-                        )
-                        if (isLoading) {
-                            HamsterListLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-                        }
-                    }
-                }
-            }
+    Scaffold(
+        topBar = {
+            ShoppingListHeader(
+                title = uiState.shoppingList.title,
+                onBack = onBack
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            ShoppingListContent(
+                uiState = uiState,
+                onAction = onAction,
+                modifier = Modifier.weight(1f)
+            )
+            AddItemView(
+                addItemInput = uiState.addItemInput,
+                onAction = onAction,
+                isEnabled = uiState.loadingState is LoadingState.Done,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+            )
         }
-        AddItemView(
-            addItemInput = uiState.addItemInput,
-            onAction = onAction,
-            isEnabled = uiState.loadingState is LoadingState.Done,
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShoppingListHeader(
     title: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        IconButton(
-            onClick = onBack,
-            modifier = Modifier.size(48.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.navigation_back_button)
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center
             )
+        },
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.navigation_back_button)
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+    )
+}
+
+@Composable
+private fun ShoppingListContent(
+    uiState: ShoppingListState,
+    onAction: (ShoppingListAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Crossfade(
+        targetState = uiState.loadingState,
+        label = "loading state",
+        modifier = modifier
+    ) { state ->
+        when (state) {
+            is LoadingState.Error -> {
+                ErrorContent(
+                    throwable = state.throwable,
+                    refresh = { onAction(ShoppingListAction.FetchList) },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                )
+            }
+
+            is LoadingState.Done,
+            is LoadingState.Loading -> {
+                val isLoading = state is LoadingState.Loading
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ShoppingListView(
+                        uiState = uiState,
+                        onAction = onAction,
+                        isEnabled = !isLoading,
+                        modifier = Modifier
+                            .alpha(ALPHA_LOADING)
+                            .takeIf { isLoading } ?: Modifier
+                    )
+                    if (isLoading) {
+                        HamsterListLoadingIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+            }
         }
-        Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 48.dp)
-        )
     }
 }
 
@@ -133,8 +163,7 @@ fun ShoppingListPagePreview() {
             ShoppingListPage(
                 uiState = ShoppingListState.mock,
                 onAction = {},
-                onBack = {},
-                modifier = Modifier.padding(vertical = 20.dp)
+                onBack = {}
             )
         }
     }

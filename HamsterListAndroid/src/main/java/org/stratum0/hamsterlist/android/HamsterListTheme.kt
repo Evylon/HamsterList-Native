@@ -26,7 +26,7 @@ fun HamsterListTheme(
     val colors = if (darkTheme) hamsterListDarkColors else hamsterListLightColors
     val materialColors = if (darkTheme) {
         darkColorScheme(
-            primary = Color(0xFF4CAE4F),
+            primary = Color(0xFF39823B),
             onPrimary = Color.White,
             secondary = Color(0xFFAE4CAB),
             background = Color.Black
@@ -34,7 +34,7 @@ fun HamsterListTheme(
     } else {
         lightColorScheme(
             primary = Color(0xFF4CAE4F),
-            onPrimary = Color.White,
+            onPrimary = Color.Black,
             secondary = Color(0xFFAE4CAB),
             background = Color.LightGray
         )
