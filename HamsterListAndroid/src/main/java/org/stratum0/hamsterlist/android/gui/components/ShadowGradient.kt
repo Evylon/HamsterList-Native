@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +29,9 @@ fun BoxScope.ShadowGradient(isTop: Boolean) {
             .background(
                 Brush.verticalGradient(
                     colors = if (isTop) {
-                        listOf(MaterialTheme.colors.background, Color.Transparent)
+                        listOf(MaterialTheme.colorScheme.background, Color.Transparent)
                     } else {
-                        listOf(Color.Transparent, MaterialTheme.colors.background)
+                        listOf(Color.Transparent, MaterialTheme.colorScheme.background)
                     }
                 )
             )

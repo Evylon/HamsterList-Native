@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +45,7 @@ fun OrdersMenu(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(6.dp)
                 )
                 .padding(8.dp)
@@ -63,12 +63,15 @@ fun OrdersMenu(
             onDismissRequest = { isExpanded = false },
         ) {
             orders.forEach { order ->
-                DropdownMenuItem(onClick = {
-                    onAction(ShoppingListAction.SelectOrder(order))
-                    isExpanded = false
-                }) {
-                    Text(text = order.name)
-                }
+                DropdownMenuItem(
+                    text = {
+                        Text(text = order.name)
+                    },
+                    onClick = {
+                        onAction(ShoppingListAction.SelectOrder(order))
+                        isExpanded = false
+                    }
+                )
             }
         }
     }

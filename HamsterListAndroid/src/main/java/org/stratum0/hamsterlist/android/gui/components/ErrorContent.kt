@@ -3,11 +3,11 @@ package org.stratum0.hamsterlist.android.gui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
@@ -38,7 +38,7 @@ fun ErrorContent(
         Text(
             text = throwable.message ?: "Unkown Error",
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyLarge
         )
         Button(refresh) {
             Text("Retry")

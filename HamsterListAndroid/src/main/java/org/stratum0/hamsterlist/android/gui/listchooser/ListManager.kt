@@ -8,19 +8,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -48,7 +49,7 @@ fun ListManager(
     modifier: Modifier = Modifier
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxHeight()) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -58,7 +59,7 @@ fun ListManager(
         ) {
             Text(
                 text = stringResource(R.string.listManager_headline),
-                style = MaterialTheme.typography.h5
+                style = MaterialTheme.typography.headlineSmall
             )
             AnimatedVisibility(uiState.hamsterLists.isNotEmpty()) {
                 IconButton(onClick = { isEditing = !isEditing }) {
@@ -67,17 +68,20 @@ fun ListManager(
                         contentDescription = stringResource(R.string.listManager_edit_description),
                         modifier = Modifier.size(30.dp),
                         tint = if (isEditing) {
-                            MaterialTheme.colors.error
+                            MaterialTheme.colorScheme.error
                         } else {
-                            MaterialTheme.colors.primary
+                            MaterialTheme.colorScheme.primary
                         }
                     )
                 }
             }
         }
-        Crossfade(uiState.hamsterLists.isEmpty()) { isEmpty ->
+        Crossfade(
+            uiState.hamsterLists.isEmpty(),
+            modifier = Modifier
+        ) { isEmpty ->
             if (isEmpty) {
-                EmptyListsState(modifier = modifier)
+                EmptyListsState(modifier = Modifier)
             } else {
                 ListChooser(
                     hamsterLists = uiState.hamsterLists,
@@ -95,8 +99,8 @@ fun ListManager(
                 isEditing = false
                 openListCreationSheet()
             },
-            modifier = modifier
-                .padding(vertical = 4.dp)
+            modifier = Modifier
+                .padding(vertical = 16.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text(stringResource(R.string.listManager_addNew_button))
@@ -173,7 +177,7 @@ private fun HamsterListItem(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = stringResource(R.string.listManager_delete_icon),
                 modifier = Modifier.padding(end = 8.dp),
-                tint = MaterialTheme.colors.error
+                tint = MaterialTheme.colorScheme.error
             )
         }
     }

@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -64,11 +64,11 @@ fun AddItemView(
                 .weight(1f)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(24.dp)
                 ),
             shape = RoundedCornerShape(24.dp),
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -84,7 +84,7 @@ fun AddItemView(
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = stringResource(R.string.hamsterList_newItem_icon),
-                        tint = MaterialTheme.colors.primary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(36.dp)
                     )
                 }

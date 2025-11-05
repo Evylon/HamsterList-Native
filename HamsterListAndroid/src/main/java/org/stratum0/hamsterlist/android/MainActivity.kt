@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +27,7 @@ import org.stratum0.hamsterlist.android.gui.HomePage
 import org.stratum0.hamsterlist.android.gui.shoppinglist.ShoppingListPage
 import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.viewmodel.home.HomeAction
 import org.stratum0.hamsterlist.viewmodel.home.HomeViewModel
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
 
@@ -85,19 +86,22 @@ fun NavigationHost(
         composable("home") {
             val viewModel: HomeViewModel = koinViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            if (hasSharedContent) {
+                viewModel.handleHomeAction(HomeAction.OpenShareContentSheet)
+            }
             HomePage(
                 uiState = uiState,
-                hasSharedContent = hasSharedContent,
-                onLoadHamsterList = { username, loadedList, autoLoadLast ->
-                    viewModel.updateSettings(
-                        newName = username,
-                        loadedList = loadedList,
-                        autoLoadLast = autoLoadLast
+                onAction = viewModel::handleHomeAction,
+                onLoadHamsterList = { selectedList ->
+                    viewModel.handleHomeAction(
+                        HomeAction.LoadHamsterlist(
+                            selectedList = selectedList,
+                            navigateToList = {
+                                navController.navigate("shoppingList/${selectedList.listId}")
+                            }
+                        )
                     )
-                    navController.navigate("shoppingList/${loadedList.listId}")
-                    hasSharedContent = false
-                },
-                onDeleteHamsterList = viewModel::deleteKnownList
+                }
             )
         }
         composable("shoppingList/{id}") {

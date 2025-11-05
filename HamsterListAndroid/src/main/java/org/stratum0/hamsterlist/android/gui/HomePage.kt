@@ -1,6 +1,5 @@
 package org.stratum0.hamsterlist.android.gui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,15 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -39,6 +36,7 @@ import org.stratum0.hamsterlist.viewmodel.home.HomeAction
 import org.stratum0.hamsterlist.viewmodel.home.HomeSheetState
 import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(
     uiState: HomeUiState,
@@ -46,47 +44,36 @@ fun HomePage(
     onLoadHamsterList: (KnownHamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     uiState.dialogState?.let { dialogState ->
         HamsterListDialog(
             dialogState = dialogState,
             onDismiss = { onAction(HomeAction.DismissDialog) }
         )
     }
-        if (uiState.sheetState != null && !sheetState.isVisible) {
-            LaunchedEffect(uiState.sheetState) {
-                sheetState.show()
-            }
-        } else if (uiState.sheetState == null && sheetState.isVisible) {
-            LaunchedEffect(null) {
-                sheetState.hide()
-            }
-        }
-    ModalBottomSheetLayout(
-        sheetContent = {
-            BackHandler { onAction(HomeAction.DismissSheet) }
+    uiState.sheetState?.let { sheetState ->
+        ModalBottomSheet(
+            onDismissRequest = { onAction(HomeAction.DismissSheet) }
+        ) {
             HomePageSheetContent(
-                sheetState = uiState.sheetState,
+                sheetState = sheetState,
                 knownHamsterLists = uiState.knownHamsterLists,
                 lastLoadedServer = uiState.lastLoadedServer,
                 onLoadHamsterList = onLoadHamsterList
             )
-        },
-        modifier = modifier,
-        sheetState = sheetState,
-    ) {
-        HomePageContent(
-            uiState = uiState,
-            knownHamsterLists = uiState.knownHamsterLists,
-            onAction = onAction,
-            onLoadHamsterList = onLoadHamsterList,
-        )
+        }
     }
+    HomePageContent(
+        uiState = uiState,
+        knownHamsterLists = uiState.knownHamsterLists,
+        onAction = onAction,
+        onLoadHamsterList = onLoadHamsterList,
+        modifier = modifier
+    )
 }
 
 @Composable
 private fun HomePageSheetContent(
-    sheetState: HomeSheetState?,
+    sheetState: HomeSheetState,
     knownHamsterLists: List<KnownHamsterList>,
     lastLoadedServer: String?,
     onLoadHamsterList: (KnownHamsterList) -> Unit,
@@ -104,8 +91,6 @@ private fun HomePageSheetContent(
             onLoadHamsterList = onLoadHamsterList,
             modifier = modifier
         )
-
-        null -> {}
     }
 }
 
@@ -173,8 +158,8 @@ private fun HomePageContent(
             onDeleteList = { list -> onAction(HomeAction.DeleteHamsterList(list)) },
             openListCreationSheet = { onAction(HomeAction.OpenListCreationSheet) },
             modifier = Modifier.padding(vertical = 24.dp)
+                .weight(1f)
         )
-        Spacer(Modifier.weight(1f))
         VersionNote(Modifier.padding(bottom = 8.dp))
     }
 }
@@ -183,7 +168,7 @@ private fun HomePageContent(
 private fun VersionNote(modifier: Modifier = Modifier) {
     Text(
         text = BuildConfig.VERSION_NAME,
-        style = MaterialTheme.typography.caption,
+        style = MaterialTheme.typography.bodySmall,
         modifier = modifier
     )
 }

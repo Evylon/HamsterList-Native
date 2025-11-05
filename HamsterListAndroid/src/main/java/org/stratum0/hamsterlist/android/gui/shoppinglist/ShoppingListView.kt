@@ -11,11 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Surface
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -87,7 +85,7 @@ fun ShoppingListView(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShoppingItemsList(
     uiState: ShoppingListState,
@@ -96,12 +94,12 @@ private fun ShoppingItemsList(
     showCategoryChooser: (item: Item) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.loadingState is LoadingState.Loading,
-        onRefresh = { onAction(ShoppingListAction.FetchList) }
-    )
     val listState = rememberLazyListState()
-    Box(modifier = modifier.fillMaxSize()) {
+    PullToRefreshBox(
+        isRefreshing = uiState.loadingState is LoadingState.Loading,
+        onRefresh = { onAction(ShoppingListAction.FetchList) },
+        modifier = modifier.fillMaxSize()
+    ) {
         if (listState.canScrollBackward) {
             ShadowGradient(isTop = true)
         }
@@ -111,7 +109,6 @@ private fun ShoppingItemsList(
             state = listState,
             modifier = Modifier
                 .padding(horizontal = 12.dp)
-                .pullRefresh(pullRefreshState)
                 .animateContentSize()
         ) {
             items(
@@ -134,12 +131,6 @@ private fun ShoppingItemsList(
                 }
             }
         }
-        PullRefreshIndicator(
-            refreshing = false,
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-            scale = true
-        )
         if (listState.canScrollForward) {
             ShadowGradient(isTop = false)
         }

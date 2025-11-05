@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
@@ -74,11 +74,13 @@ fun ShoppingListItem(
             onDone = { focusManager.clearFocus() }
         ),
         enabled = isEnabled,
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            backgroundColor = HamsterListTheme.colors.shapeBackgroundColor,
+            focusedContainerColor = HamsterListTheme.colors.shapeBackgroundColor,
+            unfocusedContainerColor = HamsterListTheme.colors.shapeBackgroundColor,
+            disabledContainerColor = HamsterListTheme.colors.shapeBackgroundColor
         ),
         shape = RoundedCornerShape(12.dp),
         leadingIcon = {
@@ -97,7 +99,7 @@ fun ShoppingListItem(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(R.string.hamsterList_deleteItem_icon),
-                    tint = MaterialTheme.colors.error
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         },

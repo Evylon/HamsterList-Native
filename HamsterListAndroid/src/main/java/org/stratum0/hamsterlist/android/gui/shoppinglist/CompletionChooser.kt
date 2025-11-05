@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,8 +41,8 @@ fun CompletionsChooser(
                             CategoryCircle(uiState = itemState.categoryState)
                             Text(
                                 text = itemState.completion.name,
-                                color = MaterialTheme.colors.onSurface,
-                                style = MaterialTheme.typography.body1,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier
                                     .padding(start = 8.dp)
                                     .fillMaxWidth()
@@ -52,7 +52,7 @@ fun CompletionsChooser(
                             )
                         }
                         Divider(
-                            color = MaterialTheme.colors.primary,
+                            color = MaterialTheme.colorScheme.primary,
                             thickness = 1.dp
                         )
                     }

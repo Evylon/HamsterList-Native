@@ -1,8 +1,6 @@
 package org.stratum0.hamsterlist.android.gui.components
 
 import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -13,7 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -31,6 +29,7 @@ private const val STRETCH_X_INITIAL = 0.4f
 private const val STRETCH_X_FULL = 0.45f
 private const val STRETCH_Y_INITIAL = 0.4f
 private const val STRETCH_Y_FULL = 0.35f
+
 @Suppress("MagicNumber")
 private val easing = CubicBezierEasing(0.5f, 0.0f, 0.75f, 0.4f)
 

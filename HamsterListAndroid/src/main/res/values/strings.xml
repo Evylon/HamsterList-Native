@@ -18,4 +18,6 @@
     <string name="listCreation_server_placeholder">Server URL</string>
     <string name="listCreation_load_button">Load</string>
     <string name="navigation_back_button">Back</string>
+    <string name="dialog_dismiss_button">Dismiss</string>
+    <string name="dialog_categoryChooser_headline">Choose a category</string>
 </resources>

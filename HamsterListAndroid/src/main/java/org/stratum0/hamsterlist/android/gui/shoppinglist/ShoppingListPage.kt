@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -91,7 +91,7 @@ fun ShoppingListPage(
             addItemInput = uiState.addItemInput,
             onAction = onAction,
             isEnabled = uiState.loadingState is LoadingState.Done,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
         )
     }
 }

@@ -16,4 +16,6 @@
     <string name="listCreation_server_placeholder">Server URL</string>
     <string name="listCreation_load_button">Laden</string>
     <string name="navigation_back_button">Zurück</string>
+    <string name="dialog_dismiss_button">Schließen</string>
+    <string name="dialog_categoryChooser_headline">Wähle eine Kategorie</string>
 </resources>

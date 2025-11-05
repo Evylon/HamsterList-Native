@@ -2,11 +2,11 @@ package org.stratum0.hamsterlist.android
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Shapes
-import androidx.compose.material.Typography
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -25,22 +25,22 @@ fun HamsterListTheme(
 ) {
     val colors = if (darkTheme) hamsterListDarkColors else hamsterListLightColors
     val materialColors = if (darkTheme) {
-        darkColors(
+        darkColorScheme(
             primary = Color(0xFF4CAE4F),
-            primaryVariant = Color(0xFF7AAE4C),
+            onPrimary = Color.White,
             secondary = Color(0xFFAE4CAB),
             background = Color.Black
         )
     } else {
-        lightColors(
+        lightColorScheme(
             primary = Color(0xFF4CAE4F),
-            primaryVariant = Color(0xFF7AAE4C),
+            onPrimary = Color.White,
             secondary = Color(0xFFAE4CAB),
             background = Color.LightGray
         )
     }
     val typography = Typography(
-        body1 = TextStyle(
+        bodyLarge = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 20.sp
@@ -54,7 +54,7 @@ fun HamsterListTheme(
 
     CompositionLocalProvider(LocalHamsterListColors provides colors) {
         MaterialTheme(
-            colors = materialColors,
+            colorScheme = materialColors,
             typography = typography,
             shapes = shapes,
             content = content
