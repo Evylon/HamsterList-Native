@@ -21,7 +21,6 @@ class HomeViewModel(
         HomeUiState(
             username = settingsRepository.username.value,
             knownHamsterLists = settingsRepository.knownHamsterLists.value,
-            loadedListId = settingsRepository.loadedListId.value,
             autoLoadLast = settingsRepository.autoLoadLast.value
         )
     )
@@ -57,14 +56,12 @@ class HomeViewModel(
         combine(
             settingsRepository.username,
             settingsRepository.knownHamsterLists,
-            settingsRepository.loadedListId,
             settingsRepository.autoLoadLast
-        ) { username, knownHamsterLists, loadedListId, autoLoadLast ->
+        ) { username, knownHamsterLists, autoLoadLast ->
             _uiState.update { oldValue ->
                 oldValue.copy(
                     username = username,
                     knownHamsterLists = knownHamsterLists,
-                    loadedListId = loadedListId,
                     autoLoadLast = autoLoadLast
                 )
             }
@@ -103,14 +100,15 @@ class HomeViewModel(
 
     private fun updateSettings(
         username: String,
-        autoLoadLast: Boolean,
-        loadedList: HamsterList
+        loadedList: HamsterList,
+        autoLoadLast: Boolean
     ) {
         settingsRepository.setUsername(username)
         settingsRepository.setAutoLoadLast(autoLoadLast)
-        settingsRepository.setLoadedListId(loadedList.listId)
         if (!settingsRepository.knownHamsterLists.value.contains(loadedList)) {
             settingsRepository.addKnownList(loadedList)
+        } else {
+            settingsRepository.updateLastLoadedList(loadedList = loadedList)
         }
     }
 

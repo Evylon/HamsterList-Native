@@ -29,18 +29,16 @@ class SettingsRepository(
     )
 
     @OptIn(ExperimentalSettingsApi::class)
-    val loadedListId = settings.getStringOrNullStateFlow(
-        coroutineScope = CoroutineScope(Dispatchers.IO),
-        key = SettingsKey.LOADED_LIST_ID.name
-    )
-
-    @OptIn(ExperimentalSettingsApi::class)
     val autoLoadLast = settings.getBooleanStateFlow(
         coroutineScope = CoroutineScope(Dispatchers.IO),
         key = SettingsKey.AUTO_LOAD_LAST.name,
         defaultValue = false
     )
 
+    /**
+     * Currently known list of [HamsterList] loaded by the user.
+     * The list is always sorted anti-chronologically by the last time a list was loaded.
+     */
     @OptIn(ExperimentalSettingsApi::class)
     val knownHamsterLists: StateFlow<List<HamsterList>> =
         settings
@@ -51,15 +49,14 @@ class SettingsRepository(
             .stateIn(
                 CoroutineScope(Dispatchers.IO),
                 SharingStarted.Eagerly,
-                emptyList()
+                getKnownLists()
             )
+
+    fun getKnownLists(): List<HamsterList> =
+        settings.getStringOrNull(key = SettingsKey.KNOWN_LISTS.name)?.decodeKnownLists().orEmpty()
 
     fun setUsername(newName: String) {
         settings[SettingsKey.USERNAME.name] = newName.trim().takeIf { it.isNotBlank() }
-    }
-
-    fun setLoadedListId(listId: String?) {
-        settings[SettingsKey.LOADED_LIST_ID.name] = listId?.trim().takeIf { !it.isNullOrBlank() }
     }
 
     fun setAutoLoadLast(autoLoadLast: Boolean) {
@@ -68,8 +65,7 @@ class SettingsRepository(
 
     fun addKnownList(newList: HamsterList) {
         val updatedList = knownHamsterLists.value.toMutableList()
-        updatedList.add(newList)
-        updatedList.sortBy { it.listId }
+        updatedList.add(0, newList)
         try {
             updateKnownLists(updatedList)
         } catch (e: Exception) {
@@ -78,15 +74,20 @@ class SettingsRepository(
     }
 
     fun deleteKnownList(listToDelete: HamsterList) {
-        val updatedList = knownHamsterLists.value.toMutableList()
-        updatedList.remove(listToDelete)
-        updatedList.sortBy { it.listId }
+        val updatedList = knownHamsterLists.value.filterNot { it == listToDelete }
         try {
             updateKnownLists(updatedList)
-            if (loadedListId.value == listToDelete.listId) {
-                setAutoLoadLast(false)
-                setLoadedListId(null)
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun updateLastLoadedList(loadedList: HamsterList) {
+        val oldList = knownHamsterLists.value.toMutableList()
+        val updatedList = oldList.filterNot { it == loadedList }.toMutableList()
+        updatedList.add(0, loadedList)
+        try {
+            updateKnownLists(updatedList)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -94,7 +95,8 @@ class SettingsRepository(
 
     private fun updateKnownLists(knownLists: List<HamsterList>) {
         try {
-            settings[SettingsKey.KNOWN_LISTS.name] = Json.encodeToString(knownLists)
+            val knownListsUnique = knownLists.toSet().toList()
+            settings[SettingsKey.KNOWN_LISTS.name] = Json.encodeToString(knownListsUnique)
         } catch (e: Exception) {
             e.printStackTrace()
         }

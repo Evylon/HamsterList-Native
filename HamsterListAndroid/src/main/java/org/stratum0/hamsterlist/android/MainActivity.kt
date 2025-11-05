@@ -2,6 +2,7 @@ package org.stratum0.hamsterlist.android
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -40,15 +41,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val autoLoadLast = settingsRepository.autoLoadLast.value
-        val lastList = settingsRepository.knownHamsterLists.value.find {
-            it.listId == settingsRepository.loadedListId.value.orEmpty()
-        }
+        val lastLoadedList = settingsRepository.getKnownLists().firstOrNull()
+        Log.d(this::class.simpleName, "lastList $lastLoadedList autoload $autoLoadLast")
         val hasSharedContent = handleTextSharing(intent)
         setContent {
             HamsterListTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     NavigationHost(
-                        autoLoadList = lastList.takeIf { autoLoadLast && lastList != null },
+                        autoLoadList = lastLoadedList.takeIf { autoLoadLast && lastLoadedList != null },
                         hasSharedContentIntent = hasSharedContent,
                         modifier = Modifier
                     )

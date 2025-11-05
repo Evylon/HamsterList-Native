@@ -60,7 +60,6 @@ fun HomePage(
                 HomePageSheetContent(
                     sheetState = sheetState,
                     knownHamsterLists = uiState.knownHamsterLists,
-                    lastLoadedServer = uiState.lastLoadedServer,
                     onLoadHamsterList = onLoadHamsterList
                 )
             }
@@ -79,7 +78,6 @@ fun HomePage(
 private fun HomePageSheetContent(
     sheetState: HomeSheetState,
     knownHamsterLists: List<HamsterList>,
-    lastLoadedServer: String?,
     onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -91,7 +89,7 @@ private fun HomePageSheetContent(
         )
 
         is HomeSheetState.ListCreation -> ListCreationSheet(
-            lastLoadedServer = lastLoadedServer,
+            lastLoadedServer = knownHamsterLists.firstOrNull()?.serverHostName,
             onLoadHamsterList = onLoadHamsterList,
             modifier = modifier
         )

@@ -6,10 +6,7 @@ import org.stratum0.hamsterlist.models.HamsterList
 data class HomeUiState(
     val username: String? = null,
     val knownHamsterLists: List<HamsterList> = emptyList(),
-    val loadedListId: String? = null,
     val autoLoadLast: Boolean = false,
     val sheetState: HomeSheetState? = null,
     val dialogState: DialogState? = null
-) {
-    val lastLoadedServer = knownHamsterLists.find { it.listId == loadedListId }?.serverHostName
-}
+)

@@ -5,6 +5,5 @@ enum class SettingsKey {
     AUTO_LOAD_LAST,
     SERVER_HOST_NAME,
     USERNAME,
-    LOADED_LIST_ID,
     KNOWN_LISTS
 }
