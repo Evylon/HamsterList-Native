@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +50,7 @@ fun ListManager(
     modifier: Modifier = Modifier
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    Column(modifier = modifier.fillMaxHeight()) {
+    Column(modifier = modifier) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -78,7 +79,7 @@ fun ListManager(
         }
         Crossfade(
             uiState.hamsterLists.isEmpty(),
-            modifier = Modifier
+            modifier = Modifier.weight(1f)
         ) { isEmpty ->
             if (isEmpty) {
                 EmptyListsState(modifier = Modifier)
@@ -103,7 +104,11 @@ fun ListManager(
                 .padding(vertical = 16.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text(stringResource(R.string.listManager_addNew_button))
+            Text(
+                text = stringResource(R.string.listManager_addNew_button),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(4.dp)
+            )
         }
     }
 }
