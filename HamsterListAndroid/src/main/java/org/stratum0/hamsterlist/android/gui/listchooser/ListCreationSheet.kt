@@ -25,12 +25,12 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 
 @Composable
 fun ListCreationSheet(
     lastLoadedServer: String?,
-    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var listId by rememberSaveable { mutableStateOf("") }
@@ -72,7 +72,7 @@ fun ListCreationSheet(
             keyboardActions = KeyboardActions(
                 onDone = {
                     if (isInputValid) {
-                        onLoadHamsterList(KnownHamsterList(listId, serverHostName))
+                        onLoadHamsterList(HamsterList(listId, serverHostName))
                         listId = ""
                     }
                 }
@@ -80,7 +80,7 @@ fun ListCreationSheet(
         )
         Button(
             onClick = {
-                onLoadHamsterList(KnownHamsterList(listId, serverHostName))
+                onLoadHamsterList(HamsterList(listId, serverHostName))
                 listId = ""
             },
             enabled = isInputValid

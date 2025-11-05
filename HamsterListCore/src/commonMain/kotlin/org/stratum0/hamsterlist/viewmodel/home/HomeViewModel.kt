@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.models.DialogState
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.utils.parseUrlLenient
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 
@@ -38,7 +38,7 @@ class HomeViewModel(
         when (action) {
             is HomeAction.UpdateUsername -> updateUsername(username = action.username)
             is HomeAction.UpdateAutoLoadLast -> updateAutoLoadLast(autoLoadLast = action.autoLoadLast)
-            is HomeAction.DeleteHamsterList -> deleteKnownList(action.knownHamsterList)
+            is HomeAction.DeleteHamsterList -> deleteKnownList(action.hamsterList)
             is HomeAction.LoadHamsterlist -> loadHamsterList(action = action)
 
             is HomeAction.OpenListCreationSheet -> updateSheetState(HomeSheetState.ListCreation)
@@ -104,7 +104,7 @@ class HomeViewModel(
     private fun updateSettings(
         username: String,
         autoLoadLast: Boolean,
-        loadedList: KnownHamsterList
+        loadedList: HamsterList
     ) {
         settingsRepository.setUsername(username)
         settingsRepository.setAutoLoadLast(autoLoadLast)
@@ -114,8 +114,8 @@ class HomeViewModel(
         }
     }
 
-    private fun deleteKnownList(knownHamsterList: KnownHamsterList) {
-        settingsRepository.deleteKnownList(knownHamsterList)
+    private fun deleteKnownList(hamsterList: HamsterList) {
+        settingsRepository.deleteKnownList(hamsterList)
     }
 
     private fun updateSheetState(sheetState: HomeSheetState?) {

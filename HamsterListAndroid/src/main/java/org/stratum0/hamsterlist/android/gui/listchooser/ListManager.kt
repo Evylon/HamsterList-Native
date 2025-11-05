@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,13 +37,13 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 
 @Composable
 fun ListManager(
     uiState: ListChooserState,
-    onLoadList: (KnownHamsterList) -> Unit,
-    onDeleteList: (KnownHamsterList) -> Unit,
+    onLoadList: (HamsterList) -> Unit,
+    onDeleteList: (HamsterList) -> Unit,
     openListCreationSheet: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -115,9 +113,9 @@ fun ListManager(
 
 @Composable
 fun ListChooser(
-    hamsterLists: List<KnownHamsterList>,
+    hamsterLists: List<HamsterList>,
     isEditing: Boolean,
-    onClick: (KnownHamsterList) -> Unit,
+    onClick: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -159,9 +157,9 @@ private fun EmptyListsState(modifier: Modifier) {
 
 @Composable
 private fun HamsterListItem(
-    hamsterList: KnownHamsterList,
+    hamsterList: HamsterList,
     isEditing: Boolean,
-    onClick: (KnownHamsterList) -> Unit,
+    onClick: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -196,10 +194,10 @@ fun ListChooserPreview() {
             ListManager(
                 uiState = ListChooserState(
                     listOf(
-                        KnownHamsterList(
+                        HamsterList(
                             "LocalList",
                             ""
-                        ), KnownHamsterList(
+                        ), HamsterList(
                             "RemoteList",
                             ""
                         )

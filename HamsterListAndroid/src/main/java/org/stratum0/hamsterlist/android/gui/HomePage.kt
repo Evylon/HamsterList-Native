@@ -31,7 +31,7 @@ import org.stratum0.hamsterlist.android.gui.listchooser.ListChooserState
 import org.stratum0.hamsterlist.android.gui.listchooser.ListCreationSheet
 import org.stratum0.hamsterlist.android.gui.listchooser.ListManager
 import org.stratum0.hamsterlist.android.gui.listchooser.ListSharingSheet
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.viewmodel.home.HomeAction
 import org.stratum0.hamsterlist.viewmodel.home.HomeSheetState
 import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
@@ -41,7 +41,7 @@ import org.stratum0.hamsterlist.viewmodel.home.HomeUiState
 fun HomePage(
     uiState: HomeUiState,
     onAction: (HomeAction) -> Unit,
-    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -78,9 +78,9 @@ fun HomePage(
 @Composable
 private fun HomePageSheetContent(
     sheetState: HomeSheetState,
-    knownHamsterLists: List<KnownHamsterList>,
+    knownHamsterLists: List<HamsterList>,
     lastLoadedServer: String?,
-    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (sheetState) {
@@ -139,9 +139,9 @@ private fun HomePageHeader(
 @Suppress("LongParameterList") // TODO improve UIStates, switch to events
 private fun HomePageContent(
     uiState: HomeUiState,
-    knownHamsterLists: List<KnownHamsterList>,
+    knownHamsterLists: List<HamsterList>,
     onAction: (HomeAction) -> Unit,
-    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -187,7 +187,7 @@ fun NewHomePagePreview() {
             HomePage(
                 uiState = HomeUiState(
                     knownHamsterLists = List(3) {
-                        KnownHamsterList("List $it", "")
+                        HamsterList("List $it", "")
                     }
                 ),
                 onAction = {},

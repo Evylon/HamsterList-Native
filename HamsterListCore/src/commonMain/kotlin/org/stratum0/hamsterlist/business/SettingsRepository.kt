@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 
 class SettingsRepository(
     private val settings: ObservableSettings
@@ -42,7 +42,7 @@ class SettingsRepository(
     )
 
     @OptIn(ExperimentalSettingsApi::class)
-    val knownHamsterLists: StateFlow<List<KnownHamsterList>> =
+    val knownHamsterLists: StateFlow<List<HamsterList>> =
         settings
             .getStringOrNullFlow(key = SettingsKey.KNOWN_LISTS.name)
             .map { value ->
@@ -66,7 +66,7 @@ class SettingsRepository(
         settings[SettingsKey.AUTO_LOAD_LAST.name] = autoLoadLast
     }
 
-    fun addKnownList(newList: KnownHamsterList) {
+    fun addKnownList(newList: HamsterList) {
         val updatedList = knownHamsterLists.value.toMutableList()
         updatedList.add(newList)
         updatedList.sortBy { it.listId }
@@ -77,7 +77,7 @@ class SettingsRepository(
         }
     }
 
-    fun deleteKnownList(listToDelete: KnownHamsterList) {
+    fun deleteKnownList(listToDelete: HamsterList) {
         val updatedList = knownHamsterLists.value.toMutableList()
         updatedList.remove(listToDelete)
         updatedList.sortBy { it.listId }
@@ -92,7 +92,7 @@ class SettingsRepository(
         }
     }
 
-    private fun updateKnownLists(knownLists: List<KnownHamsterList>) {
+    private fun updateKnownLists(knownLists: List<HamsterList>) {
         try {
             settings[SettingsKey.KNOWN_LISTS.name] = Json.encodeToString(knownLists)
         } catch (e: Exception) {
@@ -100,9 +100,9 @@ class SettingsRepository(
         }
     }
 
-    private fun String.decodeKnownLists(): List<KnownHamsterList>? {
+    private fun String.decodeKnownLists(): List<HamsterList>? {
         return try {
-            Json.decodeFromString<List<KnownHamsterList>>(this)
+            Json.decodeFromString<List<HamsterList>>(this)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -129,7 +129,7 @@ class SettingsRepository(
         // only migrate if we do not overwrite existing data
         if (knownHamsterLists.isEmpty()) {
             updateKnownLists(
-                listOf(KnownHamsterList(currentListId, serverHostName))
+                listOf(HamsterList(currentListId, serverHostName))
             )
         }
         // finally discard

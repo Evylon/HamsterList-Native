@@ -12,6 +12,7 @@ import org.stratum0.hamsterlist.business.ShoppingListRepository
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.models.SyncedShoppingList
@@ -21,11 +22,11 @@ import org.stratum0.hamsterlist.viewmodel.LoadingState
 
 @Suppress("TooManyFunctions")
 class ShoppingListViewModel(
-    private val hamsterListId: String,
+    private val hamsterList: HamsterList,
     private val shoppingListRepository: ShoppingListRepository
 ) : BaseViewModel() {
     private val _uiState = MutableStateFlow(
-        ShoppingListState(shoppingList = SyncedShoppingList(id = hamsterListId))
+        ShoppingListState(shoppingList = SyncedShoppingList(id = hamsterList.listId))
     )
 
     @NativeCoroutinesState
@@ -82,14 +83,14 @@ class ShoppingListViewModel(
 
     private fun fetchList() {
         scope.launch {
-            shoppingListRepository.loadListById(hamsterListId)
+            shoppingListRepository.loadHamsterList(hamsterList)
         }
     }
 
     private fun deleteItem(item: Item) {
         scope.launch {
             shoppingListRepository.deleteItem(
-                listId = _uiState.value.shoppingList.id,
+                hamsterList = hamsterList,
                 item = item
             )
         }
@@ -107,7 +108,7 @@ class ShoppingListViewModel(
             }
         scope.launch {
             shoppingListRepository.addItems(
-                listId = _uiState.value.shoppingList.id,
+                hamsterList = hamsterList,
                 items = parsedItems
             )
         }
@@ -116,7 +117,7 @@ class ShoppingListViewModel(
     private fun addItemByCompletion(completion: CompletionItem) {
         scope.launch {
             shoppingListRepository.addItem(
-                listId = _uiState.value.shoppingList.id,
+                hamsterList = hamsterList,
                 item = completion.toItem()
             )
         }
@@ -127,7 +128,7 @@ class ShoppingListViewModel(
             // filter out newlines like webclient
             val newItemFiltered = newItem.replace("\n", " ")
             shoppingListRepository.changeItem(
-                listId = _uiState.value.shoppingList.id,
+                hamsterList = hamsterList,
                 item = Item.parse(
                     stringRepresentation = newItemFiltered,
                     id = oldItem.id,
@@ -141,7 +142,7 @@ class ShoppingListViewModel(
     private fun changeCategoryForItem(item: Item, newCategoryId: String) {
         scope.launch {
             shoppingListRepository.changeItem(
-                listId = _uiState.value.shoppingList.id,
+                hamsterList = hamsterList,
                 item = item.copy(category = newCategoryId)
             )
         }
@@ -163,7 +164,7 @@ class ShoppingListViewModel(
         val uiState = uiState.first { it.loadingState !is LoadingState.Loading }
         if (uiState.loadingState is LoadingState.Done) {
             shoppingListRepository.handleSharedItems(
-                listId = uiState.shoppingList.id,
+                hamsterList = hamsterList,
                 items = shareItems.map { sharedItem ->
                     parseItemAndCheckCompletions(
                         input = sharedItem,

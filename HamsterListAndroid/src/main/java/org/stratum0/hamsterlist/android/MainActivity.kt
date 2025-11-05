@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -27,6 +27,7 @@ import org.stratum0.hamsterlist.android.gui.HomePage
 import org.stratum0.hamsterlist.android.gui.shoppinglist.ShoppingListPage
 import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.viewmodel.home.HomeAction
 import org.stratum0.hamsterlist.viewmodel.home.HomeViewModel
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
@@ -39,13 +40,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val autoLoadLast = settingsRepository.autoLoadLast.value
-        val lastListId = settingsRepository.loadedListId.value.orEmpty()
+        val lastList = settingsRepository.knownHamsterLists.value.find {
+            it.listId == settingsRepository.loadedListId.value.orEmpty()
+        }
         val hasSharedContent = handleTextSharing(intent)
         setContent {
             HamsterListTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     NavigationHost(
-                        autoLoadListId = lastListId.takeIf { autoLoadLast && lastListId.isNotBlank() },
+                        autoLoadList = lastList.takeIf { autoLoadLast && lastList != null },
                         hasSharedContentIntent = hasSharedContent,
                         modifier = Modifier
                     )
@@ -67,15 +70,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavigationHost(
-    autoLoadListId: String?,
+    autoLoadList: HamsterList?,
     hasSharedContentIntent: Boolean,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
     var hasSharedContent by remember { mutableStateOf(hasSharedContentIntent) }
     LifecycleEventEffect(Lifecycle.Event.ON_CREATE) {
-        if (!hasSharedContent && autoLoadListId != null) {
-            navController.navigate("shoppingList/$autoLoadListId")
+        if (!hasSharedContent && autoLoadList != null) {
+            navController.navigate(autoLoadList)
         }
     }
     NavHost(
@@ -97,16 +100,16 @@ fun NavigationHost(
                         HomeAction.LoadHamsterlist(
                             selectedList = selectedList,
                             navigateToList = {
-                                navController.navigate("shoppingList/${selectedList.listId}")
+                                navController.navigate(selectedList)
                             }
                         )
                     )
                 }
             )
         }
-        composable("shoppingList/{id}") {
-            val shoppingListId = it.arguments?.getString("id") ?: ""
-            val viewModel: ShoppingListViewModel = koinViewModel { parametersOf(shoppingListId) }
+        composable<HamsterList> { backStackEntry ->
+            val hamsterList: HamsterList = backStackEntry.toRoute()
+            val viewModel: ShoppingListViewModel = koinViewModel { parametersOf(hamsterList) }
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             ShoppingListPage(
                 uiState = uiState,

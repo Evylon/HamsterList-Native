@@ -1,17 +1,17 @@
 package org.stratum0.hamsterlist.viewmodel.home
 
 import org.stratum0.hamsterlist.models.DialogState
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 
 sealed interface HomeAction {
     data class UpdateAutoLoadLast(val autoLoadLast: Boolean) : HomeAction
     data class UpdateUsername(val username: String) : HomeAction
     data class DeleteHamsterList(
-        val knownHamsterList: KnownHamsterList
+        val hamsterList: HamsterList
     ) : HomeAction
 
     data class LoadHamsterlist(
-        val selectedList: KnownHamsterList,
+        val selectedList: HamsterList,
         val navigateToList: () -> Unit
     ) : HomeAction
 

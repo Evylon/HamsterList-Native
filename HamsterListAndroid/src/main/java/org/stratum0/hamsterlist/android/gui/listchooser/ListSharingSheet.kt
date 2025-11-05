@@ -11,12 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
-import org.stratum0.hamsterlist.models.KnownHamsterList
+import org.stratum0.hamsterlist.models.HamsterList
 
 @Composable
 fun ListSharingSheet(
-    knownHamsterLists: List<KnownHamsterList>,
-    onLoadHamsterList: (KnownHamsterList) -> Unit,
+    knownHamsterLists: List<HamsterList>,
+    onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
@@ -42,7 +42,7 @@ private fun ListSharingSheetPreview() {
         Surface {
             ListSharingSheet(
                 knownHamsterLists = List(size = 4) {
-                    KnownHamsterList("List$it", "")
+                    HamsterList("List$it", "")
                 },
                 onLoadHamsterList = {}
             )

@@ -14,21 +14,16 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
+import io.ktor.http.Url
 import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.models.AdditionalData
+import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.SyncRequest
 import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.utils.isDebug
@@ -38,26 +33,6 @@ import kotlin.coroutines.cancellation.CancellationException
 internal class ShoppingListApi(
     private val settingsRepository: SettingsRepository
 ) {
-    // TODO create a new API instance for each server, to support background sync with multiple servers
-    private val baseUrl: StateFlow<String> = combine(
-        settingsRepository.loadedListId,
-        settingsRepository.knownHamsterLists
-    ) { loadedListId, knownHamsterLists ->
-        val selectedHamsterList = knownHamsterLists.find { it.listId == loadedListId }
-        val parsedUrl = selectedHamsterList?.let { parseUrlLenient(it.serverHostName) }
-        parsedUrl?.let {
-            with(URLBuilder(parsedUrl)) {
-                protocol = URLProtocol.HTTPS
-                appendPathSegments("api")
-                buildString()
-            }
-        }.orEmpty()
-    }.stateIn(
-        scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.Eagerly,
-        initialValue = ""
-    )
-
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(
@@ -76,11 +51,22 @@ internal class ShoppingListApi(
         }
     }
 
+    private fun baseUrl(hamsterList: HamsterList): Url {
+        val parsedUrl = parseUrlLenient(hamsterList.serverHostName)
+            ?: throw IOException("cannot parse url for $hamsterList")
+
+        return with(URLBuilder(parsedUrl)) {
+            protocol = URLProtocol.HTTPS
+            appendPathSegments("api", hamsterList.listId)
+            build()
+        }
+    }
+
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
-    suspend fun getSyncedShoppingList(listId: String): SyncResponse {
-        return httpClient.get(baseUrl.value) {
+    suspend fun getSyncedShoppingList(hamsterList: HamsterList): SyncResponse {
+        return httpClient.get(baseUrl(hamsterList)) {
             url {
-                appendPathSegments(listId, "sync")
+                appendPathSegments("sync")
                 parameters.append("includeInResponse", AdditionalData.orders.toString())
                 parameters.append("includeInResponse", AdditionalData.categories.toString())
                 parameters.append("includeInResponse", AdditionalData.completions.toString())
@@ -94,9 +80,12 @@ internal class ShoppingListApi(
     }
 
     @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
-    suspend fun requestSync(listId: String, syncRequest: SyncRequest): SyncResponse {
-        return httpClient.post(baseUrl.value) {
-            url { appendPathSegments(listId, "sync") }
+    suspend fun requestSync(
+        hamsterList: HamsterList,
+        syncRequest: SyncRequest
+    ): SyncResponse {
+        return httpClient.post(baseUrl(hamsterList)) {
+            url { appendPathSegments("sync") }
             contentType(ContentType.Application.Json)
             setBody(syncRequest)
             settingsRepository.username.value?.let { username ->
