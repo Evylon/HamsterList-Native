@@ -57,7 +57,7 @@ private fun SyncIconButtonPreview() {
                     LoadingState.Done,
                     LoadingState.Loading,
                     LoadingState.SyncEnqueued,
-                    LoadingState.Error(IllegalStateException())
+                    LoadingState.Error(IllegalStateException(""))
                 ).forEach { loadingState ->
                     SyncIconButton(
                         loadingState = loadingState,

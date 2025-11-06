@@ -101,9 +101,6 @@ private fun ShoppingItemsList(
         onRefresh = { onAction(ShoppingListAction.FetchList) },
         modifier = modifier.fillMaxSize()
     ) {
-        if (listState.canScrollBackward) {
-            ShadowGradient(isTop = true)
-        }
         LazyColumn(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
@@ -128,6 +125,9 @@ private fun ShoppingItemsList(
                     },
                 )
             }
+        }
+        if (listState.canScrollBackward) {
+            ShadowGradient(isTop = true)
         }
         if (listState.canScrollForward) {
             ShadowGradient(isTop = false)

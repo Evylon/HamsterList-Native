@@ -3,15 +3,20 @@ package org.stratum0.hamsterlist.android.gui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import org.stratum0.hamsterlist.android.HamsterListTheme
 
 @Composable
 fun BoxScope.ShadowGradient(isTop: Boolean) {
@@ -29,11 +34,25 @@ fun BoxScope.ShadowGradient(isTop: Boolean) {
             .background(
                 Brush.verticalGradient(
                     colors = if (isTop) {
-                        listOf(MaterialTheme.colorScheme.background, Color.Transparent)
+                        listOf(MaterialTheme.colorScheme.surface, Color.Transparent)
                     } else {
-                        listOf(Color.Transparent, MaterialTheme.colorScheme.background)
+                        listOf(Color.Transparent, MaterialTheme.colorScheme.surface)
                     }
                 )
             )
     )
+}
+
+@PreviewLightDark
+@Composable
+private fun ShadowGradientPreview() {
+    HamsterListTheme {
+        Surface(color = HamsterListTheme.colors.shapeBackgroundColor) {
+            Box(modifier = Modifier.size(100.dp)) {
+                Spacer(Modifier.height(20.dp))
+                ShadowGradient(isTop = true)
+                ShadowGradient(isTop = false)
+            }
+        }
+    }
 }
