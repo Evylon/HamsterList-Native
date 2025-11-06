@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.HamsterList
@@ -22,7 +24,8 @@ import org.stratum0.hamsterlist.viewmodel.LoadingState
 @Suppress("TooManyFunctions")
 class ShoppingListViewModel(
     private val hamsterList: HamsterList,
-    private val shoppingListRepository: ShoppingListRepository
+    private val shoppingListRepository: ShoppingListRepository,
+    private val settingsRepository: SettingsRepository
 ) : BaseViewModel() {
     private val _uiState = MutableStateFlow(
         ShoppingListState(
@@ -39,8 +42,19 @@ class ShoppingListViewModel(
 
     init {
         shoppingListRepository.clear()
+        // load last sync if available
+        val cachedList = settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
+        if (cachedList != null) {
+            updateSyncState(cachedList.syncResponse)
+        }
+
         shoppingListRepository.lastSync.onEach { latestSync ->
-            latestSync?.let { updateSyncState(it) }
+            latestSync?.let {
+                updateSyncState(latestSync)
+                settingsRepository.updateCachedList(
+                    CachedHamsterList(hamsterList, latestSync)
+                )
+            }
         }.launchIn(scope)
         shoppingListRepository.syncState.onEach { syncState ->
             _uiState.update { currentState ->

@@ -31,10 +31,10 @@ suspend fun <T> loadCatching(apiCall: suspend () -> T): Result<T> {
 
 data class HamsterListDataException(
     override val cause: Throwable?,
-    override val message: String = "Unable to read server response"
+    override val message: String = "Unable to read server response."
 ) : Exception(message, cause)
 
 data class HamsterListConnectionException(
     override val cause: Throwable?,
-    override val message: String = "A problem with the network connection occured",
+    override val message: String = "A problem with the network connection occurred.",
 ) : Exception(message, cause)

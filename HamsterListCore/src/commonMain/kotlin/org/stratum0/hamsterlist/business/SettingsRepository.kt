@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
 
 class SettingsRepository(
@@ -44,16 +45,13 @@ class SettingsRepository(
         settings
             .getStringOrNullFlow(key = SettingsKey.KNOWN_LISTS.name)
             .map { value ->
-                value?.decodeKnownLists().orEmpty()
+                value?.decode<List<HamsterList>>().orEmpty()
             }
             .stateIn(
                 CoroutineScope(Dispatchers.IO),
                 SharingStarted.Eagerly,
                 getKnownLists()
             )
-
-    fun getKnownLists(): List<HamsterList> =
-        settings.getStringOrNull(key = SettingsKey.KNOWN_LISTS.name)?.decodeKnownLists().orEmpty()
 
     fun setUsername(newName: String) {
         settings[SettingsKey.USERNAME.name] = newName.trim().takeIf { it.isNotBlank() }
@@ -62,6 +60,12 @@ class SettingsRepository(
     fun setAutoLoadLast(autoLoadLast: Boolean) {
         settings[SettingsKey.AUTO_LOAD_LAST.name] = autoLoadLast
     }
+
+    fun getKnownLists(): List<HamsterList> =
+        settings
+            .getStringOrNull(key = SettingsKey.KNOWN_LISTS.name)
+            ?.decode<List<HamsterList>>()
+            .orEmpty()
 
     fun addKnownList(newList: HamsterList) {
         val updatedList = knownHamsterLists.value.toMutableList()
@@ -93,6 +97,35 @@ class SettingsRepository(
         }
     }
 
+    fun getCachedLists(): List<CachedHamsterList> =
+        settings
+            .getStringOrNull(key = SettingsKey.CACHED_LISTS.name)
+            ?.decode<List<CachedHamsterList>>()
+            .orEmpty()
+
+    /**
+     * Update existing or insert new cached list into Settings.
+     */
+    fun updateCachedList(updatedList: CachedHamsterList) {
+        val cachedLists = getCachedLists().toMutableList()
+        val updatedCachedLists = if (cachedLists.none { it.hamsterList == updatedList.hamsterList }) {
+            cachedLists.apply { add(updatedList) }
+        } else {
+            cachedLists.map { cachedList ->
+                if (cachedList.hamsterList == updatedList.hamsterList) {
+                    updatedList
+                } else {
+                    cachedList
+                }
+            }
+        }
+        try {
+            settings[SettingsKey.CACHED_LISTS.name] = Json.encodeToString(updatedCachedLists)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun updateKnownLists(knownLists: List<HamsterList>) {
         try {
             val knownListsUnique = knownLists.toSet().toList()
@@ -102,9 +135,9 @@ class SettingsRepository(
         }
     }
 
-    private fun String.decodeKnownLists(): List<HamsterList>? {
+    private inline fun <reified T> String.decode(): T? {
         return try {
-            Json.decodeFromString<List<HamsterList>>(this)
+            Json.decodeFromString<T>(this)
         } catch (e: Exception) {
             e.printStackTrace()
             null
