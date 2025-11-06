@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
@@ -42,7 +44,7 @@ internal class ShoppingListRepositoryImpl(
     private val _sharedItemsFlow = MutableStateFlow<List<String>?>(null)
     override val sharedItems: StateFlow<List<String>?> = _sharedItemsFlow.asStateFlow()
 
-    private val syncRequestFlow = MutableStateFlow<SyncQueueItem?>(null)
+    private val syncRequestFlow = MutableSharedFlow<SyncQueueItem>()
 
     private data class SyncQueueItem(
         val hamsterList: HamsterList,
@@ -187,16 +189,18 @@ internal class ShoppingListRepositoryImpl(
             _syncStateFlow.update { LoadingState.Error(HamsterListDataException(null)) }
             return
         }
-        syncRequestFlow.update {
-            SyncQueueItem(
-                hamsterList,
-                SyncRequest(
-                    previousSync = lastSync.list,
-                    currentState = updatedList,
-                    includeInResponse = listOf(
-                        AdditionalData.orders,
-                        AdditionalData.categories,
-                        AdditionalData.completions
+        scope.launch {
+            syncRequestFlow.emit(
+                SyncQueueItem(
+                    hamsterList,
+                    SyncRequest(
+                        previousSync = lastSync.list,
+                        currentState = updatedList,
+                        includeInResponse = listOf(
+                            AdditionalData.orders,
+                            AdditionalData.categories,
+                            AdditionalData.completions
+                        )
                     )
                 )
             )
