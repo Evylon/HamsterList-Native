@@ -1,66 +1,155 @@
 package org.stratum0.hamsterlist.business
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import org.stratum0.hamsterlist.models.AdditionalData
+import org.stratum0.hamsterlist.models.CategoryDefinition
+import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.HamsterList
+import org.stratum0.hamsterlist.models.HamsterListDataException
 import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.models.Result
+import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncRequest
 import org.stratum0.hamsterlist.models.SyncResponse
-import org.stratum0.hamsterlist.models.SyncedShoppingList
+import org.stratum0.hamsterlist.models.loadCatching
 import org.stratum0.hamsterlist.network.ShoppingListApi
-import org.stratum0.hamsterlist.utils.FetchState
-import org.stratum0.hamsterlist.utils.loadCatchingAndEmit
+import org.stratum0.hamsterlist.viewmodel.LoadingState
+import kotlin.time.Duration.Companion.seconds
 
 internal class ShoppingListRepositoryImpl(
     private val shoppingListApi: ShoppingListApi
 ) : ShoppingListRepository {
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     // Flows
-    private val _syncStateFlow = MutableStateFlow<FetchState<SyncResponse>>(FetchState.Loading)
+    private val _syncStateFlow = MutableStateFlow<LoadingState>(LoadingState.Loading)
     override val syncState = _syncStateFlow.asStateFlow()
+
+    private var _lastSyncFlow = MutableStateFlow<SyncResponse?>(null)
+    override var lastSync = _lastSyncFlow.asStateFlow()
 
     private val _sharedItemsFlow = MutableStateFlow<List<String>?>(null)
     override val sharedItems: StateFlow<List<String>?> = _sharedItemsFlow.asStateFlow()
 
+    private val syncRequestFlow = MutableStateFlow<SyncQueueItem?>(null)
+
+    private data class SyncQueueItem(
+        val hamsterList: HamsterList,
+        val syncRequest: SyncRequest
+    )
+
+    init {
+        @OptIn(FlowPreview::class)
+        syncRequestFlow
+            .filterNotNull()
+            .debounce(1.seconds)
+            .onEach { syncQueueItem ->
+                executeSync {
+                    shoppingListApi.requestSync(
+                        syncQueueItem.hamsterList,
+                        syncQueueItem.syncRequest
+                    )
+                }
+            }
+            .launchIn(scope)
+    }
+
     // Service Calls
-    override suspend fun loadHamsterList(hamsterList: HamsterList) {
-        _syncStateFlow.loadCatchingAndEmit {
+    override suspend fun loadHamsterList(hamsterList: HamsterList): Result<ShoppingList> {
+        val syncResult = executeSync {
             shoppingListApi.getSyncedShoppingList(hamsterList)
+        }
+        return syncResult.mapSuccess { it.list.toShoppingList() }
+    }
+
+    override fun deleteItem(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        item: Item
+    ): ShoppingList {
+        return transformListAndSync(hamsterList, currentList) { currentList ->
+            currentList.copy(
+                items = currentList.items.filterNot { it.id == item.id }
+            )
         }
     }
 
-    override suspend fun deleteItem(hamsterList: HamsterList, item: Item) {
-        trySync(hamsterList) { previousList ->
-            previousList.copy(
-                items = previousList.items.filterNot {
-                    it.id == item.id
+    override fun addItemInput(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        itemInput: String
+    ): ShoppingList {
+        return addItems(
+            hamsterList = hamsterList,
+            currentList = currentList,
+            items = itemInput
+                .split("\n")
+                .map { input ->
+                    parseItemAndCheckCompletions(
+                        input = input,
+                        categories = lastSync.value?.categories.orEmpty(),
+                        completions = lastSync.value?.completions.orEmpty()
+                    )
+                }
+        )
+    }
+
+    override fun addItem(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        item: Item
+    ): ShoppingList {
+        return transformListAndSync(hamsterList, currentList) { currentList ->
+            currentList.copy(
+                items = currentList.items.plus(item)
+            )
+        }
+    }
+
+    override fun addItems(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        items: List<Item>
+    ): ShoppingList {
+        return transformListAndSync(hamsterList, currentList) { currentList ->
+            currentList.copy(
+                items = currentList.items.plus(items)
+            )
+        }
+    }
+
+    override fun changeItem(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        item: Item
+    ): ShoppingList {
+        return transformListAndSync(hamsterList, currentList) { currentList ->
+            currentList.copy(
+                items = currentList.items.map {
+                    if (it.id == item.id) item else it
                 }
             )
         }
     }
 
-    override suspend fun addItem(hamsterList: HamsterList, item: Item) {
-        trySync(hamsterList) { previousList ->
-            previousList.copy(
-                items = previousList.items.plus(item)
-            )
-        }
-    }
-
-    override suspend fun addItems(hamsterList: HamsterList, items: List<Item>) {
-        trySync(hamsterList) { previousList ->
-            previousList.copy(
-                items = previousList.items.plus(items)
-            )
-        }
-    }
-
-    override suspend fun handleSharedItems(hamsterList: HamsterList, items: List<Item>) {
+    override fun handleSharedItems(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        items: List<Item>
+    ): ShoppingList {
         _sharedItemsFlow.update { null }
-        addItems(hamsterList, items)
+        return addItems(hamsterList, currentList, items)
     }
 
     override fun enqueueSharedContent(content: String) {
@@ -69,49 +158,91 @@ internal class ShoppingListRepositoryImpl(
         }
     }
 
-    override suspend fun changeItem(hamsterList: HamsterList, item: Item) {
-        trySync(hamsterList) { previousList ->
-            previousList.copy(
-                items = previousList.items.map {
-                    if (it.id == item.id) item else it
-                }
-            )
-        }
-    }
-
     override fun clear() {
-        _syncStateFlow.update { FetchState.Loading }
+        _syncStateFlow.update { LoadingState.Loading }
+        _lastSyncFlow.update { null }
     }
 
-    // TODO separate last saved sync state from current ShoppingList
-    private suspend fun trySync(
+    private fun transformListAndSync(
         hamsterList: HamsterList,
-        transformList: (SyncedShoppingList) -> SyncedShoppingList
-    ) {
-        val previousList = getLatestList(hamsterList) ?: return // TODO add error handling
-        val updatedList = transformList(previousList)
-        if (previousList.id != updatedList.id) return // TODO add error handling
-        val syncRequest = SyncRequest(
-            previousSync = previousList,
-            currentState = updatedList.toShoppingList(),
-            includeInResponse = listOf(
-                AdditionalData.orders,
-                AdditionalData.categories,
-                AdditionalData.completions
-            )
+        currentList: ShoppingList,
+        transform: (ShoppingList) -> ShoppingList
+    ): ShoppingList {
+        val updatedList = transform(currentList)
+        enqueueSync(
+            hamsterList = hamsterList,
+            updatedList = updatedList
         )
-        _syncStateFlow.loadCatchingAndEmit {
-            shoppingListApi.requestSync(hamsterList, syncRequest)
+        return updatedList
+    }
+
+    private fun enqueueSync(
+        hamsterList: HamsterList,
+        updatedList: ShoppingList
+    ) {
+        _syncStateFlow.update { LoadingState.SyncEnqueued }
+        val lastSync = this.lastSync.value
+        if (lastSync == null) {
+            // TODO error handling
+            _syncStateFlow.update { LoadingState.Error(HamsterListDataException(null)) }
+            return
+        }
+        syncRequestFlow.update {
+            SyncQueueItem(
+                hamsterList,
+                SyncRequest(
+                    previousSync = lastSync.list,
+                    currentState = updatedList,
+                    includeInResponse = listOf(
+                        AdditionalData.orders,
+                        AdditionalData.categories,
+                        AdditionalData.completions
+                    )
+                )
+            )
         }
     }
 
-    // TODO add caching and resolving for multiple lists
-    private fun getLatestList(hamsterList: HamsterList): SyncedShoppingList? {
-        val list = (_syncStateFlow.value as? FetchState.Success)?.value?.list
-        return if (list == null || list.id != hamsterList.listId) {
-            null
+    private suspend fun executeSync(
+        syncAction: suspend () -> SyncResponse
+    ): Result<SyncResponse> {
+        _syncStateFlow.update { LoadingState.Loading }
+        val syncResult = loadCatching {
+            syncAction()
+        }
+        when (syncResult) {
+            is Result.Success -> {
+                _lastSyncFlow.update { syncResult.value }
+                _syncStateFlow.update { LoadingState.Done }
+            }
+
+            is Result.Failure -> _syncStateFlow.update {
+                syncResult.exception.printStackTrace()
+                LoadingState.Error(syncResult.exception)
+            }
+        }
+        return syncResult
+    }
+
+    private fun parseItemAndCheckCompletions(
+        input: String,
+        categories: List<CategoryDefinition>,
+        completions: List<CompletionItem>
+    ): Item {
+        val parsedItem = Item.parse(
+            stringRepresentation = input,
+            categories = categories
+        )
+        val completion = completions.find { it.name == parsedItem.name }
+        return if (completion != null) {
+            parsedItem.copy(
+                id = parsedItem.id,
+                name = completion.name,
+                amount = parsedItem.amount,
+                category = parsedItem.category ?: completion.category
+            )
         } else {
-            list
+            parsedItem
         }
     }
 }

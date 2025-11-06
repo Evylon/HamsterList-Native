@@ -4,16 +4,13 @@ import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
-import org.stratum0.hamsterlist.models.SyncedShoppingList
+import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.viewmodel.LoadingState
-import kotlin.random.Random
 
 data class ShoppingListState(
-    val shoppingList: SyncedShoppingList = SyncedShoppingList(
+    val shoppingList: ShoppingList = ShoppingList(
         id = "",
         title = "",
-        token = Random.nextInt().toString(),
-        changeId = Random.nextInt().toString(),
         items = emptyList()
     ),
     val categories: List<CategoryDefinition> = emptyList(),
@@ -30,11 +27,9 @@ data class ShoppingListState(
         // used on iOS
         val empty = ShoppingListState()
         val mock = ShoppingListState(
-            shoppingList = SyncedShoppingList(
+            shoppingList = ShoppingList(
                 id = "Mock",
                 title = "MockList",
-                token = Random.nextInt().toString(),
-                changeId = Random.nextInt().toString(),
                 items = List(15) {
                     Item(
                         id = "UUID$it",

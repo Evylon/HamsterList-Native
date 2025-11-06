@@ -63,15 +63,18 @@ fun HamsterListTheme(
 }
 
 data class HamsterListColors(
-    val shapeBackgroundColor: Color = Color.Unspecified
+    val shapeBackgroundColor: Color = Color.Unspecified,
+    val warning: Color = Color.Unspecified
 )
 
 val hamsterListLightColors = HamsterListColors(
-    shapeBackgroundColor = Color.Black.copy(alpha = 0.12f)
+    shapeBackgroundColor = Color.Black.copy(alpha = 0.12f),
+    warning = Color(0xFFFF9800)
 )
 
 val hamsterListDarkColors = HamsterListColors(
-    shapeBackgroundColor = Color.White.copy(alpha = 0.12f)
+    shapeBackgroundColor = Color.White.copy(alpha = 0.12f),
+    warning = Color(0xFFFF9800)
 )
 
 val LocalHamsterListColors = staticCompositionLocalOf { HamsterListColors() }

@@ -34,6 +34,7 @@ import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.android.gui.components.ErrorContent
 import org.stratum0.hamsterlist.android.gui.components.HamsterListLoadingIndicator
+import org.stratum0.hamsterlist.android.gui.components.SyncIconButton
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListState
@@ -55,7 +56,9 @@ fun ShoppingListPage(
         topBar = {
             ShoppingListHeader(
                 title = uiState.shoppingList.title,
-                onBack = onBack
+                loadingState = uiState.loadingState,
+                onBack = onBack,
+                onRefresh = { onAction(ShoppingListAction.FetchList) }
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -85,14 +88,17 @@ fun ShoppingListPage(
 @Composable
 private fun ShoppingListHeader(
     title: String,
+    loadingState: LoadingState,
     onBack: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
         title = {
             Text(
                 text = title,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineSmall
             )
         },
         modifier = modifier,
@@ -103,9 +109,17 @@ private fun ShoppingListHeader(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.navigation_back_button)
+                    contentDescription = stringResource(R.string.navigation_back_button),
+                    modifier = Modifier.size(32.dp)
                 )
             }
+        },
+        actions = {
+            SyncIconButton(
+                loadingState = loadingState,
+                onClick = onRefresh,
+                modifier = Modifier.size(48.dp)
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -138,6 +152,7 @@ private fun ShoppingListContent(
             }
 
             is LoadingState.Done,
+            is LoadingState.SyncEnqueued,
             is LoadingState.Loading -> {
                 val isLoading = state is LoadingState.Loading
                 Box(modifier = Modifier.fillMaxSize()) {

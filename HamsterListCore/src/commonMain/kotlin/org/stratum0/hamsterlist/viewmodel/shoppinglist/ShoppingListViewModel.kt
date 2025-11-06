@@ -11,12 +11,11 @@ import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.business.ShoppingListRepository
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
-import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.HamsterList
+import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
+import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
-import org.stratum0.hamsterlist.models.SyncedShoppingList
-import org.stratum0.hamsterlist.utils.FetchState
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 
@@ -26,7 +25,13 @@ class ShoppingListViewModel(
     private val shoppingListRepository: ShoppingListRepository
 ) : BaseViewModel() {
     private val _uiState = MutableStateFlow(
-        ShoppingListState(shoppingList = SyncedShoppingList(id = hamsterList.listId))
+        ShoppingListState(
+            shoppingList = ShoppingList(
+                id = hamsterList.listId,
+                title = hamsterList.listId,
+                items = emptyList()
+            )
+        )
     )
 
     @NativeCoroutinesState
@@ -34,17 +39,12 @@ class ShoppingListViewModel(
 
     init {
         shoppingListRepository.clear()
-        shoppingListRepository.syncState.onEach { networkResult ->
-            when (networkResult) {
-                is FetchState.Success -> updateSyncState(networkResult.value)
-                is FetchState.Failure -> _uiState.update { oldState ->
-                    networkResult.throwable.printStackTrace()
-                    oldState.copy(loadingState = LoadingState.Error(networkResult.throwable))
-                }
-
-                is FetchState.Loading -> _uiState.update { oldState ->
-                    oldState.copy(loadingState = LoadingState.Loading)
-                }
+        shoppingListRepository.lastSync.onEach { latestSync ->
+            latestSync?.let { updateSyncState(it) }
+        }.launchIn(scope)
+        shoppingListRepository.syncState.onEach { syncState ->
+            _uiState.update { currentState ->
+                currentState.copy(loadingState = syncState)
             }
         }.launchIn(scope)
         shoppingListRepository.sharedItems.onEach { sharedItems ->
@@ -88,62 +88,70 @@ class ShoppingListViewModel(
     }
 
     private fun deleteItem(item: Item) {
-        scope.launch {
-            shoppingListRepository.deleteItem(
-                hamsterList = hamsterList,
-                item = item
+        _uiState.update { currentState ->
+            currentState.copy(
+                shoppingList = shoppingListRepository.deleteItem(
+                    hamsterList = hamsterList,
+                    currentList = currentState.shoppingList,
+                    item = item
+                )
             )
         }
     }
 
     private fun addItem(userInput: String) {
-        val parsedItems = userInput
-            .split("\n")
-            .map { input ->
-                parseItemAndCheckCompletions(
-                    input,
-                    uiState.value.categories,
-                    uiState.value.completions
+        _uiState.update { currentState ->
+            currentState.copy(
+                shoppingList = shoppingListRepository.addItemInput(
+                    hamsterList = hamsterList,
+                    currentList = currentState.shoppingList,
+                    itemInput = userInput
                 )
-            }
-        scope.launch {
-            shoppingListRepository.addItems(
-                hamsterList = hamsterList,
-                items = parsedItems
             )
         }
     }
 
     private fun addItemByCompletion(completion: CompletionItem) {
-        scope.launch {
-            shoppingListRepository.addItem(
-                hamsterList = hamsterList,
-                item = completion.toItem()
-            )
-        }
-    }
-
-    private fun changeItem(oldItem: Item, newItem: String) {
-        scope.launch {
-            // filter out newlines like webclient
-            val newItemFiltered = newItem.replace("\n", " ")
-            shoppingListRepository.changeItem(
-                hamsterList = hamsterList,
-                item = Item.parse(
-                    stringRepresentation = newItemFiltered,
-                    id = oldItem.id,
-                    category = oldItem.category,
-                    categories = uiState.value.categories
+        _uiState.update { currentState ->
+            currentState.copy(
+                shoppingList = shoppingListRepository.addItem(
+                    hamsterList = hamsterList,
+                    currentList = currentState.shoppingList,
+                    item = completion.toItem()
                 )
             )
         }
     }
 
+    private fun changeItem(oldItem: Item, newItem: String) {
+        // filter out newlines like webclient
+        val newItemFiltered = newItem.replace("\n", " ")
+        val parsedItem = Item.parse(
+            stringRepresentation = newItemFiltered,
+            id = oldItem.id,
+            category = oldItem.category,
+            categories = uiState.value.categories
+        )
+        _uiState.update { currentState ->
+            currentState.copy(
+                shoppingList = shoppingListRepository.changeItem(
+                    hamsterList = hamsterList,
+                    currentList = currentState.shoppingList,
+                    item = parsedItem
+                )
+            )
+        }
+
+    }
+
     private fun changeCategoryForItem(item: Item, newCategoryId: String) {
-        scope.launch {
-            shoppingListRepository.changeItem(
-                hamsterList = hamsterList,
-                item = item.copy(category = newCategoryId)
+        _uiState.update { currentState ->
+            currentState.copy(
+                shoppingList = shoppingListRepository.addItem(
+                    hamsterList = hamsterList,
+                    currentList = currentState.shoppingList,
+                    item = item.copy(category = newCategoryId)
+                )
             )
         }
     }
@@ -165,6 +173,7 @@ class ShoppingListViewModel(
         if (uiState.loadingState is LoadingState.Done) {
             shoppingListRepository.handleSharedItems(
                 hamsterList = hamsterList,
+                currentList = uiState.shoppingList,
                 items = shareItems.map { sharedItem ->
                     parseItemAndCheckCompletions(
                         input = sharedItem,
@@ -207,7 +216,7 @@ class ShoppingListViewModel(
             oldState.copy(
                 shoppingList = syncResponse.list.copy(
                     items = syncResponse.list.items.sortedByOrder(selectedOrder)
-                ),
+                ).toShoppingList(),
                 categories = syncResponse.categories,
                 completions = syncResponse.completions.distinctBy { it.name },
                 orders = syncResponse.orders,

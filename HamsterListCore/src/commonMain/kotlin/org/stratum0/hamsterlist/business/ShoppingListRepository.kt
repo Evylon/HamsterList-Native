@@ -1,38 +1,47 @@
 package org.stratum0.hamsterlist.business
 
-import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.StateFlow
-import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.HamsterList
+import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.models.Result
+import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
-import org.stratum0.hamsterlist.utils.FetchState
+import org.stratum0.hamsterlist.viewmodel.LoadingState
 
 interface ShoppingListRepository {
     @NativeCoroutinesState
-    val syncState: StateFlow<FetchState<SyncResponse>>
+    val syncState: StateFlow<LoadingState>
+
+    @NativeCoroutinesState
+    val lastSync: StateFlow<SyncResponse?>
 
     val sharedItems: StateFlow<List<String>?>
 
-    @NativeCoroutines
-    suspend fun loadHamsterList(hamsterList: HamsterList)
+    suspend fun loadHamsterList(hamsterList: HamsterList): Result<ShoppingList>
+    fun deleteItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList
+    fun addItemInput(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        itemInput: String
+    ): ShoppingList
 
-    @NativeCoroutines
-    suspend fun deleteItem(hamsterList: HamsterList, item: Item)
+    fun addItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList
+    fun addItems(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        items: List<Item>
+    ): ShoppingList
 
-    @NativeCoroutines
-    suspend fun addItem(hamsterList: HamsterList, item: Item)
+    fun changeItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList
 
-    @NativeCoroutines
-    suspend fun addItems(hamsterList: HamsterList, items: List<Item>)
-
-    @NativeCoroutines
-    suspend fun handleSharedItems(hamsterList: HamsterList, items: List<Item>)
+    fun handleSharedItems(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        items: List<Item>
+    ): ShoppingList
 
     fun enqueueSharedContent(content: String)
-
-    @NativeCoroutines
-    suspend fun changeItem(hamsterList: HamsterList, item: Item)
 
     fun clear()
 }
