@@ -91,6 +91,7 @@ fun NavigationHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             if (hasSharedContent) {
                 viewModel.handleHomeAction(HomeAction.OpenShareContentSheet)
+                hasSharedContent = false
             }
             HomePage(
                 uiState = uiState,
