@@ -77,7 +77,7 @@ fun NavigationHost(
     val navController = rememberNavController()
     var hasSharedContent by remember { mutableStateOf(hasSharedContentIntent) }
     LifecycleEventEffect(Lifecycle.Event.ON_CREATE) {
-        if (!hasSharedContent && autoLoadList != null) {
+        if (!hasSharedContentIntent && autoLoadList != null) {
             navController.navigate(autoLoadList)
         }
     }
