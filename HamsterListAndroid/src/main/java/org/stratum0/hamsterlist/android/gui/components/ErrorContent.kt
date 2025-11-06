@@ -1,15 +1,11 @@
 package org.stratum0.hamsterlist.android.gui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,28 +18,14 @@ import java.io.IOException
 @Composable
 fun ErrorContent(
     throwable: Throwable,
-    refresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.CenterVertically)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Warning,
-            contentDescription = "Error",
-            modifier = Modifier.size(60.dp)
-        )
-        Text(
-            text = throwable.message ?: "Unkown Error",
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Button(refresh) {
-            Text("Retry")
-        }
-    }
+    Text(
+        text = throwable.message ?: "Unknown Error",
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = modifier.fillMaxWidth(),
+    )
 }
 
 @PreviewLightDark
@@ -52,8 +34,8 @@ fun ShoppingListPagePreview() {
     HamsterListTheme {
         Surface {
             ErrorContent(
-                throwable = IOException("A problem with the network connection occured"),
-                refresh = {}
+                throwable = IOException("A problem with the network connection occurred."),
+                modifier = Modifier.padding(12.dp)
             )
         }
     }

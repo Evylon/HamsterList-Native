@@ -140,34 +140,26 @@ private fun ShoppingListContent(
         label = "loading state",
         modifier = modifier
     ) { state ->
-        when (state) {
-            is LoadingState.Error -> {
-                ErrorContent(
-                    throwable = state.throwable,
-                    refresh = { onAction(ShoppingListAction.FetchList) },
+        val isLoading = state is LoadingState.Loading
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column {
+                if (state is LoadingState.Error) {
+                    ErrorContent(
+                        throwable = state.throwable,
+                        modifier = Modifier.padding(top = 12.dp).padding(horizontal = 12.dp)
+                    )
+                }
+                ShoppingListView(
+                    uiState = uiState,
+                    onAction = onAction,
+                    isEnabled = !isLoading,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(12.dp)
+                        .alpha(ALPHA_LOADING)
+                        .takeIf { isLoading } ?: Modifier
                 )
             }
-
-            is LoadingState.Done,
-            is LoadingState.SyncEnqueued,
-            is LoadingState.Loading -> {
-                val isLoading = state is LoadingState.Loading
-                Box(modifier = Modifier.fillMaxSize()) {
-                    ShoppingListView(
-                        uiState = uiState,
-                        onAction = onAction,
-                        isEnabled = !isLoading,
-                        modifier = Modifier
-                            .alpha(ALPHA_LOADING)
-                            .takeIf { isLoading } ?: Modifier
-                    )
-                    if (isLoading) {
-                        HamsterListLoadingIndicator(modifier = Modifier.align(Alignment.Center))
-                    }
-                }
+            if (isLoading) {
+                HamsterListLoadingIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }
