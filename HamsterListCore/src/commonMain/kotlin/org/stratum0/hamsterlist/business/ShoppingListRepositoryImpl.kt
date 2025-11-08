@@ -13,11 +13,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.stratum0.hamsterlist.models.CategoryDefinition
-import org.stratum0.hamsterlist.models.CompletionItem
+import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.HamsterListDataException
 import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.models.Item.Companion.parseItemAndCheckCompletions
 import org.stratum0.hamsterlist.models.Result
 import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncRequest
@@ -72,12 +72,17 @@ internal class ShoppingListRepositoryImpl(
         // if cached list exists, request a sync instead of just loading the list.
         return if (cachedList != null) {
             _lastSyncFlow.update { cachedList.lastSyncState }
-            scope.launch {
-                executeSync {
-                    shoppingListApi.requestSync(
-                        hamsterList,
-                        SyncRequest(cachedState = cachedList)
-                    )
+            val sharedItems = sharedItems.value
+            if (sharedItems != null) {
+                handleSharedItems(cachedList, sharedItems)
+            } else {
+                scope.launch {
+                    executeSync {
+                        shoppingListApi.requestSync(
+                            hamsterList,
+                            SyncRequest(cachedState = cachedList)
+                        )
+                    }
                 }
             }
             Result.Success(cachedList.currentList)
@@ -165,12 +170,23 @@ internal class ShoppingListRepositoryImpl(
     }
 
     override fun handleSharedItems(
-        hamsterList: HamsterList,
-        currentList: ShoppingList,
-        items: List<Item>
+        cachedList: CachedHamsterList,
+        items: List<String>
     ): ShoppingList {
+        val parsedItems = items.map { sharedItem ->
+            parseItemAndCheckCompletions(
+                input = sharedItem,
+                categories = cachedList.lastSyncState.categories,
+                completions = cachedList.lastSyncState.completions
+            )
+        }
         _sharedItemsFlow.update { null }
-        return addItems(hamsterList, currentList, items, skipQueue = true)
+        return addItems(
+            hamsterList = cachedList.hamsterList,
+            currentList = cachedList.currentList,
+            items = parsedItems,
+            skipQueue = true
+        )
     }
 
     override fun enqueueSharedContent(content: String) {
@@ -256,27 +272,5 @@ internal class ShoppingListRepositoryImpl(
             }
         }
         return syncResult
-    }
-
-    private fun parseItemAndCheckCompletions(
-        input: String,
-        categories: List<CategoryDefinition>,
-        completions: List<CompletionItem>
-    ): Item {
-        val parsedItem = Item.parse(
-            stringRepresentation = input,
-            categories = categories
-        )
-        val completion = completions.find { it.name == parsedItem.name }
-        return if (completion != null) {
-            parsedItem.copy(
-                id = parsedItem.id,
-                name = completion.name,
-                amount = parsedItem.amount,
-                category = parsedItem.category ?: completion.category
-            )
-        } else {
-            parsedItem
-        }
     }
 }

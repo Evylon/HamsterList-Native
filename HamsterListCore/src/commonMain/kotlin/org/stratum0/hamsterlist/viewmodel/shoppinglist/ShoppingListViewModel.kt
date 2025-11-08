@@ -3,14 +3,12 @@ package org.stratum0.hamsterlist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepository
-import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.Item
@@ -54,11 +52,6 @@ class ShoppingListViewModel(
         shoppingListRepository.syncState.onEach { syncState ->
             _uiState.update { currentState ->
                 currentState.copy(loadingState = syncState)
-            }
-        }.launchIn(scope)
-        shoppingListRepository.sharedItems.onEach { sharedItems ->
-            if (sharedItems != null) {
-                handleSharedItems(sharedItems)
             }
         }.launchIn(scope)
         settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
@@ -179,49 +172,6 @@ class ShoppingListViewModel(
                 ),
                 selectedOrder = order
             )
-        }
-    }
-
-    private suspend fun handleSharedItems(shareItems: List<String>) {
-        // wait for list to load
-        val uiState = uiState.first { it.loadingState !is LoadingState.Loading }
-        if (uiState.loadingState is LoadingState.Done) {
-            shoppingListRepository.handleSharedItems(
-                hamsterList = hamsterList,
-                currentList = uiState.shoppingList,
-                items = shareItems.map { sharedItem ->
-                    parseItemAndCheckCompletions(
-                        input = sharedItem,
-                        categories = uiState.categories,
-                        completions = uiState.completions
-                    )
-                }
-            )
-        } else {
-            // TODO show dialog
-            println("Error loading the list")
-        }
-    }
-
-    private fun parseItemAndCheckCompletions(
-        input: String,
-        categories: List<CategoryDefinition>,
-        completions: List<CompletionItem>
-    ): Item {
-        val parsedItem = Item.parse(
-            stringRepresentation = input,
-            categories = categories
-        )
-        val completion = completions.find { it.name == parsedItem.name }
-        return if (completion != null) {
-            parsedItem.copy(
-                id = parsedItem.id,
-                name = completion.name,
-                amount = parsedItem.amount,
-                category = parsedItem.category ?: completion.category
-            )
-        } else {
-            parsedItem
         }
     }
 

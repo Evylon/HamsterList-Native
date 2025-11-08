@@ -69,6 +69,28 @@ data class Item(
                 category = category
             )
         }
+
+        fun parseItemAndCheckCompletions(
+            input: String,
+            categories: List<CategoryDefinition>,
+            completions: List<CompletionItem>
+        ): Item {
+            val parsedItem = Item.parse(
+                stringRepresentation = input,
+                categories = categories
+            )
+            val completion = completions.find { it.name == parsedItem.name }
+            return if (completion != null) {
+                parsedItem.copy(
+                    id = parsedItem.id,
+                    name = completion.name,
+                    amount = parsedItem.amount,
+                    category = parsedItem.category ?: completion.category
+                )
+            } else {
+                parsedItem
+            }
+        }
     }
 
     override fun toString(): String = buildString {
