@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
-import org.stratum0.hamsterlist.models.HamsterListDataException
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Item.Companion.parseItemAndCheckCompletions
 import org.stratum0.hamsterlist.models.Result
@@ -71,6 +70,7 @@ internal class ShoppingListRepositoryImpl(
         val cachedList = settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
         // if cached list exists, request a sync instead of just loading the list.
         if (cachedList != null) {
+            _lastSyncFlow.update { cachedList.lastSyncState }
             val sharedItems = sharedItems.value
             if (sharedItems != null) {
                 handleSharedItems(cachedList, sharedItems)
@@ -230,22 +230,35 @@ internal class ShoppingListRepositoryImpl(
         updatedList: ShoppingList
     ) {
         _syncStateFlow.update { LoadingState.Syncing }
-        val lastSync = this.lastSync.value
-        if (lastSync == null) {
-            // TODO error handling
-            _syncStateFlow.update { LoadingState.Error(HamsterListDataException(null)) }
-            return
-        }
         scope.launch {
-            syncRequestFlow.emit(
-                SyncQueueItem(
-                    hamsterList,
-                    SyncRequest(
-                        previousSync = lastSync,
-                        updatedList = updatedList,
+            val lastSync = getOrReloadSync(hamsterList)
+            if (lastSync != null) {
+                syncRequestFlow.emit(
+                    SyncQueueItem(
+                        hamsterList,
+                        SyncRequest(
+                            previousSync = lastSync,
+                            updatedList = updatedList,
+                        )
                     )
                 )
-            )
+            }
+        }
+    }
+
+    private suspend fun getOrReloadSync(hamsterList: HamsterList): SyncResponse? {
+        val lastSync = lastSync.value
+        return if (lastSync != null) {
+            lastSync
+        } else {
+            val syncResult = executeSync {
+                shoppingListApi.getSyncedShoppingList(hamsterList)
+            }
+            if (syncResult is Result.Success) {
+                syncResult.value
+            } else {
+                null
+            }
         }
     }
 

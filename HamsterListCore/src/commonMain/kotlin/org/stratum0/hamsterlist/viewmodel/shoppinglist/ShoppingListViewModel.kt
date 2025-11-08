@@ -18,7 +18,6 @@ import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.network.ShoppingListApi
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
-import org.stratum0.hamsterlist.viewmodel.LoadingState
 
 @Suppress("TooManyFunctions")
 class ShoppingListViewModel(
@@ -192,7 +191,6 @@ class ShoppingListViewModel(
                 completions = syncResponse.completions.distinctBy { it.name },
                 orders = syncResponse.orders,
                 selectedOrder = selectedOrder,
-                loadingState = if (!isFromCache) LoadingState.Done else LoadingState.Loading
             )
         }
         if (!isFromCache) {
