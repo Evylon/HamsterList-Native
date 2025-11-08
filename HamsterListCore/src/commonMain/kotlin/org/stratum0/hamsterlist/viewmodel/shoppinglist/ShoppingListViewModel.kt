@@ -17,14 +17,16 @@ import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
 import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
-import org.stratum0.hamsterlist.network.ShoppingListApi
+import org.stratum0.hamsterlist.network.LocalShoppingListApi
+import org.stratum0.hamsterlist.network.RemoteShoppingListApi
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 
 @Suppress("TooManyFunctions")
 class ShoppingListViewModel(
     userInputHamsterList: HamsterList,
     sharedContentManager: SharedContentManager,
-    shoppingListApi: ShoppingListApi,
+    remoteShoppingListApi: RemoteShoppingListApi,
+    localShoppingListApi: LocalShoppingListApi,
     private val settingsRepository: SettingsRepository
 ) : BaseViewModel() {
     /**
@@ -33,7 +35,11 @@ class ShoppingListViewModel(
     private var hamsterList: HamsterList = userInputHamsterList
     private val shoppingListRepository: ShoppingListRepository = ShoppingListRepositoryImpl(
         settingsRepository = settingsRepository,
-        shoppingListApi = shoppingListApi,
+        shoppingListApi = if (userInputHamsterList.isLocal) {
+            localShoppingListApi
+        } else {
+            remoteShoppingListApi
+        },
         sharedContentManager = sharedContentManager
     )
 

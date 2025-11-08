@@ -7,4 +7,5 @@ enum class SettingsKey {
     USERNAME,
     KNOWN_LISTS,
     CACHED_LISTS,
+    LOCAL_LISTS
 }

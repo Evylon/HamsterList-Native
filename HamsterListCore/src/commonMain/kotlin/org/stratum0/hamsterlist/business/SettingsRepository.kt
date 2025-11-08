@@ -20,6 +20,7 @@ import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
+import org.stratum0.hamsterlist.utils.decode
 
 class SettingsRepository(
     private val settings: ObservableSettings
@@ -151,15 +152,6 @@ class SettingsRepository(
             settings[SettingsKey.KNOWN_LISTS.name] = Json.encodeToString(knownListsUnique)
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    private inline fun <reified T> String.decode(): T? {
-        return try {
-            Json.decodeFromString<T>(this)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 

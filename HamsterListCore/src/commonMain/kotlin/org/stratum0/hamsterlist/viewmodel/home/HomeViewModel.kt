@@ -74,7 +74,7 @@ class HomeViewModel(
         val uiState = uiState.value
         if (uiState.username.isNullOrBlank()) {
             updateDialogState(DialogState.UsernameMissing)
-        } else if (parseUrlLenient(selectedList.serverHostName) == null) {
+        } else if (!selectedList.isLocal && parseUrlLenient(selectedList.serverHostName) == null) {
             updateDialogState(DialogState.ServerInvalid)
         } else {
             updateSettings(

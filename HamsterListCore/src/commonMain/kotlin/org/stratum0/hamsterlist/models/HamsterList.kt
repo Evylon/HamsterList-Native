@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 data class HamsterList(
     val listId: String,
     val serverHostName: String,
-    val title: String? = null
+    val title: String? = null,
+    val isLocal: Boolean = false
 ) {
     val titleOrId = title ?: listId
 }
