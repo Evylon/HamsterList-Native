@@ -18,6 +18,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
+import org.stratum0.hamsterlist.models.ShoppingList
+import org.stratum0.hamsterlist.models.SyncResponse
 
 class SettingsRepository(
     private val settings: ObservableSettings
@@ -103,22 +105,44 @@ class SettingsRepository(
             ?.decode<List<CachedHamsterList>>()
             .orEmpty()
 
-    /**
-     * Update existing or insert new cached list into Settings.
-     */
-    fun updateCachedList(updatedList: CachedHamsterList) {
+    fun updateCachedSync(hamsterList: HamsterList, newSyncResponse: SyncResponse) {
+        val updatedCache = CachedHamsterList(
+            hamsterList = hamsterList,
+            lastSyncState = newSyncResponse,
+            currentList = newSyncResponse.list.toShoppingList()
+        )
         val cachedLists = getCachedLists().toMutableList()
-        val updatedCachedLists = if (cachedLists.none { it.hamsterList == updatedList.hamsterList }) {
-            cachedLists.apply { add(updatedList) }
+        val updatedCachedLists = if (cachedLists.none { it.hamsterList == hamsterList }) {
+            cachedLists.apply { add(updatedCache) }
         } else {
             cachedLists.map { cachedList ->
-                if (cachedList.hamsterList == updatedList.hamsterList) {
-                    updatedList
+                if (cachedList.hamsterList == hamsterList) {
+                    updatedCache
                 } else {
                     cachedList
                 }
             }
         }
+        updateCache(updatedCachedLists)
+    }
+
+    /**
+     * Update existing or insert new cached list into Settings.
+     */
+    fun updateCachedList(hamsterList: HamsterList, updatedList: ShoppingList) {
+        val cachedLists = getCachedLists().toMutableList()
+        if (cachedLists.none { it.hamsterList == hamsterList }) return
+        val updatedCachedLists = cachedLists.map { cachedList ->
+            if (cachedList.hamsterList == hamsterList) {
+                cachedList.copy(currentList = updatedList)
+            } else {
+                cachedList
+            }
+        }
+        updateCache(updatedCachedLists)
+    }
+
+    private fun updateCache(updatedCachedLists: List<CachedHamsterList>) {
         try {
             settings[SettingsKey.CACHED_LISTS.name] = Json.encodeToString(updatedCachedLists)
         } catch (e: Exception) {

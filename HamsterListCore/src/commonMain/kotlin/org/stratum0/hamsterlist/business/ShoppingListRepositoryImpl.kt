@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.stratum0.hamsterlist.models.AdditionalData
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.HamsterList
@@ -30,7 +28,8 @@ import org.stratum0.hamsterlist.viewmodel.LoadingState
 import kotlin.time.Duration.Companion.seconds
 
 internal class ShoppingListRepositoryImpl(
-    private val shoppingListApi: ShoppingListApi
+    private val shoppingListApi: ShoppingListApi,
+    private val settingsRepository: SettingsRepository
 ) : ShoppingListRepository {
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -44,7 +43,7 @@ internal class ShoppingListRepositoryImpl(
     private val _sharedItemsFlow = MutableStateFlow<List<String>?>(null)
     override val sharedItems: StateFlow<List<String>?> = _sharedItemsFlow.asStateFlow()
 
-    private val syncRequestFlow = MutableSharedFlow<SyncQueueItem>()
+    private val syncRequestFlow = MutableStateFlow<SyncQueueItem?>(null)
 
     private data class SyncQueueItem(
         val hamsterList: HamsterList,
@@ -69,10 +68,25 @@ internal class ShoppingListRepositoryImpl(
 
     // Service Calls
     override suspend fun loadHamsterList(hamsterList: HamsterList): Result<ShoppingList> {
-        val syncResult = executeSync {
-            shoppingListApi.getSyncedShoppingList(hamsterList)
+        val cachedList = settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
+        // if cached list exists, request a sync instead of just loading the list.
+        return if (cachedList != null) {
+            _lastSyncFlow.update { cachedList.lastSyncState }
+            scope.launch {
+                executeSync {
+                    shoppingListApi.requestSync(
+                        hamsterList,
+                        SyncRequest(cachedState = cachedList)
+                    )
+                }
+            }
+            Result.Success(cachedList.currentList)
+        } else {
+            val syncResult = executeSync {
+                shoppingListApi.getSyncedShoppingList(hamsterList)
+            }
+            syncResult.mapSuccess { it.list.toShoppingList() }
         }
-        return syncResult.mapSuccess { it.list.toShoppingList() }
     }
 
     override fun deleteItem(
@@ -122,9 +136,14 @@ internal class ShoppingListRepositoryImpl(
     override fun addItems(
         hamsterList: HamsterList,
         currentList: ShoppingList,
-        items: List<Item>
+        items: List<Item>,
+        skipQueue: Boolean
     ): ShoppingList {
-        return transformListAndSync(hamsterList, currentList) { currentList ->
+        return transformListAndSync(
+            hamsterList = hamsterList,
+            currentList = currentList,
+            skipQueue = skipQueue
+        ) { currentList ->
             currentList.copy(
                 items = currentList.items.plus(items)
             )
@@ -151,7 +170,7 @@ internal class ShoppingListRepositoryImpl(
         items: List<Item>
     ): ShoppingList {
         _sharedItemsFlow.update { null }
-        return addItems(hamsterList, currentList, items)
+        return addItems(hamsterList, currentList, items, skipQueue = true)
     }
 
     override fun enqueueSharedContent(content: String) {
@@ -163,18 +182,33 @@ internal class ShoppingListRepositoryImpl(
     override fun clear() {
         _syncStateFlow.update { LoadingState.Loading }
         _lastSyncFlow.update { null }
+        syncRequestFlow.update { null }
     }
 
     private fun transformListAndSync(
         hamsterList: HamsterList,
         currentList: ShoppingList,
+        skipQueue: Boolean = false,
         transform: (ShoppingList) -> ShoppingList
     ): ShoppingList {
         val updatedList = transform(currentList)
-        enqueueSync(
-            hamsterList = hamsterList,
-            updatedList = updatedList
-        )
+        val lastSync = lastSync.value
+        if (skipQueue && lastSync != null) {
+            scope.launch {
+                executeSync {
+                    shoppingListApi.requestSync(
+                        hamsterList = hamsterList,
+                        syncRequest = SyncRequest(lastSync, updatedList)
+                    )
+                }
+            }
+        } else {
+            enqueueSync(
+                hamsterList = hamsterList,
+                updatedList = updatedList
+            )
+        }
+        settingsRepository.updateCachedList(hamsterList, updatedList)
         return updatedList
     }
 
@@ -194,13 +228,8 @@ internal class ShoppingListRepositoryImpl(
                 SyncQueueItem(
                     hamsterList,
                     SyncRequest(
-                        previousSync = lastSync.list,
-                        currentState = updatedList,
-                        includeInResponse = listOf(
-                            AdditionalData.orders,
-                            AdditionalData.categories,
-                            AdditionalData.completions
-                        )
+                        previousSync = lastSync,
+                        updatedList = updatedList,
                     )
                 )
             )
@@ -218,6 +247,7 @@ internal class ShoppingListRepositoryImpl(
             is Result.Success -> {
                 _lastSyncFlow.update { syncResult.value }
                 _syncStateFlow.update { LoadingState.Done }
+                syncRequestFlow.emit(null)
             }
 
             is Result.Failure -> _syncStateFlow.update {

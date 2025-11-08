@@ -16,7 +16,7 @@ expect val viewModelModule: Module
 
 @OptIn(ExperimentalSettingsApi::class)
 fun hamsterListModules() = viewModelModule + module {
-    single<ShoppingListRepository> { ShoppingListRepositoryImpl(get()) }
+    single<ShoppingListRepository> { ShoppingListRepositoryImpl(get(), get()) }
     singleOf(::ShoppingListApi)
     singleOf(::SettingsRepository)
     single<ObservableSettings> { Settings().makeObservable() }

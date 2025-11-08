@@ -3,16 +3,13 @@ package org.stratum0.hamsterlist.viewmodel.shoppinglist
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepository
-import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.HamsterList
@@ -44,12 +41,12 @@ class ShoppingListViewModel(
 
     init {
         shoppingListRepository.clear()
-        initCaching()
         shoppingListRepository.lastSync.onEach { latestSync ->
             latestSync?.let {
                 updateSyncState(latestSync)
-                settingsRepository.updateCachedList(
-                    CachedHamsterList(hamsterList, latestSync)
+                settingsRepository.updateCachedSync(
+                    hamsterList = hamsterList,
+                    newSyncResponse = latestSync,
                 )
             }
         }.launchIn(scope)
@@ -63,33 +60,12 @@ class ShoppingListViewModel(
                 handleSharedItems(sharedItems)
             }
         }.launchIn(scope)
-    }
-
-    private fun initCaching() {
-        // load last sync if available
-        val cachedList = settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
-        if (cachedList != null) {
-            updateSyncState(cachedList.syncResponse)
-        }
-        // update cache whenever shopping list updates
-        uiState.map { it.shoppingList }
-            .distinctUntilChanged()
-            .onEach { shoppingList ->
-                val cachedList = settingsRepository.getCachedLists()
-                    .find { it.hamsterList == hamsterList }
-                if (cachedList != null) {
-                    val updatedList = cachedList.copy(
-                        syncResponse = cachedList.syncResponse.copy(
-                            list = cachedList.syncResponse.list.copy(
-                                title = shoppingList.title,
-                                items = shoppingList.items
-                            )
-                        )
-                    )
-                    settingsRepository.updateCachedList(updatedList)
+        settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
+            ?.let { cachedList ->
+                _uiState.update { oldState ->
+                    oldState.copy(shoppingList = cachedList.currentList)
                 }
-            }.launchIn(scope)
-
+            }
     }
 
     fun handleAction(action: ShoppingListAction) {

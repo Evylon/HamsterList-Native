@@ -30,7 +30,8 @@ interface ShoppingListRepository {
     fun addItems(
         hamsterList: HamsterList,
         currentList: ShoppingList,
-        items: List<Item>
+        items: List<Item>,
+        skipQueue: Boolean = false
     ): ShoppingList
 
     fun changeItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList

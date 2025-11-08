@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CachedHamsterList(
     val hamsterList: HamsterList,
-    val syncResponse: SyncResponse
+    val lastSyncState: SyncResponse,
+    val currentList: ShoppingList
 )
