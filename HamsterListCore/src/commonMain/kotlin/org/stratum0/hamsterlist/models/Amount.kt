@@ -13,6 +13,7 @@ data class Amount(
         private const val PATTERN_COMBINED = "^\\d+(\\.\\d+)?[a-zA-Z]+\$"
 
         fun parse(components: List<String>): Amount? {
+            if (components.any { it.isBlank()} ) return null
             return when (components.size) {
                 1 -> {
                     components[0].toDoubleOrNull()?.let {
@@ -35,7 +36,7 @@ data class Amount(
                 return null
             }
             val lastDigitIndex = input.indexOfLast { it.isDigit() }
-            val value = input.substring(0, lastDigitIndex + 1).toDoubleOrNull()
+            val value = input.take(lastDigitIndex + 1).toDoubleOrNull()
             val unit = parseUnitAndPrefix(input.substring(lastDigitIndex + 1))
             return if (value != null && unit != null) {
                 Amount(value, unit)
