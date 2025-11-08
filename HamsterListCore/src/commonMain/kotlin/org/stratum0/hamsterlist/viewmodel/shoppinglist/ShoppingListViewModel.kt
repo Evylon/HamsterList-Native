@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.stratum0.hamsterlist.business.SettingsRepository
+import org.stratum0.hamsterlist.business.SharedContentManager
 import org.stratum0.hamsterlist.business.ShoppingListRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepositoryImpl
 import org.stratum0.hamsterlist.models.CompletionItem
@@ -22,8 +23,9 @@ import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 @Suppress("TooManyFunctions")
 class ShoppingListViewModel(
     userInputHamsterList: HamsterList,
-    private val settingsRepository: SettingsRepository,
-    shoppingListApi: ShoppingListApi
+    sharedContentManager: SharedContentManager,
+    shoppingListApi: ShoppingListApi,
+    private val settingsRepository: SettingsRepository
 ) : BaseViewModel() {
     /**
      * The id and title of a hamsterlist might be changed server-side.
@@ -31,7 +33,8 @@ class ShoppingListViewModel(
     private var hamsterList: HamsterList = userInputHamsterList
     private val shoppingListRepository: ShoppingListRepository = ShoppingListRepositoryImpl(
         settingsRepository = settingsRepository,
-        shoppingListApi = shoppingListApi
+        shoppingListApi = shoppingListApi,
+        sharedContentManager = sharedContentManager
     )
 
     private val _uiState = MutableStateFlow(

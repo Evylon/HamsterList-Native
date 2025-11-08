@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
@@ -28,7 +27,8 @@ import kotlin.time.Duration.Companion.seconds
 
 internal class ShoppingListRepositoryImpl(
     private val shoppingListApi: ShoppingListApi,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val sharedContentManager: SharedContentManager
 ) : ShoppingListRepository {
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -38,9 +38,6 @@ internal class ShoppingListRepositoryImpl(
 
     private var _lastSyncFlow = MutableStateFlow<SyncResponse?>(null)
     override var lastSync = _lastSyncFlow.asStateFlow()
-
-    private val _sharedItemsFlow = MutableStateFlow<List<String>?>(null)
-    override val sharedItems: StateFlow<List<String>?> = _sharedItemsFlow.asStateFlow()
 
     private val syncRequestFlow = MutableStateFlow<SyncQueueItem?>(null)
 
@@ -71,7 +68,7 @@ internal class ShoppingListRepositoryImpl(
         // if cached list exists, request a sync instead of just loading the list.
         if (cachedList != null) {
             _lastSyncFlow.update { cachedList.lastSyncState }
-            val sharedItems = sharedItems.value
+            val sharedItems = sharedContentManager.sharedItems.value
             if (sharedItems != null) {
                 handleSharedItems(cachedList, sharedItems)
             } else {
@@ -177,19 +174,13 @@ internal class ShoppingListRepositoryImpl(
                 completions = cachedList.lastSyncState.completions
             )
         }
-        _sharedItemsFlow.update { null }
+        sharedContentManager.clearSharedItems()
         return addItems(
             hamsterList = cachedList.hamsterList,
             currentList = cachedList.currentList,
             items = parsedItems,
             skipQueue = true
         )
-    }
-
-    override fun enqueueSharedContent(content: String) {
-        _sharedItemsFlow.update {
-            content.split("\n")
-        }
     }
 
     override fun clear() {

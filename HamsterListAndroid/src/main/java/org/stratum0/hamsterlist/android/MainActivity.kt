@@ -27,7 +27,7 @@ import org.koin.core.parameter.parametersOf
 import org.stratum0.hamsterlist.android.gui.HomePage
 import org.stratum0.hamsterlist.android.gui.shoppinglist.ShoppingListPage
 import org.stratum0.hamsterlist.business.SettingsRepository
-import org.stratum0.hamsterlist.business.ShoppingListRepository
+import org.stratum0.hamsterlist.business.SharedContentManager
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.viewmodel.home.HomeAction
 import org.stratum0.hamsterlist.viewmodel.home.HomeViewModel
@@ -35,7 +35,7 @@ import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
 
 class MainActivity : ComponentActivity() {
     private val settingsRepository: SettingsRepository by inject()
-    private val shoppingListRepository: ShoppingListRepository by inject()
+    private val sharedContentManager: SharedContentManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
     private fun handleTextSharing(intent: Intent): Boolean {
         if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
             intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
-                shoppingListRepository.enqueueSharedContent(sharedText)
+                sharedContentManager.enqueueSharedContent(sharedText)
                 return true
             }
         }

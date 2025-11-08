@@ -17,8 +17,6 @@ interface ShoppingListRepository {
     @NativeCoroutinesState
     val lastSync: StateFlow<SyncResponse?>
 
-    val sharedItems: StateFlow<List<String>?>
-
     suspend fun loadHamsterList(hamsterList: HamsterList)
     fun deleteItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList
     fun addItemInput(
@@ -41,8 +39,6 @@ interface ShoppingListRepository {
         cachedList: CachedHamsterList,
         items: List<String>
     ): ShoppingList
-
-    fun enqueueSharedContent(content: String)
 
     fun clear()
 }
