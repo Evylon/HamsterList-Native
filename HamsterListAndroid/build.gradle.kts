@@ -21,7 +21,7 @@ android {
         applicationId = "org.stratum0.hamsterlist.android"
         minSdk = 26
         targetSdk = 36
-        versionCode = 16
+        versionCode = 17
         versionName = "1.1+$versionCode"
     }
     signingConfigs {
