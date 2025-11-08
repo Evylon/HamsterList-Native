@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,25 +41,32 @@ fun ListCreationSheet(
     onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
     Column(
         modifier = modifier.padding(20.dp),
     ) {
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = modifier.padding(bottom = 20.dp)
         ) {
             Tab(
                 selected = selectedTab == 0,
                 text = {
-                    Text("Server")
+                    Text(
+                        "Server",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 },
                 onClick = { selectedTab = 0 }
             )
             Tab(
                 selected = selectedTab == 1,
                 text = {
-                    Text("Local")
+                    Text(
+                        "Local",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 },
                 onClick = { selectedTab = 1 }
             )
@@ -182,7 +191,9 @@ private fun LocalHamsterListCreation(
 @Composable
 fun ListCreationSheetPreview() {
     HamsterListTheme {
-        Surface {
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainerLow
+        ) {
             ListCreationSheet(
                 lastLoadedServer = "example.com",
                 onLoadHamsterList = {}
