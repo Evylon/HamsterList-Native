@@ -20,4 +20,7 @@
     <string name="navigation_back_button">Back</string>
     <string name="dialog_dismiss_button">Dismiss</string>
     <string name="dialog_categoryChooser_headline">Choose a category</string>
+    <string name="listCreation_server_tabTitle">Server</string>
+    <string name="listCreation_local_tabTitle">Local</string>
+    <string name="listChooser_local_icon">Local HamsterList</string>
 </resources>

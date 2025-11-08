@@ -173,7 +173,7 @@ private fun HamsterListItem(
         if (hamsterList.isLocal) {
             Icon(
                 imageVector = Icons.Filled.Home,
-                contentDescription = "Local HamsterList",
+                contentDescription = stringResource(R.string.listChooser_local_icon),
                 modifier = Modifier.padding(start = 8.dp),
             )
         }

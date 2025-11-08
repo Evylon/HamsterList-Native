@@ -54,7 +54,7 @@ fun ListCreationSheet(
                 selected = selectedTab == 0,
                 text = {
                     Text(
-                        "Server",
+                        stringResource(R.string.listCreation_server_tabTitle),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
@@ -64,7 +64,7 @@ fun ListCreationSheet(
                 selected = selectedTab == 1,
                 text = {
                     Text(
-                        "Local",
+                        stringResource(R.string.listCreation_local_tabTitle),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },

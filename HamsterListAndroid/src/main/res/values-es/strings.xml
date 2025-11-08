@@ -18,4 +18,7 @@
     <string name="navigation_back_button">Atrás</string>
     <string name="dialog_categoryChooser_headline">Elegir una categoría</string>
     <string name="dialog_dismiss_button">Cerrar</string>
+    <string name="listCreation_server_tabTitle">Servidor</string>
+    <string name="listCreation_local_tabTitle">local</string>
+    <string name="listChooser_local_icon">Hámsterlista local</string>
 </resources>
