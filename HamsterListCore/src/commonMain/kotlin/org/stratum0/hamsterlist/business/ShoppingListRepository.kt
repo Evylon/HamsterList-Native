@@ -19,7 +19,7 @@ interface ShoppingListRepository {
 
     val sharedItems: StateFlow<List<String>?>
 
-    suspend fun loadHamsterList(hamsterList: HamsterList): Result<ShoppingList>
+    suspend fun loadHamsterList(hamsterList: HamsterList)
     fun deleteItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList
     fun addItemInput(
         hamsterList: HamsterList,

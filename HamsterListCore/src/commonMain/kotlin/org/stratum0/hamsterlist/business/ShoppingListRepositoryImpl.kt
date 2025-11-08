@@ -67,11 +67,10 @@ internal class ShoppingListRepositoryImpl(
     }
 
     // Service Calls
-    override suspend fun loadHamsterList(hamsterList: HamsterList): Result<ShoppingList> {
+    override suspend fun loadHamsterList(hamsterList: HamsterList) {
         val cachedList = settingsRepository.getCachedLists().find { it.hamsterList == hamsterList }
         // if cached list exists, request a sync instead of just loading the list.
-        return if (cachedList != null) {
-            _lastSyncFlow.update { cachedList.lastSyncState }
+        if (cachedList != null) {
             val sharedItems = sharedItems.value
             if (sharedItems != null) {
                 handleSharedItems(cachedList, sharedItems)
@@ -85,12 +84,10 @@ internal class ShoppingListRepositoryImpl(
                     }
                 }
             }
-            Result.Success(cachedList.currentList)
         } else {
-            val syncResult = executeSync {
+            executeSync {
                 shoppingListApi.getSyncedShoppingList(hamsterList)
             }
-            syncResult.mapSuccess { it.list.toShoppingList() }
         }
     }
 
