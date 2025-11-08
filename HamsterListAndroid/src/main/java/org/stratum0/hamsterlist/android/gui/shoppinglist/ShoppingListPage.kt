@@ -77,7 +77,7 @@ fun ShoppingListPage(
             AddItemView(
                 addItemInput = uiState.addItemInput,
                 onAction = onAction,
-                isEnabled = uiState.loadingState is LoadingState.Done,
+                isEnabled = uiState.loadingState !is LoadingState.Loading,
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
             )
         }

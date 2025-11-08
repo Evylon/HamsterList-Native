@@ -2,6 +2,7 @@ package org.stratum0.hamsterlist.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -29,6 +30,7 @@ import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.utils.isDebug
 import org.stratum0.hamsterlist.utils.parseUrlLenient
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.seconds
 
 class ShoppingListApi(
     private val settingsRepository: SettingsRepository
@@ -42,6 +44,11 @@ class ShoppingListApi(
                     ignoreUnknownKeys = true
                 }
             )
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 5.seconds.inWholeMilliseconds
+            connectTimeoutMillis = 5.seconds.inWholeMilliseconds
+            socketTimeoutMillis = 5.seconds.inWholeMilliseconds
         }
         if (isDebug) {
             install(Logging) {

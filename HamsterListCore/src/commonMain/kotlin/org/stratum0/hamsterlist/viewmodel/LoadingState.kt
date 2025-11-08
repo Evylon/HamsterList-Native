@@ -4,5 +4,5 @@ sealed class LoadingState {
     data object Done : LoadingState()
     data class Error(val throwable: Throwable) : LoadingState()
     data object Loading : LoadingState()
-    data object SyncEnqueued : LoadingState()
+    data object Syncing : LoadingState()
 }

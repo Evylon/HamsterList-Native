@@ -76,7 +76,7 @@ internal class ShoppingListRepositoryImpl(
                 handleSharedItems(cachedList, sharedItems)
             } else {
                 scope.launch {
-                    executeSync {
+                    executeSync(LoadingState.Loading) {
                         shoppingListApi.requestSync(
                             hamsterList,
                             SyncRequest(cachedState = cachedList)
@@ -85,7 +85,7 @@ internal class ShoppingListRepositoryImpl(
                 }
             }
         } else {
-            executeSync {
+            executeSync(LoadingState.Loading) {
                 shoppingListApi.getSyncedShoppingList(hamsterList)
             }
         }
@@ -229,7 +229,7 @@ internal class ShoppingListRepositoryImpl(
         hamsterList: HamsterList,
         updatedList: ShoppingList
     ) {
-        _syncStateFlow.update { LoadingState.SyncEnqueued }
+        _syncStateFlow.update { LoadingState.Syncing }
         val lastSync = this.lastSync.value
         if (lastSync == null) {
             // TODO error handling
@@ -250,9 +250,10 @@ internal class ShoppingListRepositoryImpl(
     }
 
     private suspend fun executeSync(
+        loadingState: LoadingState = LoadingState.Syncing,
         syncAction: suspend () -> SyncResponse
     ): Result<SyncResponse> {
-        _syncStateFlow.update { LoadingState.Loading }
+        _syncStateFlow.update { loadingState }
         val syncResult = loadCatching {
             syncAction()
         }

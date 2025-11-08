@@ -26,13 +26,13 @@ fun SyncIconButton(
         is LoadingState.Done -> R.drawable.ic_sync
         is LoadingState.Error -> R.drawable.ic_sync_problem
         is LoadingState.Loading -> R.drawable.ic_sync_arrow_down
-        is LoadingState.SyncEnqueued -> R.drawable.ic_sync_arrow_up
+        is LoadingState.Syncing -> R.drawable.ic_sync_arrow_up
     }
     val color = when (loadingState) {
         is LoadingState.Done -> MaterialTheme.colorScheme.onPrimary
         is LoadingState.Error -> MaterialTheme.colorScheme.error
         is LoadingState.Loading,
-        is LoadingState.SyncEnqueued -> HamsterListTheme.colors.warning
+        is LoadingState.Syncing -> HamsterListTheme.colors.warning
     }
     IconButton(
         onClick = onClick,
@@ -56,7 +56,7 @@ private fun SyncIconButtonPreview() {
                 listOf(
                     LoadingState.Done,
                     LoadingState.Loading,
-                    LoadingState.SyncEnqueued,
+                    LoadingState.Syncing,
                     LoadingState.Error(IllegalStateException(""))
                 ).forEach { loadingState ->
                     SyncIconButton(
