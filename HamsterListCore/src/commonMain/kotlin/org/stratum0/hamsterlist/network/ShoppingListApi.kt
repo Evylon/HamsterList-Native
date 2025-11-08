@@ -30,7 +30,7 @@ import org.stratum0.hamsterlist.utils.isDebug
 import org.stratum0.hamsterlist.utils.parseUrlLenient
 import kotlin.coroutines.cancellation.CancellationException
 
-internal class ShoppingListApi(
+class ShoppingListApi(
     private val settingsRepository: SettingsRepository
 ) {
     private val httpClient = HttpClient {
