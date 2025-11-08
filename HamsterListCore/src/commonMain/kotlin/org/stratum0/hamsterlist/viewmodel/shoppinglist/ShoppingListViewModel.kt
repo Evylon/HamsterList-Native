@@ -22,10 +22,15 @@ import org.stratum0.hamsterlist.viewmodel.LoadingState
 
 @Suppress("TooManyFunctions")
 class ShoppingListViewModel(
-    private val hamsterList: HamsterList,
+    userInputHamsterList: HamsterList,
     private val shoppingListRepository: ShoppingListRepository,
     private val settingsRepository: SettingsRepository
 ) : BaseViewModel() {
+    /**
+     * The id and title of a hamsterlist might be changed server-side.
+     */
+    private var hamsterList: HamsterList = userInputHamsterList
+
     private val _uiState = MutableStateFlow(
         ShoppingListState(
             shoppingList = ShoppingList(
@@ -44,10 +49,6 @@ class ShoppingListViewModel(
         shoppingListRepository.lastSync.onEach { latestSync ->
             latestSync?.let {
                 updateSyncState(latestSync)
-                settingsRepository.updateCachedSync(
-                    hamsterList = hamsterList,
-                    newSyncResponse = latestSync,
-                )
             }
         }.launchIn(scope)
         shoppingListRepository.syncState.onEach { syncState ->
@@ -237,6 +238,23 @@ class ShoppingListViewModel(
                 selectedOrder = selectedOrder,
                 loadingState = LoadingState.Done
             )
+        }
+        updateHamsterList(syncResponse)
+        settingsRepository.updateCachedSync(
+            hamsterList = hamsterList,
+            newSyncResponse = syncResponse,
+        )
+    }
+
+    private fun updateHamsterList(syncResponse: SyncResponse) {
+        val syncedList = syncResponse.list
+        if (hamsterList.listId != syncedList.id || hamsterList.title != syncedList.title) {
+            settingsRepository.deleteKnownList(hamsterList)
+            hamsterList = hamsterList.copy(
+                listId = syncedList.id,
+                title = syncedList.title
+            )
+            settingsRepository.addKnownList(hamsterList)
         }
     }
 

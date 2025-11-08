@@ -170,7 +170,7 @@ private fun HamsterListItem(
             .padding(4.dp)
     ) {
         Text(
-            text = hamsterList.listId,
+            text = hamsterList.titleOrId,
             modifier = Modifier
                 .padding(8.dp)
                 .weight(1f)
