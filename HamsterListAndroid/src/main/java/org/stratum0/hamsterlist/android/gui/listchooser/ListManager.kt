@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -21,9 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -169,6 +170,13 @@ private fun HamsterListItem(
             .clickable { onClick(hamsterList) }
             .padding(4.dp)
     ) {
+        if (hamsterList.isLocal) {
+            Icon(
+                imageVector = Icons.Filled.Home,
+                contentDescription = "Local HamsterList",
+                modifier = Modifier.padding(start = 8.dp),
+            )
+        }
         Text(
             text = hamsterList.titleOrId,
             modifier = Modifier
@@ -196,7 +204,8 @@ fun ListChooserPreview() {
                     listOf(
                         HamsterList(
                             "LocalList",
-                            ""
+                            "",
+                            isLocal = true
                         ), HamsterList(
                             "RemoteList",
                             ""
