@@ -133,8 +133,8 @@ class SettingsRepository(
     }
 
     private fun removeCachedList(hamsterList: HamsterList) {
-        updateCache(getCachedLists()
-            .filterNot { it.hamsterList == hamsterList }
+        updateCache(
+            getCachedLists().filterNot { it.hamsterList == hamsterList }
         )
     }
 

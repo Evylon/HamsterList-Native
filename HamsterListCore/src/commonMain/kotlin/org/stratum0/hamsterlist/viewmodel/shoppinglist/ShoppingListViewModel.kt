@@ -72,7 +72,7 @@ class ShoppingListViewModel(
         settingsRepository.getCachedLists()
             .find { it.hamsterList == hamsterList }
             ?.let { cachedList ->
-                updateSyncState(cachedList.lastSyncState, isFromCache = true)
+                updateSyncState(cachedList.lastSyncState)
             }
     }
 
@@ -189,7 +189,7 @@ class ShoppingListViewModel(
         }
     }
 
-    private fun updateSyncState(syncResponse: SyncResponse, isFromCache: Boolean = false) {
+    private fun updateSyncState(syncResponse: SyncResponse) {
         _uiState.update { oldState ->
             val selectedOrder = oldState.selectedOrder ?: syncResponse.orders.firstOrNull()
             oldState.copy(
@@ -202,7 +202,10 @@ class ShoppingListViewModel(
                 selectedOrder = selectedOrder,
             )
         }
-        if (!isFromCache) {
+        val cachedSync = settingsRepository.getCachedLists()
+            .find { it.hamsterList == hamsterList }
+            ?.lastSyncState
+        if (cachedSync?.list?.changeId != syncResponse.list.changeId) {
             updateHamsterList(syncResponse)
             settingsRepository.updateCachedSync(
                 hamsterList = hamsterList,
