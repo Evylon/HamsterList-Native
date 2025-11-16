@@ -169,7 +169,7 @@ class ShoppingListViewModel(
     private fun changeCategoryForItem(item: Item, newCategoryId: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                shoppingList = shoppingListRepository.addItem(
+                shoppingList = shoppingListRepository.changeItem(
                     hamsterList = hamsterList,
                     currentList = currentState.shoppingList,
                     item = item.copy(category = newCategoryId)
