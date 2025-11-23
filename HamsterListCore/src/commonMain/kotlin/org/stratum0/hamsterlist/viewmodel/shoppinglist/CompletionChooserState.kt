@@ -20,7 +20,12 @@ data class CompletionChooserState(
                 .take(MAX_COMPLETIONS)
                 .map { completion ->
                     CompletionItemState(
-                        completion = completion,
+                        completion = Item(
+                            id = parsedItemInput.id,
+                            name = completion.name,
+                            amount = parsedItemInput.amount,
+                            category = parsedItemInput.category ?: completion.category
+                        ),
                         categoryState = CategoryCircleState(categories.firstOrNull { it.id == completion.category })
                     )
                 }

@@ -133,13 +133,13 @@ class ShoppingListViewModel(
         }
     }
 
-    private fun addItemByCompletion(completion: CompletionItem) {
+    private fun addItemByCompletion(completion: Item) {
         _uiState.update { currentState ->
             currentState.copy(
                 shoppingList = shoppingListRepository.addItem(
                     hamsterList = hamsterList,
                     currentList = currentState.shoppingList,
-                    item = completion.toItem()
+                    item = completion
                 )
             )
         }

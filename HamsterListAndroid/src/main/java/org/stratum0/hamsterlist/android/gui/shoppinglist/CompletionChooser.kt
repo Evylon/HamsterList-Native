@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
-import org.stratum0.hamsterlist.models.CompletionItem
+import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.CompletionChooserState
 
 @Composable
 fun CompletionsChooser(
     uiState: CompletionChooserState,
-    addItemByCompletion: (completion: CompletionItem) -> Unit,
+    addItemByCompletion: (completion: Item) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.filteredCompletions.isNotEmpty()) {
@@ -31,7 +31,7 @@ fun CompletionsChooser(
             LazyColumn(reverseLayout = true) {
                 items(
                     items = uiState.filteredCompletions,
-                    key = { it.completion.name }
+                    key = { it.completion.hashCode() }
                 ) { itemState ->
                     Column {
                         Row(
@@ -40,7 +40,7 @@ fun CompletionsChooser(
                         ) {
                             CategoryCircle(uiState = itemState.categoryState)
                             Text(
-                                text = itemState.completion.name,
+                                text = itemState.completion.toString(),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier
