@@ -2,6 +2,7 @@ package org.stratum0.hamsterlist.android.gui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,10 +13,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -160,20 +163,44 @@ private fun HomePageContent(
             onDeleteList = { list -> onAction(HomeAction.DeleteHamsterList(list)) },
             openListCreationSheet = { onAction(HomeAction.OpenListCreationSheet) },
             modifier = Modifier
-                .padding(vertical = 12.dp)
+                .padding(top = 12.dp)
                 .weight(1f)
         )
-        VersionNote(Modifier.padding(bottom = 8.dp))
+        LegalFooter(Modifier.padding(vertical = 8.dp))
     }
 }
 
 @Composable
-private fun VersionNote(modifier: Modifier = Modifier) {
-    Text(
-        text = BuildConfig.VERSION_NAME,
-        style = MaterialTheme.typography.bodySmall,
-        modifier = modifier
-    )
+private fun LegalFooter(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val urlHandler = LocalUriHandler.current
+        val privacyPolicyUrl = stringResource(R.string.homepage_legal_url)
+        TextButton(
+            onClick = {
+                try {
+                    urlHandler.openUri(privacyPolicyUrl)
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
+                }
+            }
+        ) {
+            Text(
+                text = stringResource(R.string.homepage_legal_button),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        Text(
+            text = "•",
+            modifier = Modifier.padding(end = 15.dp)
+        )
+        Text(
+            text = BuildConfig.VERSION_NAME,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
 }
 
 @Suppress("MagicNumber")

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">HL Debug</string>
+    <string name="homepage_legal_url" translatable="false">https://github.com/Evylon/HamsterList-Native/blob/main/privacyPolicy.md</string>
 </resources>

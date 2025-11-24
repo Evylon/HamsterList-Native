@@ -23,4 +23,6 @@
     <string name="listCreation_server_tabTitle">Server</string>
     <string name="listCreation_local_tabTitle">Local</string>
     <string name="listChooser_local_icon">Local HamsterList</string>
+    <string name="homepage_legal_button">Legal</string>
+    <string name="homepage_legal_url" translatable="false">https://github.com/Evylon/HamsterList-Native/blob/main/privacyPolicy.md</string>
 </resources>

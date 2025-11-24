@@ -100,7 +100,7 @@ fun ListManager(
                 openListCreationSheet()
             },
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(top = 16.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text(
