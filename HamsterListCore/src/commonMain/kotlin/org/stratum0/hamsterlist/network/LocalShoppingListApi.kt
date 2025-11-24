@@ -64,10 +64,11 @@ class LocalShoppingListApi(
                 title = hamsterList.titleOrId,
             ),
             orders = emptyList(),
-            categories = emptyList(),
+            categories = LocalHamsterList.defaultCategories,
             completions = emptyList()
         )
     )
+
 
     private fun writeLocalList(updatedList: LocalHamsterList) {
         val localLists = settings
