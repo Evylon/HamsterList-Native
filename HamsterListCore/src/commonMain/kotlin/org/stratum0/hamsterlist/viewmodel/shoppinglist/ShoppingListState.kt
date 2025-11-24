@@ -19,9 +19,13 @@ data class ShoppingListState(
     val selectedOrder: Order? = orders.firstOrNull(),
     val addItemInput: String = "",
     val loadingState: LoadingState = LoadingState.Loading,
+    val categoryChooserItem: Item? = null
 ) {
     val completionChooserState: CompletionChooserState =
         CompletionChooserState(addItemInput, completions, categories)
+    val categoryChooserState: CategoryChooserState? = categoryChooserItem?.let { selectedItem ->
+        CategoryChooserState(selectedItem, categories)
+    }
 
     companion object {
         // used on iOS

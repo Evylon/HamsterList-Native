@@ -11,7 +11,6 @@ import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.business.SharedContentManager
 import org.stratum0.hamsterlist.business.ShoppingListRepository
 import org.stratum0.hamsterlist.business.ShoppingListRepositoryImpl
-import org.stratum0.hamsterlist.models.CompletionItem
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.models.Order
@@ -91,8 +90,10 @@ class ShoppingListViewModel(
             )
 
             is ShoppingListAction.DeleteItem -> deleteItem(action.item)
+            is ShoppingListAction.DismissCategoryChooser -> dismissCategoryChooser()
             is ShoppingListAction.FetchList -> fetchList()
             is ShoppingListAction.SelectOrder -> selectOrder(action.order)
+            is ShoppingListAction.ShowCategoryChooser -> showCategoryChooser(action.selectedItem)
             is ShoppingListAction.UpdateAddItemInput -> updateAddItemInput(action.input)
         }
     }
@@ -100,6 +101,18 @@ class ShoppingListViewModel(
     private fun updateAddItemInput(newInput: String) {
         _uiState.update { oldState ->
             oldState.copy(addItemInput = newInput)
+        }
+    }
+
+    private fun showCategoryChooser(selectedItem: Item) {
+        _uiState.update { oldState ->
+            oldState.copy(categoryChooserItem = selectedItem)
+        }
+    }
+
+    private fun dismissCategoryChooser() {
+        _uiState.update { oldState ->
+            oldState.copy(categoryChooserItem = null)
         }
     }
 

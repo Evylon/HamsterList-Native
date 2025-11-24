@@ -13,17 +13,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.gui.components.ShadowGradient
-import org.stratum0.hamsterlist.models.Item
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ItemState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
@@ -36,15 +31,10 @@ fun ShoppingListView(
     isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var categoryChooserItem by remember {
-        mutableStateOf<Item?>(null)
-    }
-    categoryChooserItem?.let { selectedItem ->
+    uiState.categoryChooserState?.let { chooserState ->
         CategoryChooser(
-            selectedItem = selectedItem,
-            categories = uiState.categories,
+            uiState = chooserState,
             onAction = onAction,
-            dismiss = { categoryChooserItem = null }
         )
     }
     Column(
@@ -67,9 +57,6 @@ fun ShoppingListView(
                 uiState = uiState,
                 isEnabled = isEnabled,
                 onAction = onAction,
-                showCategoryChooser = { item ->
-                    categoryChooserItem = item
-                },
                 modifier = Modifier
             )
             if (uiState.addItemInput.isNotBlank()) {
@@ -92,7 +79,6 @@ private fun ShoppingItemsList(
     uiState: ShoppingListState,
     isEnabled: Boolean,
     onAction: (ShoppingListAction) -> Unit,
-    showCategoryChooser: (item: Item) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -120,9 +106,6 @@ private fun ShoppingItemsList(
                     ),
                     isEnabled = isEnabled,
                     onAction = onAction,
-                    showCategoryChooser = {
-                        showCategoryChooser(item)
-                    },
                 )
             }
         }

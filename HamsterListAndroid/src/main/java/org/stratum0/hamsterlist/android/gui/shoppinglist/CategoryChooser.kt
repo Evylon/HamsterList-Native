@@ -26,6 +26,7 @@ import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.CategoryDefinition
 import org.stratum0.hamsterlist.models.Item
+import org.stratum0.hamsterlist.viewmodel.shoppinglist.CategoryChooserState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.CategoryCircleState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
 
@@ -33,12 +34,11 @@ private const val MAX_DIALOG_HEIGHT = 600
 
 @Composable
 fun CategoryChooser(
-    selectedItem: Item,
-    categories: List<CategoryDefinition>,
+    uiState: CategoryChooserState,
     onAction: (ShoppingListAction) -> Unit,
-    dismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = dismiss) {
+    val onDismiss = { onAction(ShoppingListAction.DismissCategoryChooser) }
+    Dialog(onDismissRequest = onDismiss) {
         Card {
             Column(
                 modifier = Modifier
@@ -57,14 +57,14 @@ fun CategoryChooser(
                         .verticalScroll(rememberScrollState())
                         .weight(1f)
                 ) {
-                    categories.forEach { category ->
+                    uiState.categories.forEach { category ->
                         CategoryListItem(
                             category = category,
-                            selectedItem = selectedItem,
+                            selectedItem = uiState.selectedItem,
                             onAction = onAction,
-                            dismiss = dismiss
+                            dismiss = onDismiss
                         )
-                        if (categories.last() != category) {
+                        if (uiState.categories.last() != category) {
                             HorizontalDivider()
                         }
                     }
@@ -72,7 +72,7 @@ fun CategoryChooser(
                 Row {
                     Spacer(Modifier.weight(1f))
                     TextButton(
-                        onClick = dismiss,
+                        onClick = onDismiss,
                     ) {
                         Text(stringResource(R.string.dialog_dismiss_button))
                     }
@@ -119,17 +119,18 @@ fun CategoryChooserPreview() {
     HamsterListTheme {
         Surface {
             CategoryChooser(
-                selectedItem = Item(
-                    id = "UUID1",
-                    name = "Item1",
-                    category = "cat1"
-                ),
-                categories = listOf(
-                    CategoryDefinition.mockLight,
-                    CategoryDefinition.mockDark
+                uiState = CategoryChooserState(
+                    selectedItem = Item(
+                        id = "UUID1",
+                        name = "Item1",
+                        category = "cat1"
+                    ),
+                    categories = listOf(
+                        CategoryDefinition.mockLight,
+                        CategoryDefinition.mockDark
+                    ),
                 ),
                 onAction = {},
-                dismiss = {}
             )
         }
     }

@@ -6,14 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +44,6 @@ fun ShoppingListItem(
     itemState: ItemState,
     isEnabled: Boolean,
     onAction: (ShoppingListAction) -> Unit,
-    showCategoryChooser: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val itemText = itemState.item.toString()
@@ -87,7 +86,9 @@ fun ShoppingListItem(
             CategoryCircle(
                 uiState = itemState.categoryCircleState,
                 modifier = Modifier
-                    .clickable { showCategoryChooser() }
+                    .clickable {
+                        onAction(ShoppingListAction.ShowCategoryChooser(itemState.item))
+                    }
                     .padding(start = 4.dp)
             )
         },
@@ -137,7 +138,6 @@ fun ShoppingListItemRowPreview(@PreviewParameter(ItemPreviewProvider::class) ite
                 itemState = itemState,
                 isEnabled = true,
                 onAction = {},
-                showCategoryChooser = {},
                 modifier = Modifier.padding(8.dp)
             )
         }

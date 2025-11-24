@@ -9,7 +9,9 @@ sealed interface ShoppingListAction {
     data class ChangeItem(val oldItem: Item, val newItem: String) : ShoppingListAction
     data class ChangeCategoryForItem(val item: Item, val newCategoryId: String) : ShoppingListAction
     data class DeleteItem(val item: Item) : ShoppingListAction
+    object DismissCategoryChooser : ShoppingListAction
     object FetchList : ShoppingListAction
     data class SelectOrder(val order: Order) : ShoppingListAction
+    data class ShowCategoryChooser(val selectedItem: Item) : ShoppingListAction
     data class UpdateAddItemInput(val input: String) : ShoppingListAction
 }
