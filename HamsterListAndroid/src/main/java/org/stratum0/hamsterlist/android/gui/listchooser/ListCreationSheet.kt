@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.HamsterList
+import org.stratum0.hamsterlist.utils.parseHamsterListFromUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +55,7 @@ fun ListCreationSheet(
                 selected = selectedTab == 0,
                 text = {
                     Text(
-                        stringResource(R.string.listCreation_server_tabTitle),
+                        stringResource(R.string.listCreation_link_tabTitle),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
@@ -64,11 +65,21 @@ fun ListCreationSheet(
                 selected = selectedTab == 1,
                 text = {
                     Text(
-                        stringResource(R.string.listCreation_local_tabTitle),
+                        stringResource(R.string.listCreation_server_tabTitle),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
                 onClick = { selectedTab = 1 }
+            )
+            Tab(
+                selected = selectedTab == 2,
+                text = {
+                    Text(
+                        stringResource(R.string.listCreation_local_tabTitle),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
+                onClick = { selectedTab = 2 }
             )
         }
         AnimatedContent(
@@ -76,14 +87,60 @@ fun ListCreationSheet(
 
             ) { selectedTab ->
             when (selectedTab) {
-                0 -> RemoteHamsterListCreation(
+                0 -> LinkHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
+                1 -> RemoteHamsterListCreation(
                     lastLoadedServer = lastLoadedServer,
                     onLoadHamsterList = onLoadHamsterList,
                 )
 
-                1 -> LocalHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
+                2 -> LocalHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
                 else -> {}
             }
+        }
+    }
+}
+
+@Composable
+fun LinkHamsterListCreation(
+    modifier: Modifier = Modifier,
+    onLoadHamsterList: (HamsterList) -> Unit,
+) {
+    var url by rememberSaveable { mutableStateOf("") }
+    val parsedHamsterList = remember(url) {
+        parseHamsterListFromUrl(url)
+    }
+    val onLoad = {
+        if (parsedHamsterList != null) {
+            onLoadHamsterList(parsedHamsterList)
+            url = ""
+        }
+    }
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
+    ) {
+        TextField(
+            value = url,
+            onValueChange = { url = it },
+            singleLine = true,
+            label = { Text(stringResource(R.string.listCreation_link_placeholder)) },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.None,
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onLoad() }
+            )
+        )
+        Button(
+            onClick = onLoad,
+            enabled = parsedHamsterList != null
+        ) {
+            Text(text = stringResource(R.string.listCreation_load_button))
         }
     }
 }

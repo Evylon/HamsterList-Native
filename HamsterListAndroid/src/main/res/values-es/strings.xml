@@ -22,4 +22,6 @@
     <string name="listCreation_local_tabTitle">local</string>
     <string name="listChooser_local_icon">Hámsterlista local</string>
     <string name="homepage_legal_button">Legal</string>
+    <string name="listCreation_link_tabTitle">Enlace</string>
+    <string name="listCreation_link_placeholder">Enlace de HamsterList</string>
 </resources>

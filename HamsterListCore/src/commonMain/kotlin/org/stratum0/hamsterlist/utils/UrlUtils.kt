@@ -1,8 +1,10 @@
 package org.stratum0.hamsterlist.utils
 
+import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import io.ktor.http.Url
 import io.ktor.http.parseUrl
+import org.stratum0.hamsterlist.models.HamsterList
 
 /**
  * Parse a url from the given [urlString].
@@ -15,5 +17,19 @@ fun parseUrlLenient(urlString: String): Url? {
         parseUrl(urlString)
     } else {
         parseUrl(URLProtocol.HTTPS.name + "://" + urlString)
+    }
+}
+
+fun parseHamsterListFromUrl(urlString: String): HamsterList? {
+    return parseUrlLenient(urlString)?.let { url ->
+        if (url.segments.size != 1) return null
+        HamsterList(
+            listId = url.segments.first(),
+            serverHostName = URLBuilder(
+                protocol = URLProtocol.HTTPS,
+                host = url.host,
+                port = url.port
+            ).buildString()
+        )
     }
 }
