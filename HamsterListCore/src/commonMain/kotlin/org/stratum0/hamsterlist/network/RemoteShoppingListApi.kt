@@ -64,6 +64,7 @@ class RemoteShoppingListApi(
 
         return with(URLBuilder(parsedUrl)) {
             protocol = URLProtocol.HTTPS
+            port = URLProtocol.HTTPS.defaultPort
             appendPathSegments("api", hamsterList.listId)
             build()
         }
