@@ -230,12 +230,11 @@ class ShoppingListViewModel(
     private fun updateHamsterList(syncResponse: SyncResponse) {
         val syncedList = syncResponse.list
         if (hamsterList.listId != syncedList.id || hamsterList.title != syncedList.title) {
-            settingsRepository.deleteKnownList(hamsterList)
             hamsterList = hamsterList.copy(
                 listId = syncedList.id,
                 title = syncedList.title
             )
-            settingsRepository.addKnownList(hamsterList)
+            settingsRepository.updateKnownList(hamsterList)
         }
     }
 

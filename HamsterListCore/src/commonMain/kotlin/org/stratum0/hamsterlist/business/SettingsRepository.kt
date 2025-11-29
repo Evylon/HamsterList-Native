@@ -71,22 +71,29 @@ class SettingsRepository(
             .orEmpty()
 
     fun addKnownList(newList: HamsterList) {
-        val updatedList = knownHamsterLists.value.toMutableList()
-        updatedList.add(0, newList)
-        updateKnownLists(updatedList)
+        val updatedLists = knownHamsterLists.value.toMutableList()
+        updatedLists.add(0, newList)
+        updateKnownLists(updatedLists)
     }
 
     fun deleteKnownList(listToDelete: HamsterList) {
-        val updatedList = knownHamsterLists.value.filterNot { it == listToDelete }
-        updateKnownLists(updatedList)
+        val updatedLists = knownHamsterLists.value.filterNot { it == listToDelete }
+        updateKnownLists(updatedLists)
         removeCachedList(listToDelete)
     }
 
+    fun updateKnownList(updatedList: HamsterList) {
+        val updatedLists = knownHamsterLists.value.map {
+            if (it.listId == updatedList.listId) updatedList else it
+        }
+        updateKnownLists(updatedLists)
+    }
+
     fun updateLastLoadedList(loadedList: HamsterList) {
-        val oldList = knownHamsterLists.value.toMutableList()
-        val updatedList = oldList.filterNot { it == loadedList }.toMutableList()
-        updatedList.add(0, loadedList)
-        updateKnownLists(updatedList)
+        val oldLists = knownHamsterLists.value.toMutableList()
+        val updatedLists = oldLists.filterNot { it == loadedList }.toMutableList()
+        updatedLists.add(0, loadedList)
+        updateKnownLists(updatedLists)
     }
 
     fun getCachedLists(): List<CachedHamsterList> =
