@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,6 +33,7 @@ import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.utils.parseHamsterListFromUrl
+import org.stratum0.hamsterlist.viewmodel.home.ListCreationTab
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,59 +42,38 @@ fun ListCreationSheet(
     onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val tabs = remember { ListCreationTab.entries }
+    var selectedTab by rememberSaveable { mutableStateOf(tabs.first()) }
     Column(
         modifier = modifier.padding(20.dp),
     ) {
         SecondaryTabRow(
-            selectedTabIndex = selectedTab,
+            selectedTabIndex = selectedTab.ordinal,
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = modifier.padding(bottom = 20.dp)
         ) {
-            Tab(
-                selected = selectedTab == 0,
-                text = {
-                    Text(
-                        stringResource(R.string.listCreation_link_tabTitle),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                onClick = { selectedTab = 0 }
-            )
-            Tab(
-                selected = selectedTab == 1,
-                text = {
-                    Text(
-                        stringResource(R.string.listCreation_server_tabTitle),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                onClick = { selectedTab = 1 }
-            )
-            Tab(
-                selected = selectedTab == 2,
-                text = {
-                    Text(
-                        stringResource(R.string.listCreation_local_tabTitle),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                onClick = { selectedTab = 2 }
-            )
+            tabs.forEach { tab ->
+                Tab(
+                    selected = selectedTab == tab,
+                    text = {
+                        Text(
+                            text = tab.title,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
+                    onClick = { selectedTab = tab }
+                )
+            }
         }
-        AnimatedContent(
-            targetState = selectedTab,
-
-            ) { selectedTab ->
+        AnimatedContent(targetState = selectedTab) { selectedTab ->
             when (selectedTab) {
-                0 -> LinkHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
-                1 -> RemoteHamsterListCreation(
+                ListCreationTab.LINK  -> LinkHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
+                ListCreationTab.SERVER  -> RemoteHamsterListCreation(
                     lastLoadedServer = lastLoadedServer,
                     onLoadHamsterList = onLoadHamsterList,
                 )
 
-                2 -> LocalHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
-                else -> {}
+                ListCreationTab.LOCAL  -> LocalHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
             }
         }
     }
@@ -241,8 +220,15 @@ private fun LocalHamsterListCreation(
             Text(text = stringResource(R.string.listCreation_load_button))
         }
     }
-
 }
+
+private val ListCreationTab.title: String
+    @Composable
+    get() = when (this) {
+        ListCreationTab.LINK -> stringResource(R.string.listCreation_link_tabTitle)
+        ListCreationTab.SERVER -> stringResource(R.string.listCreation_server_tabTitle)
+        ListCreationTab.LOCAL -> stringResource(R.string.listCreation_local_tabTitle)
+    }
 
 @PreviewLightDark
 @Composable
