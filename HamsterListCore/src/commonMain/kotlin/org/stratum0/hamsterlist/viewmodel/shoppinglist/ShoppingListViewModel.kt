@@ -1,6 +1,8 @@
 package org.stratum0.hamsterlist.viewmodel.shoppinglist
 
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import io.ktor.http.URLBuilder
+import io.ktor.http.URLProtocol
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -93,10 +95,17 @@ class ShoppingListViewModel(
             is ShoppingListAction.DismissCategoryChooser -> dismissCategoryChooser()
             is ShoppingListAction.FetchList -> fetchList()
             is ShoppingListAction.SelectOrder -> selectOrder(action.order)
+            is ShoppingListAction.ShareList -> action.openShareSheet(createSharingUrl())
             is ShoppingListAction.ShowCategoryChooser -> showCategoryChooser(action.selectedItem)
             is ShoppingListAction.UpdateAddItemInput -> updateAddItemInput(action.input)
         }
     }
+
+    private fun createSharingUrl(): String = URLBuilder(
+        protocol = URLProtocol.HTTPS,
+        host = hamsterList.serverHostName,
+        pathSegments = listOf(hamsterList.listId)
+    ).buildString()
 
     private fun updateAddItemInput(newInput: String) {
         _uiState.update { oldState ->

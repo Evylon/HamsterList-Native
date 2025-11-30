@@ -34,6 +34,7 @@ import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
 import org.stratum0.hamsterlist.android.gui.components.ErrorContent
 import org.stratum0.hamsterlist.android.gui.components.HamsterListLoadingIndicator
+import org.stratum0.hamsterlist.android.gui.components.ShareIconButton
 import org.stratum0.hamsterlist.android.gui.components.SyncIconButton
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListAction
@@ -58,7 +59,7 @@ fun ShoppingListPage(
                 title = uiState.shoppingList.title,
                 loadingState = uiState.loadingState,
                 onBack = onBack,
-                onRefresh = { onAction(ShoppingListAction.FetchList) }
+                onAction = onAction
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -90,7 +91,7 @@ private fun ShoppingListHeader(
     title: String,
     loadingState: LoadingState,
     onBack: () -> Unit,
-    onRefresh: () -> Unit,
+    onAction: (ShoppingListAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
@@ -115,9 +116,13 @@ private fun ShoppingListHeader(
             }
         },
         actions = {
+            ShareIconButton(
+                onAction = onAction,
+                modifier = Modifier.size(48.dp)
+            )
             SyncIconButton(
                 loadingState = loadingState,
-                onClick = onRefresh,
+                onClick = { onAction(ShoppingListAction.FetchList) },
                 modifier = Modifier.size(48.dp)
             )
         },
@@ -146,7 +151,9 @@ private fun ShoppingListContent(
                 if (state is LoadingState.Error) {
                     ErrorContent(
                         throwable = state.throwable,
-                        modifier = Modifier.padding(top = 12.dp).padding(horizontal = 12.dp)
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .padding(horizontal = 12.dp)
                     )
                 }
                 ShoppingListView(

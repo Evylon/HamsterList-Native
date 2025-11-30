@@ -12,6 +12,7 @@ sealed interface ShoppingListAction {
     object DismissCategoryChooser : ShoppingListAction
     object FetchList : ShoppingListAction
     data class SelectOrder(val order: Order) : ShoppingListAction
+    data class ShareList(val openShareSheet: (String) -> Unit) : ShoppingListAction
     data class ShowCategoryChooser(val selectedItem: Item) : ShoppingListAction
     data class UpdateAddItemInput(val input: String) : ShoppingListAction
 }

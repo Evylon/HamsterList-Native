@@ -28,4 +28,5 @@
     <string name="listCreation_link_tabTitle">Link</string>
     <string name="listCreation_link_placeholder">HamsterList Link</string>
     <string name="use_title_as_identifier">Use name as identifier</string>
+    <string name="hamsterList_shareButton_description">Share</string>
 </resources>
