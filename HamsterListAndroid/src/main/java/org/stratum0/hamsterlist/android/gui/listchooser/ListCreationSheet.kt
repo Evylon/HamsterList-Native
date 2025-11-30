@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +30,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.stratum0.hamsterlist.android.HamsterListTheme
 import org.stratum0.hamsterlist.android.R
+import org.stratum0.hamsterlist.android.gui.components.CheckboxWithLabel
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.utils.parseHamsterListFromUrl
 import org.stratum0.hamsterlist.viewmodel.home.ListCreationTab
@@ -67,13 +67,13 @@ fun ListCreationSheet(
         }
         AnimatedContent(targetState = selectedTab) { selectedTab ->
             when (selectedTab) {
-                ListCreationTab.LINK  -> LinkHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
-                ListCreationTab.SERVER  -> RemoteHamsterListCreation(
+                ListCreationTab.LINK -> LinkHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
+                ListCreationTab.SERVER -> RemoteHamsterListCreation(
                     lastLoadedServer = lastLoadedServer,
                     onLoadHamsterList = onLoadHamsterList,
                 )
 
-                ListCreationTab.LOCAL  -> LocalHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
+                ListCreationTab.LOCAL -> LocalHamsterListCreation(onLoadHamsterList = onLoadHamsterList)
             }
         }
     }
@@ -110,9 +110,6 @@ fun LinkHamsterListCreation(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Uri,
                 imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { onLoad() }
             )
         )
         Button(
@@ -130,11 +127,12 @@ private fun RemoteHamsterListCreation(
     onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var listId by rememberSaveable { mutableStateOf("") }
+    var title by rememberSaveable { mutableStateOf("") }
     var serverHostName by rememberSaveable {
         mutableStateOf(lastLoadedServer.orEmpty())
     }
-    val isInputValid = listId.isNotBlank() && serverHostName.isNotBlank()
+    val isInputValid = title.isNotBlank() && serverHostName.isNotBlank()
+    var useTitleAsId by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -142,8 +140,8 @@ private fun RemoteHamsterListCreation(
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
     ) {
         TextField(
-            value = listId,
-            onValueChange = { listId = it },
+            value = title,
+            onValueChange = { title = it },
             singleLine = true,
             label = { Text(stringResource(R.string.listCreation_listName_placeholder)) },
             keyboardOptions = KeyboardOptions(
@@ -163,19 +161,21 @@ private fun RemoteHamsterListCreation(
                 keyboardType = KeyboardType.Uri,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    if (isInputValid) {
-                        onLoadHamsterList(HamsterList(listId, serverHostName))
-                        listId = ""
-                    }
-                }
-            )
+        )
+        CheckboxWithLabel(
+            label = stringResource(R.string.use_title_as_identifier),
+            checked = useTitleAsId,
+            onCheckedChange = { useTitleAsId = !useTitleAsId }
         )
         Button(
             onClick = {
-                onLoadHamsterList(HamsterList(listId, serverHostName))
-                listId = ""
+                val hamsterList = if (useTitleAsId) {
+                    HamsterList(listId = title, serverHostName = serverHostName)
+                } else {
+                    HamsterList(serverHostName = serverHostName, title = title)
+                }
+                onLoadHamsterList(hamsterList)
+                title = ""
             },
             enabled = isInputValid
         ) {
@@ -189,8 +189,8 @@ private fun LocalHamsterListCreation(
     onLoadHamsterList: (HamsterList) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var listId by rememberSaveable { mutableStateOf("") }
-    val isInputValid = listId.isNotBlank()
+    var title by rememberSaveable { mutableStateOf("") }
+    val isInputValid = title.isNotBlank()
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -198,22 +198,22 @@ private fun LocalHamsterListCreation(
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
     ) {
         TextField(
-            value = listId,
-            onValueChange = { listId = it },
+            value = title,
+            onValueChange = { title = it },
             singleLine = true,
             label = { Text(stringResource(R.string.listCreation_listName_placeholder)) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrectEnabled = false,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
         )
         Button(
             onClick = {
                 onLoadHamsterList(
-                    HamsterList(listId, serverHostName = "", isLocal = true)
+                    HamsterList(listId = title, serverHostName = "", title = title, isLocal = true)
                 )
-                listId = ""
+                title = ""
             },
             enabled = isInputValid
         ) {

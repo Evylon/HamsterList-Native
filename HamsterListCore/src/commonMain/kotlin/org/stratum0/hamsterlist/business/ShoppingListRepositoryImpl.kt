@@ -83,7 +83,21 @@ internal class ShoppingListRepositoryImpl(
             }
         } else {
             executeSync(LoadingState.Loading) {
-                shoppingListApi.getSyncedShoppingList(hamsterList)
+                val initialSync = shoppingListApi.getSyncedShoppingList(hamsterList)
+                /**
+                 * Check if user is not using name as id.
+                 * In that case we get the uuid as title and need to overwrite it.
+                 */
+                if (hamsterList.titleOrId == initialSync.list.title) return@executeSync initialSync
+                shoppingListApi.requestSync(
+                    hamsterList,
+                    SyncRequest(
+                        previousSync = initialSync,
+                        updatedList = initialSync.list.toShoppingList().copy(
+                            title = hamsterList.titleOrId
+                        )
+                    )
+                )
             }
         }
     }
@@ -181,6 +195,17 @@ internal class ShoppingListRepositoryImpl(
             items = parsedItems,
             skipQueue = true
         )
+    }
+
+    override fun changeListTitle(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        newTitle: String,
+        skipQueue: Boolean
+    ): ShoppingList {
+        return transformListAndSync(hamsterList, currentList, skipQueue) { currentList ->
+            currentList.copy(title = newTitle)
+        }
     }
 
     override fun clear() {

@@ -40,5 +40,12 @@ interface ShoppingListRepository {
         items: List<String>
     ): ShoppingList
 
+    fun changeListTitle(
+        hamsterList: HamsterList,
+        currentList: ShoppingList,
+        newTitle: String,
+        skipQueue: Boolean = false
+    ): ShoppingList
+
     fun clear()
 }

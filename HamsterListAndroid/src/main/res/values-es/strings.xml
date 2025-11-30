@@ -24,4 +24,5 @@
     <string name="homepage_legal_button">Legal</string>
     <string name="listCreation_link_tabTitle">Enlace</string>
     <string name="listCreation_link_placeholder">Enlace de HamsterList</string>
+    <string name="use_title_as_identifier">usar nombre como identificador</string>
 </resources>

@@ -46,7 +46,7 @@ class ShoppingListViewModel(
         ShoppingListState(
             shoppingList = ShoppingList(
                 id = hamsterList.listId,
-                title = hamsterList.listId,
+                title = hamsterList.titleOrId,
                 items = emptyList()
             )
         )
@@ -207,7 +207,7 @@ class ShoppingListViewModel(
             val selectedOrder = oldState.selectedOrder ?: syncResponse.orders.firstOrNull()
             oldState.copy(
                 shoppingList = syncResponse.list.copy(
-                    items = syncResponse.list.items.sortedByOrder(selectedOrder)
+                    items = syncResponse.list.items.sortedByOrder(selectedOrder),
                 ).toShoppingList(),
                 categories = syncResponse.categories,
                 completions = syncResponse.completions.distinctBy { it.name },
