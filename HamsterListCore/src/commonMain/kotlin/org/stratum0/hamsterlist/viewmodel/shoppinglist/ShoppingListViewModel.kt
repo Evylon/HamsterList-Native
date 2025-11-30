@@ -50,7 +50,8 @@ class ShoppingListViewModel(
                 id = hamsterList.listId,
                 title = hamsterList.titleOrId,
                 items = emptyList()
-            )
+            ),
+            isLocalList = hamsterList.isLocal
         )
     )
 

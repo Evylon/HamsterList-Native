@@ -19,7 +19,8 @@ data class ShoppingListState(
     val selectedOrder: Order? = orders.firstOrNull(),
     val addItemInput: String = "",
     val loadingState: LoadingState = LoadingState.Loading,
-    val categoryChooserItem: Item? = null
+    val categoryChooserItem: Item? = null,
+    val isLocalList: Boolean = false
 ) {
     val completionChooserState: CompletionChooserState =
         CompletionChooserState(addItemInput, completions, categories)

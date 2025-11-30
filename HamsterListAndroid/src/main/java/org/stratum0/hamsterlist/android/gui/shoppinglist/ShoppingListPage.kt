@@ -57,6 +57,7 @@ fun ShoppingListPage(
         topBar = {
             ShoppingListHeader(
                 title = uiState.shoppingList.title,
+                isLocal = uiState.isLocalList,
                 loadingState = uiState.loadingState,
                 onBack = onBack,
                 onAction = onAction
@@ -89,6 +90,7 @@ fun ShoppingListPage(
 @Composable
 private fun ShoppingListHeader(
     title: String,
+    isLocal: Boolean,
     loadingState: LoadingState,
     onBack: () -> Unit,
     onAction: (ShoppingListAction) -> Unit,
@@ -116,15 +118,17 @@ private fun ShoppingListHeader(
             }
         },
         actions = {
-            ShareIconButton(
-                onAction = onAction,
-                modifier = Modifier.size(48.dp)
-            )
-            SyncIconButton(
-                loadingState = loadingState,
-                onClick = { onAction(ShoppingListAction.FetchList) },
-                modifier = Modifier.size(48.dp)
-            )
+            if (!isLocal) {
+                ShareIconButton(
+                    onAction = onAction,
+                    modifier = Modifier.size(48.dp)
+                )
+                SyncIconButton(
+                    loadingState = loadingState,
+                    onClick = { onAction(ShoppingListAction.FetchList) },
+                    modifier = Modifier.size(48.dp)
+                )
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
