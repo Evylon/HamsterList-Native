@@ -20,6 +20,7 @@ import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.network.LocalShoppingListApi
 import org.stratum0.hamsterlist.network.RemoteShoppingListApi
+import org.stratum0.hamsterlist.utils.parseUrlLenient
 import org.stratum0.hamsterlist.viewmodel.BaseViewModel
 
 @Suppress("TooManyFunctions")
@@ -102,11 +103,13 @@ class ShoppingListViewModel(
         }
     }
 
-    private fun createSharingUrl(): String = URLBuilder(
-        protocol = URLProtocol.HTTPS,
-        host = hamsterList.serverHostName,
-        pathSegments = listOf(hamsterList.listId)
-    ).buildString()
+    private fun createSharingUrl(): String =
+        parseUrlLenient(hamsterList.serverHostName)?.let { url ->
+            URLBuilder(url).apply {
+                protocol = URLProtocol.HTTPS
+                pathSegments = listOf(hamsterList.listId)
+            }.buildString()
+        } ?: hamsterList.serverHostName
 
     private fun updateAddItemInput(newInput: String) {
         _uiState.update { oldState ->
