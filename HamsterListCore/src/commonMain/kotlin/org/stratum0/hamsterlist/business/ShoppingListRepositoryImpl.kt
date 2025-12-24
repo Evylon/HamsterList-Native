@@ -22,6 +22,7 @@ import org.stratum0.hamsterlist.models.SyncRequest
 import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.models.loadCatching
 import org.stratum0.hamsterlist.network.ShoppingListApi
+import org.stratum0.hamsterlist.utils.isUUID
 import org.stratum0.hamsterlist.viewmodel.LoadingState
 import kotlin.time.Duration.Companion.seconds
 
@@ -88,16 +89,19 @@ internal class ShoppingListRepositoryImpl(
                  * Check if user is not using name as id.
                  * In that case we get the uuid as title and need to overwrite it.
                  */
-                if (hamsterList.titleOrId == initialSync.list.title) return@executeSync initialSync
-                shoppingListApi.requestSync(
-                    hamsterList,
-                    SyncRequest(
-                        previousSync = initialSync,
-                        updatedList = initialSync.list.toShoppingList().copy(
-                            title = hamsterList.titleOrId
+                if (initialSync.list.title.isUUID() && hamsterList.title != null) {
+                    shoppingListApi.requestSync(
+                        hamsterList,
+                        SyncRequest(
+                            previousSync = initialSync,
+                            updatedList = initialSync.list.toShoppingList().copy(
+                                title = hamsterList.titleOrId
+                            )
                         )
                     )
-                )
+                } else {
+                    return@executeSync initialSync
+                }
             }
         }
     }
