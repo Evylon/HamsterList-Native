@@ -1,6 +1,5 @@
 package org.stratum0.hamsterlist.utils
 
-import org.stratum0.hamsterlist.BuildConfig
 
 actual val isDebug: Boolean
-    get() = BuildConfig.DEBUG
+    get() = false // TODO BuildConfig was removed for KMP, find alternative

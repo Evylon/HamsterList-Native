@@ -1,21 +1,21 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
-    kotlin("plugin.serialization") version "2.1.0"
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
-    id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-38"
-}
-
-object Versions {
-    const val KTOR = "3.0.3"
-    const val COROUTINE = "1.10.1"
-    const val KOIN = "4.0.2"
-    const val LIFECYCLE = "2.8.7"
-    const val MULTIPLATFORM_SETTINGS = "1.3.0"
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    kotlin("plugin.serialization") version libs.versions.kotlin
+    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.kmp.nativecoroutines)
 }
 
 kotlin {
-    androidTarget()
+    androidLibrary {
+        namespace = "org.stratum0.hamsterlist"
+        compileSdk = 36
+        androidResources {
+            enable = true
+        }
+    }
     jvmToolchain(21)
 
     listOf(
@@ -33,43 +33,35 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         }
-        val commonMain by getting {
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINE}")
-                implementation("io.ktor:ktor-client-core:${Versions.KTOR}")
-                implementation("io.ktor:ktor-client-content-negotiation:${Versions.KTOR}")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.KTOR}")
-                implementation("io.ktor:ktor-client-logging:${Versions.KTOR}")
-                implementation("io.github.oshai:kotlin-logging:7.0.3")
-                implementation("io.insert-koin:koin-core:${Versions.KOIN}")
-                api("com.russhwolf:multiplatform-settings-no-arg:${Versions.MULTIPLATFORM_SETTINGS}")
-                api("com.russhwolf:multiplatform-settings-coroutines:${Versions.MULTIPLATFORM_SETTINGS}")
-                api("com.russhwolf:multiplatform-settings-make-observable:${Versions.MULTIPLATFORM_SETTINGS}")
-            }
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.kotlin.logging)
+            implementation(libs.koin.core)
+            api(libs.multiplatform.settings.no.arg)
+            api(libs.multiplatform.settings.coroutines)
+            api(libs.multiplatform.settings.make.observable)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
-        val androidMain by getting {
-            dependencies {
-                implementation("io.ktor:ktor-client-android:${Versions.KTOR}")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINE}")
-                implementation("org.slf4j:slf4j-android:1.7.36")
-                api("androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.LIFECYCLE}")
-                api("androidx.lifecycle:lifecycle-runtime-compose:${Versions.LIFECYCLE}")
-                api("io.insert-koin:koin-android:${Versions.KOIN}")
-                api("io.insert-koin:koin-androidx-compose:${Versions.KOIN}")
-            }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.android)
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.slf4j.android)
+            api(libs.lifecycle.viewmodel.compose)
+            api(libs.lifecycle.runtime.compose)
+            api(libs.koin.android)
+            api(libs.koin.androidx.compose)
         }
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependencies {
-                implementation("io.ktor:ktor-client-darwin:${Versions.KTOR}")
-            }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         val iosX64Test by getting
         val iosArm64Test by getting
@@ -80,15 +72,4 @@ kotlin {
 
 dependencies {
     add("kspCommonMainMetadata", project(":HamsterListCore"))
-}
-
-android {
-    namespace = "org.stratum0.hamsterlist"
-    compileSdk = 35
-    defaultConfig {
-        minSdk = 26
-    }
-    buildFeatures {
-        buildConfig = true
-    }
 }
