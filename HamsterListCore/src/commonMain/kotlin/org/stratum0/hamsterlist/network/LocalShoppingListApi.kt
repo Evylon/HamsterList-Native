@@ -15,12 +15,10 @@ import org.stratum0.hamsterlist.utils.decode
 class LocalShoppingListApi(
     private val settings: ObservableSettings
 ) : ShoppingListApi {
-    @Throws(HamsterListDataException::class)
     override suspend fun getSyncedShoppingList(hamsterList: HamsterList): SyncResponse {
         return getLocalList(hamsterList).syncResponse
     }
 
-    @Throws(HamsterListDataException::class)
     override suspend fun requestSync(
         hamsterList: HamsterList,
         syncRequest: SyncRequest

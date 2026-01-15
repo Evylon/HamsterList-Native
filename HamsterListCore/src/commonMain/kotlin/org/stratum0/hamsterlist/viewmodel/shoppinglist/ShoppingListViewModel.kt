@@ -4,6 +4,7 @@ import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,7 +58,7 @@ class ShoppingListViewModel(
     )
 
     @NativeCoroutinesState
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<ShoppingListState> = _uiState.asStateFlow()
 
     init {
         shoppingListRepository.clear()

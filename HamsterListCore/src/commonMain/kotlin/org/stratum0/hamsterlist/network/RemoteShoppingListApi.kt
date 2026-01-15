@@ -70,7 +70,6 @@ class RemoteShoppingListApi(
         }
     }
 
-    @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
     override suspend fun getSyncedShoppingList(hamsterList: HamsterList): SyncResponse {
         return httpClient.get(baseUrl(hamsterList)) {
             url {
@@ -87,7 +86,6 @@ class RemoteShoppingListApi(
         }.body()
     }
 
-    @Throws(IOException::class, CancellationException::class, JsonConvertException::class)
     override suspend fun requestSync(
         hamsterList: HamsterList,
         syncRequest: SyncRequest
