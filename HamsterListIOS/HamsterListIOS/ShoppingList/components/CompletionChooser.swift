@@ -12,7 +12,7 @@ import HamsterListCore
 struct CompletionChooser: View {
 
     let uiState: CompletionChooserState
-    let addItem: (_ completion: String, _ category: String?) -> Void
+    let addItem: (_ completion: Item) -> Void
 
     // TODO the List takes up too much space if few items are in it. Maybe use UIKit Stackview Instead :/
     var body: some View {
@@ -32,8 +32,7 @@ struct CompletionChooser: View {
                                     )
                                 }
                                 Button {
-                                    addItem(completionState.completion.name,
-                                            completionState.completion.category)
+                                    addItem(completionState.completion)
                                 } label: {
                                     HStack {
                                         Text(completionState.completion.name)
@@ -58,6 +57,6 @@ struct CompletionChooser: View {
 #Preview {
     CompletionChooser(
         uiState: CompletionChooserState.companion.mock,
-        addItem: { _, _ in }
+        addItem: { _ in }
     )
 }
