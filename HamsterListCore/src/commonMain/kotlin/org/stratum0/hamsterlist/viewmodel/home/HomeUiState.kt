@@ -9,4 +9,8 @@ data class HomeUiState(
     val autoLoadLast: Boolean = false,
     val sheetState: HomeSheetState? = null,
     val dialogState: DialogState? = null
-)
+) {
+    companion object {
+        val initial = HomeUiState()
+    }
+}
