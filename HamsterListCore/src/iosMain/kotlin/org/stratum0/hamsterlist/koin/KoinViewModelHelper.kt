@@ -3,6 +3,7 @@ package org.stratum0.hamsterlist.koin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
+import org.stratum0.hamsterlist.business.SettingsRepository
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.viewmodel.home.HomeViewModel
 import org.stratum0.hamsterlist.viewmodel.shoppinglist.ShoppingListViewModel
@@ -14,4 +15,6 @@ class KoinViewModelHelper : KoinComponent {
         val shoppingListViewModel by inject<ShoppingListViewModel> { parametersOf(hamsterList) }
         return shoppingListViewModel
     }
+
+    val settingsRepository: SettingsRepository by inject()
 }

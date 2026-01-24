@@ -5,7 +5,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getBooleanStateFlow
 import com.russhwolf.settings.coroutines.getStringOrNullFlow
-import com.russhwolf.settings.coroutines.getStringOrNullStateFlow
+import com.russhwolf.settings.coroutines.getStringStateFlow
 import com.russhwolf.settings.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
@@ -27,16 +26,18 @@ class SettingsRepository(
 ) {
     @OptIn(ExperimentalSettingsApi::class)
     @NativeCoroutinesState
-    val username: StateFlow<String?> = settings.getStringOrNullStateFlow(
+    val username: StateFlow<String?> = settings.getStringStateFlow(
         coroutineScope = CoroutineScope(Dispatchers.IO),
-        key = SettingsKey.USERNAME.name
+        key = SettingsKey.USERNAME.name,
+        defaultValue = settings.getString(SettingsKey.USERNAME.name, "")
     )
 
     @OptIn(ExperimentalSettingsApi::class)
+    @NativeCoroutinesState
     val autoLoadLast = settings.getBooleanStateFlow(
         coroutineScope = CoroutineScope(Dispatchers.IO),
         key = SettingsKey.AUTO_LOAD_LAST.name,
-        defaultValue = false
+        defaultValue = settings.getBoolean(SettingsKey.AUTO_LOAD_LAST.name, false)
     )
 
     /**
@@ -44,6 +45,7 @@ class SettingsRepository(
      * The list is always sorted anti-chronologically by the last time a list was loaded.
      */
     @OptIn(ExperimentalSettingsApi::class)
+    @NativeCoroutinesState
     val knownHamsterLists: StateFlow<List<HamsterList>> =
         settings
             .getStringOrNullFlow(key = SettingsKey.KNOWN_LISTS.name)

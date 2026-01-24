@@ -12,3 +12,5 @@ extension Item: Identifiable {}
 extension Order: Identifiable {}
 extension CategoryDefinition : Identifiable {}
 extension CompletionItemState : Identifiable {}
+extension HamsterList : Identifiable {}
+extension HomeSheetStateListCreation : Identifiable {}
