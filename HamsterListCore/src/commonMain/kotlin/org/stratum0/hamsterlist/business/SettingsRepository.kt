@@ -184,7 +184,14 @@ class SettingsRepository(
         // only migrate if we do not overwrite existing data
         if (knownHamsterLists.isEmpty()) {
             updateKnownLists(
-                listOf(HamsterList(currentListId, serverHostName))
+                listOf(
+                    HamsterList(
+                        listId = currentListId,
+                        title = currentListId,
+                        serverHostName = serverHostName,
+                        isLocal = false
+                    )
+                )
             )
         }
         // finally discard
