@@ -20,6 +20,7 @@
 		0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */; };
 		0777D2C62C3EEF9B00BAEF23 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */; };
 		0784E3822D6A351D00A8BDAE /* ErrorContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0784E3812D6A351800A8BDAE /* ErrorContent.swift */; };
+		0790BADF2F25873E0056617A /* ListCreationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0790BADE2F2587360056617A /* ListCreationSheet.swift */; };
 		079716B72C4049CE00FDBBC2 /* TextFieldStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */; };
 		07BE15372B8CBF77003C0501 /* Models+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BE15362B8CBF77003C0501 /* Models+Identifiable.swift */; };
 		07D7DC842C7B967D00F7E57A /* HamsterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7DC832C7B967D00F7E57A /* HamsterTheme.swift */; };
@@ -54,6 +55,7 @@
 		0777D2C32C3EE31F00BAEF23 /* ShoppingListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListItem.swift; sourceTree = "<group>"; };
 		0777D2C52C3EEF9B00BAEF23 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
 		0784E3812D6A351800A8BDAE /* ErrorContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorContent.swift; sourceTree = "<group>"; };
+		0790BADE2F2587360056617A /* ListCreationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCreationSheet.swift; sourceTree = "<group>"; };
 		079716B62C4049CE00FDBBC2 /* TextFieldStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyles.swift; sourceTree = "<group>"; };
 		07BE15362B8CBF77003C0501 /* Models+Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Models+Identifiable.swift"; sourceTree = "<group>"; };
 		07D7DC832C7B967D00F7E57A /* HamsterTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HamsterTheme.swift; sourceTree = "<group>"; };
@@ -123,6 +125,15 @@
 			path = ShoppingList;
 			sourceTree = "<group>";
 		};
+		0790BADD2F25872D0056617A /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				0790BADE2F2587360056617A /* ListCreationSheet.swift */,
+				7555FF82242A565900829871 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		079716B82C4049D700FDBBC2 /* Styles */ = {
 			isa = PBXGroup;
 			children = (
@@ -153,11 +164,11 @@
 		7555FF7D242A565900829871 /* HamsterListIOS */ = {
 			isa = PBXGroup;
 			children = (
+				0790BADD2F25872D0056617A /* Home */,
 				079716B82C4049D700FDBBC2 /* Styles */,
 				077EAE28298FE9CB00CBB7E2 /* ShoppingList */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				077EAE23298FD80300CBB7E2 /* SharedUtils */,
-				7555FF82242A565900829871 /* HomeView.swift */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -289,6 +300,7 @@
 				0746F03D2B8CBE6D0062F7FD /* FlowPublisher.swift in Sources */,
 				0777D2C42C3EE31F00BAEF23 /* ShoppingListItem.swift in Sources */,
 				7555FF83242A565900829871 /* HomeView.swift in Sources */,
+				0790BADF2F25873E0056617A /* ListCreationSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
