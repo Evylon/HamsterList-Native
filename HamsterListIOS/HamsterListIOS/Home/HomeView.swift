@@ -45,8 +45,21 @@ struct HomeView: View {
         )
     }
 
-    private var lastLoadedList: HamsterList? {
-        uiState.value.knownHamsterLists.first
+    private var cachedServerHostName: String? {
+        uiState.value.knownHamsterLists.first?.serverHostName
+    }
+
+    private func loadHamsterList(_ hamsterList: HamsterList) {
+        onAction(
+            HomeActionLoadHamsterlist(
+                selectedList: hamsterList,
+                navigateToList: {
+                    navigationPath.append(
+                        hamsterList
+                    )
+                }
+            )
+        )
     }
 
     init() {
@@ -84,20 +97,8 @@ struct HomeView: View {
                         switch uiState.value.sheetState {
                         case is HomeSheetStateListCreation:
                             ListCreationSheet(
-                                loadHamsterList: { hamsterList in
-                                    onAction(
-                                        HomeActionLoadHamsterlist(
-                                            selectedList: hamsterList,
-                                            navigateToList: {
-                                                navigationPath.append(
-                                                    hamsterList
-                                                )
-                                            }
-                                        )
-                                    )
-                                },
-                                initialServerHostName: lastLoadedList?
-                                    .serverHostName ?? ""
+                                loadHamsterList: loadHamsterList(_:),
+                                initialServerHostName: cachedServerHostName
                             )
                         case is HomeSheetStateContentSharing:
                             EmptyView()

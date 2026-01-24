@@ -12,7 +12,7 @@ struct ListCreationSheet: View {
     let loadHamsterList: (HamsterList) -> Void
 
     @State private var title = ""
-    @State private var serverHostName = ""
+    @State private var serverHostName: String
     @State private var useTitleAsId: Bool = false
 
     init(
