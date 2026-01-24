@@ -3,7 +3,7 @@ name: Continuous Delivery
 on:
   push:
     tags:
-      - 'v*' # e.g. v1.0.0
+      - 'android-v*' # e.g. v1.0.0
 
 jobs:
   build:
