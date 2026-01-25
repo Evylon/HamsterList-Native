@@ -232,7 +232,7 @@ class ShoppingListViewModel(
         val cachedSync = settingsRepository.getCachedLists()
             .find { it.hamsterList == hamsterList }
             ?.lastSyncState
-        if (cachedSync?.list?.changeId != syncResponse.list.changeId) {
+        if (cachedSync == null || cachedSync.list.changeId != syncResponse.list.changeId) {
             updateHamsterList(syncResponse)
             settingsRepository.updateCachedSync(
                 hamsterList = hamsterList,
@@ -249,6 +249,8 @@ class ShoppingListViewModel(
                 title = syncedList.title
             )
             settingsRepository.updateKnownList(hamsterList)
+        } else if (settingsRepository.knownHamsterLists.value.none { it.listId == syncedList.id} ){
+            settingsRepository.addKnownList(hamsterList)
         }
     }
 

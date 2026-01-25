@@ -85,10 +85,15 @@ class SettingsRepository(
     }
 
     fun updateKnownList(updatedList: HamsterList) {
-        val updatedLists = knownHamsterLists.value.map {
-            if (it.listId == updatedList.listId) updatedList else it
+        val knownHamsterLists = knownHamsterLists.value
+        if (knownHamsterLists.none { it.listId == updatedList.listId }) {
+            addKnownList(updatedList)
+        } else {
+            val updatedLists = knownHamsterLists.map {
+                if (it.listId == updatedList.listId) updatedList else it
+            }
+            updateKnownLists(updatedLists)
         }
-        updateKnownLists(updatedLists)
     }
 
     fun updateLastLoadedList(loadedList: HamsterList) {

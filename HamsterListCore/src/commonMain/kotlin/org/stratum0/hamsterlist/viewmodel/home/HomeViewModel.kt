@@ -105,9 +105,7 @@ class HomeViewModel(
     ) {
         settingsRepository.setUsername(username)
         settingsRepository.setAutoLoadLast(autoLoadLast)
-        if (!settingsRepository.knownHamsterLists.value.contains(loadedList)) {
-            settingsRepository.addKnownList(loadedList)
-        } else {
+        if (settingsRepository.knownHamsterLists.value.contains(loadedList)) {
             settingsRepository.updateLastLoadedList(loadedList = loadedList)
         }
     }

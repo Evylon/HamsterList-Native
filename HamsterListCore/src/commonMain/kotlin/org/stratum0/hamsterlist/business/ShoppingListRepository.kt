@@ -1,11 +1,11 @@
 package org.stratum0.hamsterlist.business
 
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutines
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.StateFlow
 import org.stratum0.hamsterlist.models.CachedHamsterList
 import org.stratum0.hamsterlist.models.HamsterList
 import org.stratum0.hamsterlist.models.Item
-import org.stratum0.hamsterlist.models.Result
 import org.stratum0.hamsterlist.models.ShoppingList
 import org.stratum0.hamsterlist.models.SyncResponse
 import org.stratum0.hamsterlist.viewmodel.LoadingState
@@ -17,6 +17,7 @@ interface ShoppingListRepository {
     @NativeCoroutinesState
     val lastSync: StateFlow<SyncResponse?>
 
+    @NativeCoroutines
     suspend fun loadHamsterList(hamsterList: HamsterList)
     fun deleteItem(hamsterList: HamsterList, currentList: ShoppingList, item: Item): ShoppingList
     fun addItemInput(

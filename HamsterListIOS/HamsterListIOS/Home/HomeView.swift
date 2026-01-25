@@ -148,8 +148,7 @@ struct HomeView: View {
             Section(
                 header: Text("Your Hamsterlists"),
                 content: {
-                    ForEach(hamsterLists) {
-                        hamsterList in
+                    ForEach(hamsterLists) { hamsterList in
                         NavigationLink(
                             destination: ShoppingListPage(
                                 hamsterList: hamsterList
