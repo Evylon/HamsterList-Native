@@ -158,13 +158,16 @@ struct HomeView: View {
                             Text(hamsterList.titleOrId)
                         }
                         .swipeActions {
-                            Button(action: {
-                                onAction(
-                                    HomeActionDeleteHamsterList(
-                                        hamsterList: hamsterList
+                            Button(
+                                role: .destructive,
+                                action: {
+                                    onAction(
+                                        HomeActionDeleteHamsterList(
+                                            hamsterList: hamsterList
+                                        )
                                     )
-                                )
-                            }) {
+                                }
+                            ) {
                                 Image(systemName: "trash")
                             }.tint(Color.red)
                         }

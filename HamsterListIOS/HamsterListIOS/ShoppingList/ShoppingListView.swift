@@ -36,11 +36,12 @@ struct ShoppingListView: View {
                 changeItem: { itemText in changeItem(item, itemText) },
                 showCategoryChooser: { categoryChooserItem = item }
             ).swipeActions {
-                Button(action: {
-                    deleteItem(item)
-                }) {
+                Button(
+                    role: .destructive,
+                    action: { deleteItem(item) }
+                ) {
                     Image(systemName: "trash")
-                }.tint(Color.red)
+                }
             }
         }
         .refreshable { refresh() }
