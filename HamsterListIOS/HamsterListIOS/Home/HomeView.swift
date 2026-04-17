@@ -54,9 +54,7 @@ struct HomeView: View {
             HomeActionLoadHamsterlist(
                 selectedList: hamsterList,
                 navigateToList: {
-                    navigationPath.append(
-                        hamsterList
-                    )
+                    navigationPath.append(hamsterList)
                 }
             )
         )
@@ -71,8 +69,10 @@ struct HomeView: View {
         )
         uiState.subscribePublisher()
 
+        // Prepare last loaded list if necessary. List can only be loaded after UI has been setup.
+        let shouldAutoLoadLast = koinHelper.settingsRepository.autoLoadLast
         let knownLists = koinHelper.settingsRepository.getKnownLists()
-        if let lastLoadedList = knownLists.first {
+        if shouldAutoLoadLast, let lastLoadedList = knownLists.first {
             autoLoadHamsterList = lastLoadedList
         }
     }
@@ -110,7 +110,7 @@ struct HomeView: View {
         }
         .onAppear {
             if let hamsterList = autoLoadHamsterList {
-                navigationPath.append(hamsterList)
+                loadHamsterList(hamsterList)
             }
         }
     }
@@ -149,12 +149,13 @@ struct HomeView: View {
                 header: Text("Your Hamsterlists"),
                 content: {
                     ForEach(hamsterLists) { hamsterList in
-                        NavigationLink(
-                            destination: ShoppingListPage(
-                                hamsterList: hamsterList
-                            )
-                        ) {
-                            Text(hamsterList.titleOrId)
+                        Button(action: { loadHamsterList(hamsterList) }) {
+                            HStack {
+                                Text(hamsterList.titleOrId)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.gray)
+                            }
                         }
                         .swipeActions {
                             Button(
